@@ -64,20 +64,20 @@ export default function TeamSection() {
             className="group relative">
             
               <div className="pillar-card card-hover rounded-sm overflow-hidden">
-                <div className="relative h-72 overflow-hidden hidden">
-                  <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100 hidden"
-                  onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80';
-                  }} />
                 
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent hidden" />
-                  <div className="absolute bottom-4 right-6">
-                    <span className="font-body text-xs text-gold tracking-widest font-bold">{member.title}</span>
-                  </div>
-                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+              
 
                 <div className="p-8">
                   <h3 className="font-display text-2xl font-black text-white mb-1">{member.name}</h3>
