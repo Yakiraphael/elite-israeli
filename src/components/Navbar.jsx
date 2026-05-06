@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Home', href: '#hero' },
-  { label: 'Our Mission', href: '#mission' },
-  { label: 'Goals', href: '#goals' },
-  { label: 'The Team', href: '#team' },
-  { label: 'Roadmap', href: '#roadmap' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'בית', href: '#hero' },
+  { label: 'המשימה', href: '#mission' },
+  { label: 'יעדים', href: '#goals' },
+  { label: 'הצוות', href: '#team' },
+  { label: 'מפת הדרכים', href: '#roadmap' },
+  { label: 'צרו קשר', href: '#contact' },
 ];
 
 export default function Navbar() {
@@ -26,7 +26,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-navy/95 backdrop-blur-md shadow-2xl border-b border-gold/10' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-navy/95 backdrop-blur-md shadow-2xl border-b border-gold/10' : 'bg-transparent'}`} dir="rtl">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <button onClick={() => handleNav('#hero')} className="flex items-center gap-3">
           <img src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png" alt="Elite C.I.C." className="h-10 w-auto" />
@@ -38,7 +38,7 @@ export default function Navbar() {
             <li key={link.label}>
               <button
                 onClick={() => handleNav(link.href)}
-                className="font-body text-sm font-medium text-cream/70 hover:text-gold transition-colors duration-200 tracking-wide uppercase"
+                className="font-body text-sm font-semibold text-cream/70 hover:text-gold transition-colors duration-200 tracking-wide"
               >
                 {link.label}
               </button>
@@ -48,9 +48,9 @@ export default function Navbar() {
 
         <button
           onClick={() => handleNav('#contact')}
-          className="hidden md:block font-body text-sm font-semibold bg-gold text-navy px-5 py-2 rounded-sm hover:bg-gold-light transition-colors duration-200 tracking-wider uppercase"
+          className="hidden md:block font-body text-sm font-bold bg-gold text-navy px-5 py-2 rounded-sm hover:bg-gold-light transition-colors duration-200 tracking-wider"
         >
-          Get Involved
+          הצטרפו אלינו
         </button>
 
         {/* Mobile */}
@@ -60,21 +60,21 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-navy/98 backdrop-blur-md border-t border-gold/10 px-6 py-6 space-y-4">
+        <div className="md:hidden bg-navy/98 backdrop-blur-md border-t border-gold/10 px-6 py-6 space-y-4" dir="rtl">
           {navLinks.map(link => (
             <button
               key={link.label}
               onClick={() => handleNav(link.href)}
-              className="block w-full text-left font-body text-base font-medium text-cream/80 hover:text-gold transition-colors py-2 uppercase tracking-wide"
+              className="block w-full text-right font-body text-base font-semibold text-cream/80 hover:text-gold transition-colors py-2"
             >
               {link.label}
             </button>
           ))}
           <button
             onClick={() => handleNav('#contact')}
-            className="block w-full text-center font-body text-sm font-semibold bg-gold text-navy px-5 py-3 rounded-sm mt-4 uppercase tracking-wider"
+            className="block w-full text-center font-body text-sm font-bold bg-gold text-navy px-5 py-3 rounded-sm mt-4"
           >
-            Get Involved
+            הצטרפו אלינו
           </button>
         </div>
       )}

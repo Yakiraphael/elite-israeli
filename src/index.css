@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Assistant:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -41,20 +41,26 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    direction: rtl;
+  }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Assistant', sans-serif;
+    direction: rtl;
   }
   h1, h2, h3, h4 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Assistant', sans-serif;
+    font-weight: 800;
   }
 }
 
 .font-display {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Assistant', sans-serif;
+  font-weight: 800;
 }
 .font-body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Assistant', sans-serif;
 }
 
 .gold-gradient {
@@ -62,10 +68,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.gold-border-gradient {
-  border-image: linear-gradient(135deg, hsl(43, 74%, 38%), hsl(43, 74%, 65%), hsl(43, 74%, 38%)) 1;
 }
 
 .navy-gradient {
@@ -121,14 +123,4 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.scroll-reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
 }

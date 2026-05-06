@@ -1,28 +1,27 @@
 import { motion } from 'framer-motion';
-import { Linkedin, Globe } from 'lucide-react';
 
 const team = [
   {
-    name: 'Yakir Raphael Carmel',
-    hebrewName: 'יקיר רפאל כרמל',
-    title: 'Social-Tech Entrepreneur & CEO',
-    description: 'A visionary leader at the intersection of technology, social impact, and sport. Yakir founded Elite Israeli with a mission to prove that the most powerful classroom is the football pitch — and that every youth in the periphery deserves access to world-class tools for self-development.',
-    expertise: ['Social Entrepreneurship', 'Tech Innovation', 'Strategic Leadership', 'Community Building'],
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80',
+    name: 'יקיר רפאל כרמל',
+    englishName: 'Yakir Raphael Carmel',
+    title: 'יזם סושיאל-טק ומנכ"ל',
+    description: 'מנהיג חזוני בצומת שבין טכנולוגיה, השפעה חברתית וספורט. יקיר ייסד את עילית ישראלית מתוך שליחות להוכיח שהמגרש הוא הכיתה החזקה ביותר — ושכל נער בפריפריה ראוי לגישה לכלים ברמה עולמית לפיתוח עצמי.',
+    expertise: ['יזמות חברתית', 'חדשנות טכנולוגית', 'מנהיגות אסטרטגית', 'בניית קהילה'],
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80',
   },
   {
-    name: 'Naor Shir',
-    hebrewName: 'נאור שיר',
-    title: 'Social-Business Entrepreneur & VP',
-    description: 'A seasoned social-business entrepreneur whose expertise bridges grassroots community work with high-level business strategy. Naor brings the commercial architecture and relational intelligence that transforms programs into sustainable, scalable impact engines.',
-    expertise: ['Business Development', 'Social Impact', 'Stakeholder Relations', 'Program Architecture'],
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+    name: 'נאור שיר',
+    englishName: 'Naor Shir',
+    title: 'יזם סושיאל-ביזנס וסמנכ"ל',
+    description: 'יזם סושיאל-ביזנס מנוסה שמומחיותו גושרת בין עבודה קהילתית שורשית לאסטרטגיה עסקית ברמה גבוהה. נאור מביא את הארכיטקטורה המסחרית והאינטליגנציה הרלציונית שהופכים תכניות למנועי השפעה בני קיימא ומדרגיים.',
+    expertise: ['פיתוח עסקי', 'השפעה חברתית', 'קשרי בעלי עניין', 'ארכיטקטורת תכניות'],
+    image: 'https://myscout.co.il/wp-content/uploads/2024/03/%D7%A0%D7%90%D7%95%D7%A8-%D7%A9%D7%99%D7%A8.jpg',
   },
 ];
 
 export default function TeamSection() {
   return (
-    <section id="team" className="py-28 md:py-36 relative overflow-hidden">
+    <section id="team" className="py-28 md:py-36 relative overflow-hidden" dir="rtl">
       <div className="absolute inset-0 navy-gradient" />
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
@@ -32,18 +31,18 @@ export default function TeamSection() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="font-body text-xs tracking-[0.4em] text-gold uppercase font-semibold"
+            className="font-body text-xs tracking-[0.3em] text-gold font-bold"
           >
-            Leadership & Vision
+            מנהיגות וחזון
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-display text-4xl md:text-6xl font-bold text-white mt-4 mb-6"
+            className="font-display text-4xl md:text-6xl font-black text-white mt-4 mb-6"
           >
-            The <span className="gold-gradient">Founders</span>
+            <span className="gold-gradient">המייסדים</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
@@ -58,28 +57,31 @@ export default function TeamSection() {
           {team.map((member, i) => (
             <motion.div
               key={member.name}
-              initial={{ opacity: 0, x: i === 0 ? -40 : 40 }}
+              initial={{ opacity: 0, x: i === 0 ? 40 : -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
               className="group relative"
             >
               <div className="pillar-card card-hover rounded-sm overflow-hidden">
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-72 overflow-hidden">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
+                    className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent" />
-                  <div className="absolute bottom-4 left-6">
-                    <span className="font-body text-xs text-gold tracking-widest uppercase font-semibold">{member.title}</span>
+                  <div className="absolute bottom-4 right-6">
+                    <span className="font-body text-xs text-gold tracking-widest font-bold">{member.title}</span>
                   </div>
                 </div>
 
                 <div className="p-8">
-                  <h3 className="font-display text-2xl font-bold text-white mb-1">{member.name}</h3>
-                  <p className="font-body text-sm text-gold/70 tracking-wider mb-5">{member.hebrewName}</p>
+                  <h3 className="font-display text-2xl font-black text-white mb-1">{member.name}</h3>
+                  <p className="font-body text-sm text-gold/70 mb-5">{member.englishName}</p>
                   <p className="font-body text-sm text-cream/60 leading-relaxed mb-6">{member.description}</p>
 
                   <div className="flex flex-wrap gap-2">
@@ -106,13 +108,13 @@ export default function TeamSection() {
           transition={{ delay: 0.3 }}
           className="mt-16 text-center relative"
         >
-          <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gold/20 font-display text-9xl leading-none select-none">"</div>
+          <div className="absolute -top-8 right-1/2 translate-x-1/2 text-gold/20 font-display text-9xl leading-none select-none">"</div>
           <blockquote className="relative z-10 max-w-3xl mx-auto">
-            <p className="font-display text-2xl md:text-3xl text-white/90 italic leading-relaxed mb-6">
-              Happiness is not in owning money, but in the process you went through to achieve it — in the thrill of the effort.
+            <p className="font-display text-2xl md:text-3xl text-white/90 font-bold leading-relaxed mb-6">
+              האושר אינו בבעלות על כסף, אלא בתהליך שעברת כדי להשיגו — בריגוש המאמץ.
             </p>
-            <cite className="font-body text-sm text-gold tracking-widest uppercase not-italic">
-              The Model is the Youth — Elite Israeli C.I.C.
+            <cite className="font-body text-sm text-gold tracking-widest font-bold not-italic">
+              המודל הוא הנוער — עילית ישראלית
             </cite>
           </blockquote>
         </motion.div>

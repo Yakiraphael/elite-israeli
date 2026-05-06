@@ -4,75 +4,74 @@ import { Home, Trophy, Users, Star, TrendingUp, MapPin, Handshake, Flame, Target
 const goals = [
   {
     icon: Home,
-    title: 'A Home for Life',
-    subtitle: 'בית לחיים',
-    description: 'Creating a permanent, nurturing "Home for Life" for youth in the periphery — a safe space where potential is recognized and cultivated.',
+    title: 'בית לחיים',
+    subtitle: 'מרכז קהילתי לנוער הפריפריה',
+    description: 'יצירת "בית לחיים" קבוע ומטפח לנוער הפריפריה — מרחב בטוח שבו פוטנציאל מזוהה ומפותח.',
   },
   {
     icon: MapPin,
-    title: 'Regional Youth Leagues',
-    subtitle: 'ליגות נוער אזוריות',
-    description: 'Establishing official regional youth leagues across the North, South, and Center of Israel, creating structured competitive frameworks.',
+    title: 'ליגות נוער אזוריות',
+    subtitle: 'צפון, דרום ומרכז',
+    description: 'הקמת ליגות נוער אזוריות רשמיות ברחבי הצפון, הדרום והמרכז של ישראל — מסגרות תחרותיות מובנות.',
   },
   {
     icon: Star,
-    title: 'The Elite House',
-    subtitle: 'בית עילית',
-    description: 'Building the "Elite House" — an exclusive hub for program graduates to continue growing, mentoring peers, and entering professional pathways.',
+    title: 'בית עילית',
+    subtitle: 'מרכז לבוגרי התכנית',
+    description: 'בניית "בית עילית" — מרכז בלעדי לבוגרי התכנית להמשיך לצמוח, לחנוך עמיתים ולהיכנס למסלולים מקצועיים.',
   },
   {
     icon: Trophy,
-    title: 'Senior Team Formation',
-    subtitle: 'הקמת קבוצה בכירה',
-    description: 'Establishing a senior competitive team built entirely from program alumni, demonstrating what transformation looks like at scale.',
+    title: 'הקמת קבוצה בכירה',
+    subtitle: 'מבוגרים מבוגרי התכנית',
+    description: 'הקמת קבוצה תחרותית בכירה הבנויה כולה מבוגרי התכנית — הוכחה חיה למה שינוי נראה כמוהו בקנה מידה.',
   },
   {
     icon: TrendingUp,
-    title: 'Professional Drafting',
-    subtitle: 'גיוס לליגות מקצועניות',
-    description: 'Developing a clear pathway for drafting talented players into professional leagues — turning development into real-world opportunity.',
+    title: 'גיוס לליגות מקצועיות',
+    subtitle: 'מסלול לקריירה מקצועית',
+    description: 'פיתוח מסלול ברור לגיוס שחקנים מוכשרים לליגות מקצועיות — הפיכת פיתוח להזדמנות אמיתית.',
   },
   {
     icon: Users,
-    title: 'Practical Leadership',
-    subtitle: 'מנהיגות מעשית',
-    description: 'Cultivating the next generation of community leaders through hands-on mentorship, responsibility programs, and real-world leadership experiences.',
+    title: 'מנהיגות מעשית',
+    subtitle: 'דור המנהיגים הבא',
+    description: 'טיפוח דור המנהיגים הקהילתי הבא דרך חניכה מעשית, תכניות אחריות וחוויות מנהיגות בעולם האמיתי.',
   },
   {
     icon: Flame,
-    title: 'Mindset Education',
-    subtitle: 'חינוך מנטלי',
-    description: 'Delivering structured programs in NLP, psychological resilience, and high-performance thinking — tools the world\'s elite have used for decades.',
+    title: 'חינוך מנטלי',
+    subtitle: 'NLP ובניית מנטליות',
+    description: 'העברת תכניות מובנות ב-NLP, חוסן פסיכולוגי וחשיבה בעלת ביצועים גבוהים — כלים שהעלית העולמית משתמשת בהם.',
   },
   {
     icon: Handshake,
-    title: 'Business Incubation',
-    subtitle: 'פיתוח יזמות',
-    description: 'Providing youth with the frameworks of entrepreneurship and business management, turning ambition into viable ventures.',
+    title: 'פיתוח יזמות',
+    subtitle: 'מדגרת עסקים',
+    description: 'מתן מסגרות של יזמות וניהול עסקי לנוער, והפיכת שאיפות לעסקים בני קיימא.',
   },
   {
     icon: Target,
-    title: 'Financial Empowerment',
-    subtitle: 'העצמה פיננסית',
-    description: 'Teaching financial literacy, investment thinking, and economic independence — breaking generational cycles through financial education.',
+    title: 'העצמה פיננסית',
+    subtitle: 'אוריינות כלכלית',
+    description: 'הוראת אוריינות פיננסית, חשיבת השקעות ועצמאות כלכלית — שבירת מעגלים דוריים דרך חינוך פיננסי.',
   },
   {
     icon: Award,
-    title: 'Community Impact',
-    subtitle: 'השפעה קהילתית',
-    description: 'Measuring success not by trophies but by transformed communities — creating a ripple effect of empowerment across Israel\'s periphery.',
+    title: 'השפעה קהילתית',
+    subtitle: 'אפקט גלים ברחבי ישראל',
+    description: 'מדידת הצלחה לא בגביעים אלא בקהילות שנשתנו — יצירת אפקט גלים של העצמה ברחבי הפריפריה הישראלית.',
   },
 ];
 
 export default function GoalsSection() {
   return (
-    <section id="goals" className="py-28 md:py-36 relative overflow-hidden" style={{ background: 'hsl(220, 35%, 5%)' }}>
+    <section id="goals" className="py-28 md:py-36 relative overflow-hidden" style={{ background: 'hsl(220, 35%, 5%)' }} dir="rtl">
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
-      {/* Subtle background texture */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full border border-gold" />
-        <div className="absolute bottom-1/3 right-1/4 w-64 h-64 rounded-full border border-gold" />
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 rounded-full border border-gold" />
+        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 rounded-full border border-gold" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -81,18 +80,18 @@ export default function GoalsSection() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="font-body text-xs tracking-[0.4em] text-gold uppercase font-semibold"
+            className="font-body text-xs tracking-[0.3em] text-gold font-bold"
           >
-            Strategic Vision
+            החזון האסטרטגי
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-display text-4xl md:text-6xl font-bold text-white mt-4 mb-6"
+            className="font-display text-4xl md:text-6xl font-black text-white mt-4 mb-6"
           >
-            10 <span className="gold-gradient">Impact Goals</span>
+            10 <span className="gold-gradient">יעדי השפעה</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
@@ -108,7 +107,7 @@ export default function GoalsSection() {
             transition={{ delay: 0.3 }}
             className="font-body text-cream/60 max-w-2xl mx-auto"
           >
-            Every initiative, every program, every player — mapped to ten transformational pillars that define our commitment to Israel's youth.
+            כל יוזמה, כל תכנית, כל שחקן — ממופים לעשרה עמודי תווך טרנספורמציוניים המגדירים את מחויבותנו לנוער ישראל.
           </motion.p>
         </div>
 
@@ -134,8 +133,8 @@ export default function GoalsSection() {
                         {String(i + 1).padStart(2, '0')}
                       </span>
                     </div>
-                    <h3 className="font-display text-lg font-bold text-white mb-0.5">{goal.title}</h3>
-                    <span className="font-body text-xs text-gold/60 tracking-wider">{goal.subtitle}</span>
+                    <h3 className="font-display text-lg font-black text-white mb-0.5">{goal.title}</h3>
+                    <span className="font-body text-xs text-gold/60">{goal.subtitle}</span>
                     <p className="font-body text-xs text-cream/55 mt-3 leading-relaxed">{goal.description}</p>
                   </div>
                 </div>
