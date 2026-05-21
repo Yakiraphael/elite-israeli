@@ -1,19 +1,16 @@
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
+const BG_IMG = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80';
+
 export default function HeroSection() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden" dir="rtl">
       {/* Background */}
       <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80"
-          alt="מגרש כדורגל"
-          className="w-full h-full object-cover"
-        />
+        <img src={BG_IMG} alt="מגרש כדורגל" className="w-full h-full object-cover" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-transparent via-gold/40 to-transparent" />
-        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
       </div>
 
       {/* Geometric accents */}
@@ -26,12 +23,12 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-6"
+          className="mb-8"
         >
           <img
             src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png"
             alt="עילית ישראלית"
-            className="h-24 md:h-32 w-auto mx-auto"
+            className="h-36 md:h-48 w-auto mx-auto drop-shadow-2xl"
           />
         </motion.div>
 
@@ -39,10 +36,13 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-4"
+          className="mb-4 flex flex-col items-center gap-2"
         >
           <span className="font-body text-xs tracking-[0.3em] text-gold font-bold">
-            חברה לטובת הציבור · ייסוד 2024
+            חברה לטובת הציבור
+          </span>
+          <span className="font-body text-xs tracking-[0.2em] text-cream/60 font-semibold">
+            שנת ייסוד: 2025
           </span>
         </motion.div>
 
@@ -84,7 +84,7 @@ export default function HeroSection() {
         >
           <button
             onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })}
-            className="font-body font-bold text-sm bg-gold text-navy px-10 py-4 rounded-sm hover:bg-gold-light transition-all duration-300 tracking-wide shadow-lg shadow-gold/20"
+            className="font-body font-bold text-sm bg-gold text-white px-10 py-4 rounded-sm hover:bg-gold-light transition-all duration-300 tracking-wide shadow-lg shadow-gold/30"
           >
             החזון שלנו
           </button>
@@ -97,7 +97,6 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
       <button
         onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gold/60 hover:text-gold transition-colors animate-bounce"

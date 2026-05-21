@@ -5,7 +5,7 @@ const phases = [
   {
     phase: 'שלב א׳',
     title: 'הקמה',
-    period: '2024 — אוגוסט 2026',
+    period: '2025 — אוגוסט 2026',
     status: 'completed',
     milestones: [
       'רישום החברה כחלצ"ה',
@@ -53,14 +53,14 @@ const phases = [
 ];
 
 const statusConfig = {
-  completed: { icon: CheckCircle2, color: 'text-gold', bg: 'bg-gold/10 border-gold/40', label: 'הושלם' },
-  active: { icon: Clock, color: 'text-gold', bg: 'bg-gold/20 border-gold', label: 'בתהליך' },
-  upcoming: { icon: Circle, color: 'text-cream/30', bg: 'bg-navy border-cream/15', label: 'עתידי' },
+  completed: { color: 'text-gold', bg: 'bg-amber-50 border-gold/40', label: 'הושלם', dot: 'bg-gold' },
+  active: { color: 'text-gold', bg: 'bg-amber-100 border-gold', label: 'בתהליך', dot: 'bg-gold' },
+  upcoming: { color: 'text-slate-400', bg: 'bg-slate-50 border-slate-200', label: 'עתידי', dot: 'bg-slate-300' },
 };
 
 export default function RoadmapSection() {
   return (
-    <section id="roadmap" className="py-28 md:py-36 relative overflow-hidden" style={{ background: 'hsl(220, 35%, 5%)' }} dir="rtl">
+    <section id="roadmap" className="py-28 md:py-36 relative overflow-hidden" style={{ background: '#f8fafc' }} dir="rtl">
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
@@ -78,7 +78,7 @@ export default function RoadmapSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-display text-4xl md:text-6xl font-black text-white mt-4 mb-6"
+            className="font-display text-4xl md:text-6xl font-black text-navy mt-4 mb-6"
           >
             מפת <span className="gold-gradient">הדרכים האסטרטגית</span>
           </motion.h2>
@@ -92,7 +92,6 @@ export default function RoadmapSection() {
         </div>
 
         <div className="relative">
-          {/* Timeline line — on the right side for RTL */}
           <div className="absolute right-8 md:right-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-gold/60 via-gold/30 to-transparent" />
 
           <div className="space-y-12">
@@ -109,25 +108,23 @@ export default function RoadmapSection() {
                   transition={{ delay: i * 0.1 }}
                   className={`relative flex ${isRight ? 'md:flex-row-reverse' : 'md:flex-row'} gap-0 items-start`}
                 >
-                  {/* Timeline dot */}
                   <div className="absolute right-8 md:right-1/2 translate-x-1/2 z-10 mt-6">
-                    <div className={`w-4 h-4 rounded-full border-2 ${phase.status === 'active' ? 'bg-gold border-gold shadow-lg shadow-gold/40' : phase.status === 'completed' ? 'bg-gold/60 border-gold/60' : 'bg-navy border-cream/20'}`} />
+                    <div className={`w-4 h-4 rounded-full border-2 ${phase.status === 'active' ? 'bg-gold border-gold shadow-lg shadow-gold/40' : phase.status === 'completed' ? 'bg-gold/60 border-gold/60' : 'bg-white border-slate-300'}`} />
                   </div>
 
-                  {/* Card */}
                   <div className={`mr-16 md:mr-0 w-full md:w-[calc(50%-2rem)] ${isRight ? 'md:pl-12' : 'md:pr-12'}`}>
                     <div className={`pillar-card rounded-sm p-6 ${phase.status === 'active' ? 'border-gold/50' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
                         <span className="font-body text-xs font-bold text-gold tracking-widest">{phase.phase}</span>
                         <span className={`font-body text-xs px-2 py-0.5 rounded-sm border ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                       </div>
-                      <h3 className="font-display text-xl font-black text-white mb-1">{phase.title}</h3>
-                      <span className="font-body text-xs text-cream/40">{phase.period}</span>
+                      <h3 className="font-display text-xl font-black text-navy mb-1">{phase.title}</h3>
+                      <span className="font-body text-xs text-slate-400">{phase.period}</span>
                       <ul className="mt-4 space-y-2">
                         {phase.milestones.map((m, mi) => (
                           <li key={mi} className="flex items-start gap-2">
-                            <div className={`mt-1.5 w-1 h-1 rounded-full flex-shrink-0 ${phase.status === 'completed' ? 'bg-gold' : phase.status === 'active' ? 'bg-gold' : 'bg-cream/20'}`} />
-                            <span className={`font-body text-xs leading-relaxed ${phase.status === 'upcoming' ? 'text-cream/40' : 'text-cream/65'}`}>{m}</span>
+                            <div className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
+                            <span className={`font-body text-xs leading-relaxed ${phase.status === 'upcoming' ? 'text-slate-400' : 'text-slate-600'}`}>{m}</span>
                           </li>
                         ))}
                       </ul>

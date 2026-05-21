@@ -26,10 +26,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-navy/95 backdrop-blur-md shadow-2xl border-b border-gold/10' : 'bg-transparent'}`} dir="rtl">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-slate-100' : 'bg-transparent'}`} dir="rtl">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <button onClick={() => handleNav('#hero')} className="flex items-center gap-3">
-          <img src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png" alt="Elite C.I.C." className="h-10 w-auto" />
+          <img src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png" alt="Elite C.I.C." className={`w-auto transition-all duration-300 ${scrolled ? 'h-12' : 'h-14'}`} style={{ filter: scrolled ? 'invert(1) sepia(1) saturate(0) brightness(0.1)' : 'none' }} />
         </button>
 
         {/* Desktop */}
@@ -38,7 +38,7 @@ export default function Navbar() {
             <li key={link.label}>
               <button
                 onClick={() => handleNav(link.href)}
-                className="font-body text-sm font-semibold text-cream/70 hover:text-gold transition-colors duration-200 tracking-wide"
+                className={`font-body text-sm font-semibold transition-colors duration-200 tracking-wide ${scrolled ? 'text-navy/70 hover:text-gold' : 'text-cream/80 hover:text-gold'}`}
               >
                 {link.label}
               </button>
@@ -48,31 +48,31 @@ export default function Navbar() {
 
         <button
           onClick={() => handleNav('#contact')}
-          className="hidden md:block font-body text-sm font-bold bg-gold text-navy px-5 py-2 rounded-sm hover:bg-gold-light transition-colors duration-200 tracking-wider"
+          className={`hidden md:block font-body text-sm font-bold px-5 py-2 rounded-sm transition-colors duration-200 tracking-wider ${scrolled ? 'bg-navy text-white hover:bg-navy-light' : 'bg-gold text-white hover:bg-gold-light'}`}
         >
           הצטרפו אלינו
         </button>
 
         {/* Mobile */}
-        <button className="md:hidden text-gold" onClick={() => setOpen(!open)}>
+        <button className={`md:hidden ${scrolled ? 'text-navy' : 'text-gold'}`} onClick={() => setOpen(!open)}>
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden bg-navy/98 backdrop-blur-md border-t border-gold/10 px-6 py-6 space-y-4" dir="rtl">
+        <div className="md:hidden bg-white border-t border-slate-100 shadow-lg px-6 py-6 space-y-4" dir="rtl">
           {navLinks.map(link => (
             <button
               key={link.label}
               onClick={() => handleNav(link.href)}
-              className="block w-full text-right font-body text-base font-semibold text-cream/80 hover:text-gold transition-colors py-2"
+              className="block w-full text-right font-body text-base font-semibold text-navy/80 hover:text-gold transition-colors py-2"
             >
               {link.label}
             </button>
           ))}
           <button
             onClick={() => handleNav('#contact')}
-            className="block w-full text-center font-body text-sm font-bold bg-gold text-navy px-5 py-3 rounded-sm mt-4"
+            className="block w-full text-center font-body text-sm font-bold bg-navy text-white px-5 py-3 rounded-sm mt-4"
           >
             הצטרפו אלינו
           </button>

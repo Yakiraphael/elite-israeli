@@ -6,34 +6,34 @@
 
 @layer base {
   :root {
-    --background: 220 35% 7%;
-    --foreground: 45 20% 95%;
-    --card: 220 30% 10%;
-    --card-foreground: 45 20% 95%;
-    --popover: 220 30% 10%;
-    --popover-foreground: 45 20% 95%;
-    --primary: 43 74% 52%;
-    --primary-foreground: 220 35% 7%;
-    --secondary: 220 25% 15%;
-    --secondary-foreground: 45 20% 95%;
-    --muted: 220 25% 15%;
-    --muted-foreground: 220 15% 55%;
-    --accent: 43 74% 52%;
-    --accent-foreground: 220 35% 7%;
+    --background: 0 0% 100%;
+    --foreground: 220 35% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 35% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 35% 10%;
+    --primary: 43 74% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 95%;
+    --secondary-foreground: 220 35% 10%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 43 74% 45%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 20% 18%;
-    --input: 220 25% 15%;
-    --ring: 43 74% 52%;
+    --border: 220 15% 88%;
+    --input: 220 15% 92%;
+    --ring: 43 74% 45%;
     --radius: 0.5rem;
 
-    --navy: 220 35% 7%;
-    --navy-light: 220 30% 12%;
-    --gold: 43 74% 52%;
-    --gold-light: 43 74% 65%;
-    --gold-dark: 43 74% 38%;
+    --navy: 220 35% 10%;
+    --navy-light: 220 30% 18%;
+    --gold: 43 74% 45%;
+    --gold-light: 43 74% 55%;
+    --gold-dark: 43 74% 32%;
     --white: 0 0% 100%;
-    --cream: 45 20% 95%;
+    --cream: 220 20% 96%;
   }
 }
 
@@ -71,7 +71,7 @@
 }
 
 .navy-gradient {
-  background: linear-gradient(180deg, hsl(220, 35%, 4%) 0%, hsl(220, 35%, 10%) 100%);
+  background: linear-gradient(180deg, hsl(220, 20%, 97%) 0%, hsl(0, 0%, 100%) 100%);
 }
 
 .hero-overlay {
@@ -97,8 +97,9 @@
 }
 
 .pillar-card {
-  background: linear-gradient(145deg, hsl(220, 30%, 12%), hsl(220, 30%, 9%));
-  border: 1px solid hsla(43, 74%, 52%, 0.2);
+  background: #ffffff;
+  border: 1px solid hsl(220, 15%, 88%);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 .pillar-card:hover {
   border-color: hsla(43, 74%, 52%, 0.6);

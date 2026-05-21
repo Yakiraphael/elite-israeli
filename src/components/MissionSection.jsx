@@ -23,11 +23,10 @@ const pillars = [
 
 export default function MissionSection() {
   return (
-    <section id="mission" className="py-28 md:py-36 relative overflow-hidden" dir="rtl">
-      <div className="absolute inset-0 navy-gradient" />
+    <section id="mission" className="py-28 md:py-36 relative overflow-hidden" style={{ background: '#f8fafc' }} dir="rtl">
       <div className="absolute top-0 left-0 right-0 section-divider" />
-      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full border border-gold/5" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full border border-gold/5" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full border border-gold/8" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full border border-gold/8" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Header */}
@@ -45,7 +44,7 @@ export default function MissionSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-display text-4xl md:text-6xl font-black text-white mt-4 mb-6"
+            className="font-display text-4xl md:text-6xl font-black text-navy mt-4 mb-6"
           >
             משימה <span className="gold-gradient">ואסטרטגיה</span>
           </motion.h2>
@@ -61,9 +60,9 @@ export default function MissionSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="font-body text-lg text-cream/60 max-w-3xl mx-auto leading-relaxed"
+            className="font-body text-lg text-slate-500 max-w-3xl mx-auto leading-relaxed"
           >
-            עילית ישראלית (חלצ) משתמשת בכדורגל כזרז ראשי לתהליך חינוכי-טיפולי עמוק,
+            עילית ישראלית (חלצ), שנוסדה ב-2025, משתמשת בכדורגל כזרז ראשי לתהליך חינוכי-טיפולי עמוק,
             ומצוידת נוער בפריפריה בחינוך, כלים לחשיבה ניהולית, ניהול עסקי ויזמות — דרך NLP, שפת גוף וניהול פיננסי.
           </motion.p>
         </div>
@@ -80,9 +79,9 @@ export default function MissionSection() {
               className="pillar-card card-hover rounded-sm p-8 text-center group"
             >
               <div className="text-4xl text-gold mb-4 font-display">{pillar.icon}</div>
-              <div className="font-display text-4xl font-black text-white mb-1">{pillar.hebrew}</div>
+              <div className="font-display text-4xl font-black text-navy mb-1">{pillar.hebrew}</div>
               <div className="font-body text-xs tracking-[0.3em] text-gold font-bold mb-5 uppercase">{pillar.english}</div>
-              <p className="font-body text-sm text-cream/60 leading-relaxed">{pillar.description}</p>
+              <p className="font-body text-sm text-slate-500 leading-relaxed">{pillar.description}</p>
             </motion.div>
           ))}
         </div>
@@ -92,8 +91,8 @@ export default function MissionSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative rounded-sm overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, hsla(43,74%,52%,0.08) 0%, hsla(220,35%,12%,1) 100%)', border: '1px solid hsla(43,74%,52%,0.25)' }}
+          className="relative rounded-sm overflow-hidden bg-navy"
+          style={{ border: '1px solid hsla(43,74%,45%,0.3)' }}
         >
           <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-gold via-gold/50 to-transparent" />
           <div className="p-8 md:p-12">
@@ -109,7 +108,7 @@ export default function MissionSection() {
               </div>
               <div className="flex-1 grid grid-cols-2 gap-4">
                 {['NLP ותקשורת', 'שפת גוף', 'אוריינות פיננסית', 'יזמות'].map((tool) => (
-                  <div key={tool} className="bg-navy/60 border border-gold/15 rounded-sm p-4 text-center">
+                  <div key={tool} className="bg-white/5 border border-gold/15 rounded-sm p-4 text-center">
                     <div className="w-2 h-2 bg-gold rounded-full mx-auto mb-2" />
                     <span className="font-body text-xs text-cream/70 font-semibold">{tool}</span>
                   </div>
