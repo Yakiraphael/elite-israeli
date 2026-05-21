@@ -4,43 +4,38 @@ const team = [
   {
     name: 'יקיר רפאל כרמל',
     title: 'מייסד ומנכ"ל',
-    description: 'יזם חברתי-טכנולוגי, מנהל מרכזי יזמות לנוער ומומחה בהובלת תוכניות חינוכיות רב-מגזריות בשטח.',
-    expertise: ['יזמות חברתית', 'חדשנות טכנולוגית', 'מנהיגות אסטרטגית'],
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80',
+    description: 'יזם חברתי-טכנולוגי, מנהל מרכזי יזמות לנוער ומומחה בהובלת תוכניות חינוכיות רב-מגזריות בשטח. מוביל תהליכי שינוי מערכתי בצומת שבין חינוך, ספורט וטכנולוגיה.',
+    tags: ['יזמות חברתית', 'פיתוח מנהיגות', 'תוכניות חינוך'],
   },
   {
     name: 'נאור שיר',
     title: 'מייסד וסמנכ"ל',
-    description: 'יזם חברתי-עסקי, מאמן אנליסט וסקאוטר בשיתוף פעולה עם סוכנויות בינלאומיות.',
-    expertise: ['פיתוח עסקי', 'אנליזה ספורטיבית', 'סקאוטינג בינלאומי'],
-    image: 'https://myscout.co.il/wp-content/uploads/2024/03/%D7%A0%D7%90%D7%95%D7%A8-%D7%A9%D7%99%D7%A8.jpg',
+    description: 'יזם חברתי-עסקי, מאמן אנליסט וסקאוטר בשיתוף פעולה עם סוכנויות בינלאומיות. מביא מומחיות ייחודית בגשר בין קהילה לאסטרטגיה עסקית ובניית מנועי השפעה מדרגיים.',
+    tags: ['פיתוח עסקי', 'אנליזה ספורטיבית', 'סקאוטינג בינלאומי'],
   },
   {
     name: 'אור מני',
     title: 'סמנכ"ל תפעול',
-    description: 'מומחה בניהול אופרטיבי, גיוס עובדים וניהול עסקים, ניהול מו"מ.',
-    expertise: ['ניהול אופרטיבי', 'גיוס עובדים', 'ניהול מו"מ'],
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
+    description: 'מומחה בניהול אופרטיבי, גיוס עובדים וניהול עסקים ומשא ומתן. אחראי על מצוינות תפעולית, בניית תשתיות ארגוניות וייעול תהליכי ליבה.',
+    tags: ['ניהול אופרטיבי', 'מצוינות ארגונית', 'גיוס ומשאבי אנוש'],
   },
   {
     name: 'שלו חן',
     title: 'סמנכ"ל פרויקטים',
-    description: 'קצין בצה"ל, מאמן מנטלי מוסמך, מאסטר NLP ויזם חברתי המוביל פרויקטים מורכבים.',
-    expertise: ['מאמן מנטלי', 'מאסטר NLP', 'יזמות חברתית'],
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80',
+    description: 'קצין בצה"ל, מאמן מנטלי מוסמך, מאסטר NLP ויזם חברתי. מוביל פרויקטים מורכבים ממשלב התכנון האסטרטגי ועד ביצוע שטח — עם דגש על חוסן מנטלי ופיתוח אישי.',
+    tags: ['NLP מאסטר', 'אימון מנטלי', 'ניהול פרויקטים'],
   },
   {
     name: "מתן רבינוביץ'",
     title: 'סמנכ"ל נוער',
-    description: 'קצין לשעבר, איש ברזל ומומחה בהובלת צוותים והנעת תהליכי שטח.',
-    expertise: ['הובלת צוותים', 'תהליכי שטח', 'פיתוח נוער'],
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+    description: 'קצין לשעבר, בעל ניסיון מוכח בהובלת צוותים בסביבות לחץ גבוהות ובהנעת תהליכי שטח. מוביל את קשרי הנוער, חניכה וביצוע תכניות ישירות בשטח.',
+    tags: ['הובלת צוותים', 'תהליכי שטח', 'חניכת נוער'],
   },
 ];
 
 export default function TeamSection() {
   return (
-    <section id="team" className="py-28 md:py-36 relative overflow-hidden bg-white" dir="rtl">
+    <section id="team" className="py-28 md:py-36 relative overflow-hidden bg-slate-50" dir="rtl">
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -49,39 +44,48 @@ export default function TeamSection() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="font-body text-xs tracking-[0.3em] text-gold font-bold"
+            className="font-body text-xs tracking-[0.3em] text-gold font-bold uppercase"
           >
-            מנהיגות וחזון
+            ניהול ומנהיגות
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-display text-4xl md:text-6xl font-black text-navy mt-4 mb-6"
+            className="font-display text-4xl md:text-5xl font-black text-navy mt-4 mb-6"
           >
-            <span className="gold-gradient">המייסדים והצוות</span>
+            <span className="gold-gradient">ההנהלה הבכירה</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="w-24 h-0.5 bg-gold mx-auto"
+            className="w-24 h-0.5 bg-gold mx-auto mb-6"
           />
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="font-body text-sm text-slate-500 max-w-xl mx-auto leading-relaxed"
+          >
+            צוות הנהלה רב-תחומי המשלב מומחיות בחינוך, עסקים, צבא, ספורט ויזמות חברתית.
+          </motion.p>
         </div>
 
-        {/* First row: 2 founders */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Founders - 2 column */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {team.slice(0, 2).map((member, i) => (
-            <MemberCard key={member.name} member={member} delay={i * 0.15} large />
+            <TeamCard key={member.name} member={member} index={i} />
           ))}
         </div>
 
-        {/* Second row: 3 VPs */}
+        {/* VPs - 3 column */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {team.slice(2).map((member, i) => (
-            <MemberCard key={member.name} member={member} delay={i * 0.1} />
+            <TeamCard key={member.name} member={member} index={i + 2} />
           ))}
         </div>
 
@@ -91,15 +95,15 @@ export default function TeamSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="mt-16 text-center relative"
+          className="mt-20 relative border border-gold/20 rounded-sm p-10 text-center bg-white"
         >
-          <div className="absolute -top-8 right-1/2 translate-x-1/2 text-gold/15 font-display text-9xl leading-none select-none">"</div>
+          <div className="absolute -top-6 right-1/2 translate-x-1/2 text-gold/20 font-display text-8xl leading-none select-none">"</div>
           <blockquote className="relative z-10 max-w-3xl mx-auto">
-            <p className="font-display text-2xl md:text-3xl text-navy font-bold leading-relaxed mb-6">
+            <p className="font-display text-xl md:text-2xl text-navy font-bold leading-relaxed mb-5">
               האושר אינו בבעלות על כסף, אלא בתהליך שעברת כדי להשיגו — בריגוש המאמץ.
             </p>
-            <cite className="font-body text-sm text-gold tracking-widest font-bold not-italic">
-              המודל הוא הנוער — עילית ישראלית
+            <cite className="font-body text-xs text-gold tracking-widest font-bold not-italic uppercase">
+              המודל הוא הנוער — עילית ישראלית, 2025
             </cite>
           </blockquote>
         </motion.div>
@@ -108,38 +112,33 @@ export default function TeamSection() {
   );
 }
 
-function MemberCard({ member, delay, large }) {
+function TeamCard({ member, index }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 25 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay }}
-      className="group pillar-card card-hover rounded-sm overflow-hidden"
+      transition={{ delay: (index % 3) * 0.1 }}
+      className="pillar-card card-hover rounded-sm p-7 bg-white"
     >
-      <div className={`relative overflow-hidden ${large ? 'h-64' : 'h-48'}`}>
-        <img
-          src={member.image}
-          alt={member.name}
-          className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
-          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80'; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
-        <div className="absolute bottom-3 right-4">
-          <span className="font-body text-xs text-gold tracking-widest font-bold">{member.title}</span>
+      <div className="mb-4">
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <h3 className="font-display text-xl font-black text-navy">{member.name}</h3>
+            <span className="font-body text-xs text-gold font-bold tracking-wide">{member.title}</span>
+          </div>
+          <div className="w-10 h-10 rounded-sm bg-amber-50 border border-gold/30 flex items-center justify-center flex-shrink-0">
+            <div className="w-2 h-2 bg-gold rounded-full" />
+          </div>
         </div>
       </div>
-
-      <div className={`p-6 ${large ? '' : 'p-5'}`}>
-        <h3 className="font-display text-xl font-black text-navy mb-3">{member.name}</h3>
-        <p className="font-body text-sm text-slate-600 leading-relaxed mb-4">{member.description}</p>
-        <div className="flex flex-wrap gap-2">
-          {member.expertise.map(skill => (
-            <span key={skill} className="font-body text-xs text-gold bg-amber-50 border border-gold/25 px-3 py-1 rounded-sm">
-              {skill}
-            </span>
-          ))}
-        </div>
+      <p className="font-body text-sm text-slate-600 leading-relaxed mb-5">{member.description}</p>
+      <div className="flex flex-wrap gap-2">
+        {member.tags.map(tag => (
+          <span key={tag} className="font-body text-xs text-gold bg-amber-50 border border-gold/20 px-3 py-1 rounded-sm">
+            {tag}
+          </span>
+        ))}
       </div>
     </motion.div>
   );

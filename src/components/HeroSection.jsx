@@ -6,29 +6,26 @@ const BG_IMG = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1
 export default function HeroSection() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden" dir="rtl">
-      {/* Background */}
       <div className="absolute inset-0">
         <img src={BG_IMG} alt="מגרש כדורגל" className="w-full h-full object-cover" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-transparent via-gold/40 to-transparent" />
       </div>
 
-      {/* Geometric accents */}
       <div className="absolute top-1/4 left-8 md:left-16 w-48 h-48 border border-gold/15 rotate-45 float-animation" />
       <div className="absolute bottom-1/4 right-8 md:right-16 w-24 h-24 border border-gold/10 rotate-12 float-animation" style={{ animationDelay: '2s' }} />
 
-      {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-8"
+          className="mb-10"
         >
           <img
             src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png"
             alt="עילית ישראלית"
-            className="h-36 md:h-48 w-auto mx-auto drop-shadow-2xl"
+            className="h-36 md:h-52 w-auto mx-auto drop-shadow-2xl"
           />
         </motion.div>
 
@@ -36,13 +33,10 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-4 flex flex-col items-center gap-2"
+          className="mb-5 flex flex-col items-center gap-2"
         >
-          <span className="font-body text-xs tracking-[0.3em] text-gold font-bold">
-            חברה לטובת הציבור
-          </span>
-          <span className="font-body text-xs tracking-[0.2em] text-cream/60 font-semibold">
-            שנת ייסוד: 2025
+          <span className="font-body text-xs tracking-[0.35em] text-gold font-bold uppercase">
+            חברה לטובת הציבור · שנת ייסוד 2025
           </span>
         </motion.div>
 
@@ -50,49 +44,40 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-6"
+          className="font-display text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6"
         >
-          משנים חיים
+          מסגרת חינוכית-טיפולית
           <br />
-          <span className="gold-gradient">דרך המשחק</span>
+          <span className="gold-gradient">לפיתוח מנהיגות הנוער</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="font-body text-lg md:text-xl text-cream/70 max-w-2xl mx-auto mb-4 leading-relaxed"
+          className="font-body text-base md:text-lg text-cream/75 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          "האושר אינו בבעלות על כסף, אלא בתהליך שעברת כדי להשיגו —
-          בריגוש המאמץ."
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="font-body text-sm text-gold/70 tracking-widest mb-12"
-        >
-          — המודל הוא הנוער
+          עילית ישראלית מתמחה בהובלת תהליכי פיתוח אישי, חוסן מנטלי ומצוינות אופרטיבית
+          לנוער בפריפריה — דרך שילוב ייחודי של ספורט, חינוך ויזמות.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <button
             onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })}
             className="font-body font-bold text-sm bg-gold text-white px-10 py-4 rounded-sm hover:bg-gold-light transition-all duration-300 tracking-wide shadow-lg shadow-gold/30"
           >
-            החזון שלנו
+            החזון והמשימה
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
             className="font-body font-bold text-sm border border-gold/50 text-gold px-10 py-4 rounded-sm hover:bg-gold/10 transition-all duration-300 tracking-wide"
           >
-            הצטרפו לתנועה
+            שיתוף פעולה אסטרטגי
           </button>
         </motion.div>
       </div>
