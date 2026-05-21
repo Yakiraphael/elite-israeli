@@ -55,7 +55,7 @@ export default function TeamSection() {
             transition={{ delay: 0.2 }}
             className="font-display text-4xl md:text-5xl font-black text-navy mt-4 mb-6"
           >
-            <span className="gold-gradient">ההנהלה הבכירה</span>
+            <span className="gold-gradient">משפחת עילית</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}

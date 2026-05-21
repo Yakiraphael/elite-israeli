@@ -79,7 +79,7 @@ export default function RoadmapSection() {
             transition={{ delay: 0.2 }}
             className="font-display text-4xl md:text-5xl font-black text-navy mt-4 mb-6"
           >
-            מפת <span className="gold-gradient">הדרכים האסטרטגית</span>
+            <span className="gold-gradient">מפת דרכים</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}

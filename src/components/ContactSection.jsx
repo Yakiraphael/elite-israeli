@@ -86,7 +86,7 @@ ${form.message}
               <div className="space-y-4">
                 {[
                   { icon: Mail, label: 'אימייל', value: 'yakiraphael@gmail.com' },
-                  { icon: Phone, label: 'טלפון', value: '050-000-0000' },
+                  { icon: Phone, label: 'טלפון', value: '050-908-0518' },
                   { icon: MapPin, label: 'אזורי פעילות', value: 'צפון · דרום · מרכז ישראל' },
                 ].map(item => (
                   <div key={item.label} className="flex items-start gap-3">

@@ -36,7 +36,7 @@ export default function GoalsSection() {
             transition={{ delay: 0.2 }}
             className="font-display text-4xl md:text-5xl font-black text-navy mt-4 mb-6"
           >
-            10 <span className="gold-gradient">יעדי השפעה מדידים</span>
+            <span className="gold-gradient">מטרות העמותה</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
@@ -57,7 +57,7 @@ export default function GoalsSection() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {goals.map((goal, i) => {
             const Icon = goal.icon;
             return (
