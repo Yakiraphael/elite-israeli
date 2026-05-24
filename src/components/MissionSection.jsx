@@ -99,16 +99,16 @@ export default function MissionSection() {
                 <h3 className="font-display text-2xl md:text-3xl font-black text-white mt-3 mb-4">
                   ספורט כ<span className="gold-gradient">פלטפורמה לפיתוח אנושי</span>
                 </h3>
-                <p className="font-body text-sm text-white/65 leading-relaxed">
+                <p className="font-body text-sm text-white/75 leading-relaxed">
                   מגרש הכדורגל משמש כסביבת למידה מוגנת שבה תהליכי לחץ, קבלת החלטות ועבודת צוות הופכים
                   להזדמנויות לפיתוח מצוינות אופרטיבית, אופי ומנהיגות פנימית — כלים שמשרתים את הנוער לאורך כל חייהם.
                 </p>
               </div>
               <div className="flex-1 grid grid-cols-2 gap-4">
                 {['NLP ותקשורת מתקדמת', 'שפת גוף ונוכחות', 'אוריינות פיננסית', 'יזמות עסקית'].map((tool) => (
-                  <div key={tool} className="bg-white/5 border border-gold/15 rounded-sm p-4 text-center">
+                  <div key={tool} className="bg-white/10 border border-gold/25 rounded-sm p-4 text-center">
                     <div className="w-2 h-2 bg-gold rounded-full mx-auto mb-2" />
-                    <span className="font-body text-xs text-white/70 font-semibold leading-snug">{tool}</span>
+                    <span className="font-body text-xs text-white/80 font-semibold leading-snug">{tool}</span>
                   </div>
                 ))}
               </div>

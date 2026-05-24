@@ -6,6 +6,8 @@ const BG_IMAGES = [
   'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&q=80',
   'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80',
   'https://images.unsplash.com/photo-1517836357463-d25ddfcbf042?w=1920&q=80',
+  'https://images.unsplash.com/photo-1625246333195-78d9c38ad576?w=1920&q=80',
+  'https://images.unsplash.com/photo-1623279373636-d0d3ffb9dc86?w=1920&q=80',
 ];
 
 export default function HeroSection() {
