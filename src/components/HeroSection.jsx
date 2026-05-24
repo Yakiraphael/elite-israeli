@@ -3,11 +3,13 @@ import { ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const BG_IMAGES = [
-  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&q=80',
-  'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80',
-  'https://images.unsplash.com/photo-1517836357463-d25ddfcbf042?w=1920&q=80',
-  'https://images.unsplash.com/photo-1625246333195-78d9c38ad576?w=1920&q=80',
-  'https://images.unsplash.com/photo-1623279373636-d0d3ffb9dc86?w=1920&q=80',
+  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1551958219-acbc608c6c4d?w=1920&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1517836357463-d25ddfcbf042?w=1920&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1552108471-8fbb247e1b41?w=1920&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80&fit=crop',
 ];
 
 export default function HeroSection() {
