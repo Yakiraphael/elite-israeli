@@ -3,9 +3,9 @@ import { ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const BG_IMAGES = [
-  'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80',
-  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1920&q=80',
-  'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1920&q=80',
+  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&q=80',
+  'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80',
+  'https://images.unsplash.com/photo-1517836357463-d25ddfcbf042?w=1920&q=80',
 ];
 
 export default function HeroSection() {
