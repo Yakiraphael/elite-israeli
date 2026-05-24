@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-const RECIPIENT = 'yakiraphael@gmail.com';
+const RECIPIENT = 'yakirkarmel@gmail.com';
 
 export default function ContactSection() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', role: '', message: '' });
@@ -85,7 +85,7 @@ ${form.message}
               <h3 className="font-display text-lg font-black text-navy mb-5">פרטי התקשרות</h3>
               <div className="space-y-4">
                 {[
-                  { icon: Mail, label: 'אימייל', value: 'yakiraphael@gmail.com' },
+                  { icon: Mail, label: 'אימייל', value: 'yakirkarmel@gmail.com' },
                   { icon: Phone, label: 'טלפון', value: '050-908-0518' },
                   { icon: MapPin, label: 'אזורי פעילות', value: 'צפון · דרום · מרכז ישראל' },
                 ].map(item => (

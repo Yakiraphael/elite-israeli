@@ -6,6 +6,7 @@ import TeamSection from '../components/TeamSection';
 import RoadmapSection from '../components/RoadmapSection';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
+import SocialFloat from '../components/SocialFloat';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <RoadmapSection />
       <ContactSection />
       <Footer />
+      <SocialFloat />
     </div>
   );
 }

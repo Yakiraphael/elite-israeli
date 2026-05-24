@@ -1,15 +1,50 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-const BG_IMG = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80';
+const BG_IMAGES = [
+  'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80',
+  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1920&q=80',
+  'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1920&q=80',
+];
 
 export default function HeroSection() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent(prev => (prev + 1) % BG_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden" dir="rtl">
       <div className="absolute inset-0">
-        <img src={BG_IMG} alt="מגרש כדורגל" className="w-full h-full object-cover" />
+        <AnimatePresence>
+          <motion.img
+            key={current}
+            src={BG_IMAGES[current]}
+            alt="עילית ישראלית"
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2 }}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-transparent via-gold/40 to-transparent" />
+        {/* Carousel dots */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          {BG_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${i === current ? 'bg-gold w-6' : 'bg-white/40'}`}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="absolute top-1/4 left-8 md:left-16 w-48 h-48 border border-gold/15 rotate-45 float-animation" />
