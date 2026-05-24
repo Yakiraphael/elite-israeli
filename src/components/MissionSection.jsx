@@ -23,7 +23,7 @@ const pillars = [
 
 export default function MissionSection() {
   return (
-    <section id="mission" className="py-28 md:py-36 relative overflow-hidden bg-slate-50" dir="rtl">
+    <section id="mission" className="py-28 md:py-36 relative overflow-hidden bg-slate-100" dir="rtl">
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
