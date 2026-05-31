@@ -2,6 +2,7 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import MissionSection from '../components/MissionSection';
 import GoalsSection from '../components/GoalsSection';
+import BubblesGallery from '../components/BubblesGallery';
 import TeamSection from '../components/TeamSection';
 import RoadmapSection from '../components/RoadmapSection';
 import ContactSection from '../components/ContactSection';
@@ -15,6 +16,7 @@ export default function Home() {
       <HeroSection />
       <MissionSection />
       <GoalsSection />
+      <BubblesGallery />
       <TeamSection />
       <RoadmapSection />
       <ContactSection />
