@@ -1,0 +1,102 @@
+{
+  "name": "PlayerRegistration",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05de\u05dc\u05d0"
+    },
+    "birth_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05dc\u05d9\u05d3\u05d4"
+    },
+    "phone": {
+      "type": "string",
+      "title": "\u05d8\u05dc\u05e4\u05d5\u05df"
+    },
+    "parent_phone": {
+      "type": "string",
+      "title": "\u05d8\u05dc\u05e4\u05d5\u05df \u05d4\u05d5\u05e8\u05d4"
+    },
+    "city": {
+      "type": "string",
+      "title": "\u05e2\u05d9\u05e8 \u05de\u05d2\u05d5\u05e8\u05d9\u05dd"
+    },
+    "position": {
+      "type": "string",
+      "title": "\u05e2\u05de\u05d3\u05d4",
+      "enum": [
+        "\u05e9\u05d5\u05e2\u05e8",
+        "\u05d1\u05dc\u05dd",
+        "\u05de\u05d2\u05df \u05e6\u05d3",
+        "\u05e7\u05e9\u05e8 \u05de\u05d2\u05df",
+        "\u05e7\u05e9\u05e8",
+        "\u05e7\u05e9\u05e8 \u05d4\u05ea\u05e7\u05e4\u05d9",
+        "\u05d7\u05dc\u05d5\u05e5 \u05e6\u05d3",
+        "\u05d7\u05dc\u05d5\u05e5"
+      ]
+    },
+    "dominant_foot": {
+      "type": "string",
+      "title": "\u05e8\u05d2\u05dc \u05d3\u05d5\u05de\u05d9\u05e0\u05e0\u05d8\u05d9\u05ea",
+      "enum": [
+        "\u05d9\u05de\u05d9\u05df",
+        "\u05e9\u05de\u05d0\u05dc",
+        "\u05e9\u05ea\u05d9\u05d9\u05dd"
+      ]
+    },
+    "team_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e7\u05d1\u05d5\u05e6\u05d4"
+    },
+    "event_id": {
+      "type": "string",
+      "title": "\u05d0\u05d9\u05e8\u05d5\u05e2/\u05d8\u05d5\u05e8\u05e0\u05d9\u05e8"
+    },
+    "event_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05d0\u05d9\u05e8\u05d5\u05e2"
+    },
+    "height_cm": {
+      "type": "number",
+      "title": "\u05d2\u05d5\u05d1\u05d4 (\u05e1\u05f4\u05de)"
+    },
+    "weight_kg": {
+      "type": "number",
+      "title": "\u05de\u05e9\u05e7\u05dc (\u05e7\u05f4\u05d2)"
+    },
+    "experience_years": {
+      "type": "number",
+      "title": "\u05e9\u05e0\u05d5\u05ea \u05e0\u05d9\u05e1\u05d9\u05d5\u05df"
+    },
+    "previous_clubs": {
+      "type": "string",
+      "title": "\u05e7\u05d1\u05d5\u05e6\u05d5\u05ea \u05e7\u05d5\u05d3\u05de\u05d5\u05ea"
+    },
+    "achievements": {
+      "type": "string",
+      "title": "\u05d4\u05d9\u05e9\u05d2\u05d9\u05dd"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "\u05ea\u05de\u05d5\u05e0\u05ea \u05e4\u05e8\u05d5\u05e4\u05d9\u05dc"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1",
+      "enum": [
+        "\u05de\u05de\u05ea\u05d9\u05df",
+        "\u05de\u05d0\u05d5\u05e9\u05e8",
+        "\u05e4\u05e2\u05d9\u05dc"
+      ],
+      "default": "\u05de\u05de\u05ea\u05d9\u05df"
+    }
+  },
+  "required": [
+    "full_name",
+    "phone",
+    "position",
+    "event_id"
+  ]
+}

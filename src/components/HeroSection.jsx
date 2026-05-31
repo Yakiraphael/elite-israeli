@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -103,7 +104,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
+          >
           <button
             onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })}
             className="font-body font-bold text-sm bg-gold text-white px-10 py-4 rounded-sm hover:bg-gold-light transition-all duration-300 tracking-wide shadow-lg shadow-gold/30"
@@ -116,7 +117,13 @@ export default function HeroSection() {
           >
             שיתוף פעולה אסטרטגי
           </button>
-        </motion.div>
+          <Link
+            to="/player-profile"
+            className="font-body font-bold text-sm bg-white/10 border border-white/30 text-white px-10 py-4 rounded-sm hover:bg-white/20 transition-all duration-300 tracking-wide text-center flex items-center justify-center gap-2"
+          >
+            ⚽ הרשמה כשחקן עילית
+          </Link>
+          </motion.div>
       </div>
 
       <button
