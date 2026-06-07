@@ -29,14 +29,6 @@ const PHOTOS = [
   'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/9029725b8_WhatsAppImage2026-05-27at152105.jpg',
 ];
 
-// Deterministic sizes and delays per bubble
-const BUBBLE_CONFIGS = PHOTOS.map((_, i) => ({
-  size: [120, 140, 160, 180, 200, 110, 150][i % 7],
-  delay: (i * 0.4) % 4,
-  duration: 5 + (i % 4),
-  yOffset: 12 + (i % 3) * 6,
-}));
-
 export default function BubblesGallery() {
   const [selected, setSelected] = useState(null);
 
@@ -72,14 +64,29 @@ export default function BubblesGallery() {
         />
       </div>
 
-      {/* Bubbles grid — scrolling marquee rows */}
-      <div className="space-y-6 overflow-hidden">
-        {/* Row 1 — slides right */}
-        <BubbleRow photos={PHOTOS.slice(0, 9)} configs={BUBBLE_CONFIGS.slice(0, 9)} direction={1} onSelect={setSelected} />
-        {/* Row 2 — slides left */}
-        <BubbleRow photos={PHOTOS.slice(9, 17)} configs={BUBBLE_CONFIGS.slice(9, 17)} direction={-1} onSelect={setSelected} />
-        {/* Row 3 — slides right */}
-        <BubbleRow photos={PHOTOS.slice(17)} configs={BUBBLE_CONFIGS.slice(17)} direction={1} onSelect={setSelected} />
+      {/* Static grid gallery */}
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {PHOTOS.map((url, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              whileHover={{ scale: 1.05 }}
+              className="aspect-square rounded-lg overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-shadow"
+              onClick={() => setSelected(url)}
+            >
+              <img
+                src={url}
+                alt="פעילות עילית"
+                className="w-full h-full object-cover blur-sm"
+                style={{ filter: 'blur(8px)' }}
+              />
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* Lightbox */}
@@ -106,43 +113,5 @@ export default function BubblesGallery() {
         </motion.div>
       )}
     </section>
-  );
-}
-
-function BubbleRow({ photos, configs, direction, onSelect }) {
-  // Duplicate for seamless loop
-  const doubled = [...photos, ...photos];
-
-  return (
-    <div className="relative flex gap-5 overflow-hidden">
-      <motion.div
-        className="flex gap-5 flex-shrink-0"
-        animate={{ x: direction > 0 ? ['0%', '-50%'] : ['-50%', '0%'] }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        style={{ width: 'max-content' }}
-      >
-        {doubled.map((url, i) => {
-          const cfg = configs[i % configs.length];
-          return (
-            <motion.div
-              key={i}
-              className="flex-shrink-0 cursor-pointer"
-              style={{ width: cfg.size, height: cfg.size }}
-              animate={{ y: [0, -cfg.yOffset, 0] }}
-              transition={{ duration: cfg.duration, delay: cfg.delay, repeat: Infinity, ease: 'easeInOut' }}
-              whileHover={{ scale: 1.08, zIndex: 10 }}
-              onClick={() => onSelect(url)}
-            >
-              <img
-                src={url}
-                alt="פעילות עילית"
-                className="w-full h-full object-cover rounded-full border-4 border-white shadow-lg hover:border-gold/60 transition-colors duration-300"
-                style={{ boxShadow: '0 8px 32px rgba(180,140,40,0.12)' }}
-              />
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </div>
   );
 }
