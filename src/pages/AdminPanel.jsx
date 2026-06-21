@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar } from 'lucide-react';
+import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import TransfersManager from '../components/admin/TransfersManager';
+import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
 
 const ADMIN_PASSWORD = 'elite2025';
 
@@ -84,7 +86,7 @@ function AdminDashboard({ onLogout }) {
       {/* Tabs */}
       <div className="border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {[{ id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }].map(t => (
+          {[{ id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-6 py-4 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={14} />{t.label}
@@ -96,6 +98,7 @@ function AdminDashboard({ onLogout }) {
       <div className="max-w-5xl mx-auto px-6 py-10">
         {tab === 'events' && <EventsManager />}
         {tab === 'players' && <PlayersViewer />}
+        {tab === 'transfers' && <TransfersManager />}
       </div>
     </div>
   );
@@ -206,6 +209,7 @@ function EventsManager() {
 
 // ---- Players Viewer ----
 function PlayersViewer() {
+  const [editingPlayer, setEditingPlayer] = useState(null);
   const { data: players = [], isLoading } = useQuery({
     queryKey: ['admin-players'],
     queryFn: () => base44.entities.PlayerRegistration.list('-created_date', 100),
@@ -239,6 +243,10 @@ function PlayersViewer() {
                 {p.event_name && <div className="text-[#D4AF37] text-xs mt-0.5">אירוע: {p.event_name}</div>}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
+                <button onClick={() => setEditingPlayer(p)} title="כרטיס Elite ID"
+                  className="w-8 h-8 rounded bg-white/5 hover:bg-[#D4AF37]/20 flex items-center justify-center transition-colors">
+                  <Star size={13} className="text-[#D4AF37]" />
+                </button>
                 <select
                   value={p.status || 'ממתין'}
                   onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value })}
@@ -252,6 +260,7 @@ function PlayersViewer() {
           ))}
         </div>
       )}
+      {editingPlayer && <EliteIdEditorModal player={editingPlayer} onClose={() => setEditingPlayer(null)} />}
     </div>
   );
 }

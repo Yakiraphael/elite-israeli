@@ -9,6 +9,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
 import PlayerProfile from './pages/PlayerProfile';
 import AdminPanel from './pages/AdminPanel';
+import TransferHub from './pages/TransferHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -39,6 +40,7 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Home />} />
       <Route path="/player-profile" element={<PlayerProfile />} />
       <Route path="/admin" element={<AdminPanel />} />
+      <Route path="/transfer-hub" element={<TransferHub />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
@@ -7,6 +8,7 @@ const navLinks = [
   { label: 'יעדים', href: '#goals' },
   { label: 'הצוות', href: '#team' },
   { label: 'מפת הדרכים', href: '#roadmap' },
+  { label: 'העברות', href: '/transfer-hub' },
   { label: 'צרו קשר', href: '#contact' },
 ];
 
@@ -20,8 +22,10 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const navigate = useNavigate();
   const handleNav = (href) => {
     setOpen(false);
+    if (href.startsWith('/')) { navigate(href); return; }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 

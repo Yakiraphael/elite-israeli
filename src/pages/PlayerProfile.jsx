@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Calendar, MapPin, Trophy, Activity, ChevronRight, CheckCircle2, Loader2, ArrowRight, Star, Target, TrendingUp, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import EliteIdCard from '../components/EliteIdCard';
 
 const POSITIONS_INFO = {
   'שוער': { role: 'Goalkeeper', skills: ['רפלקסים', 'מיקום', 'הנחיית הגנה', 'קריאת משחק'], color: 'from-yellow-500 to-amber-600' },
@@ -321,6 +322,19 @@ function PlayerProfileView({ player, events }) {
                     ))}
                   </div>
                 </div>
+                {(player.elite_id || player.stats) && (
+                  <div className="bg-[#1B263B] border border-[#D4AF37]/20 rounded-lg p-4">
+                    <EliteIdCard
+                      name={player.full_name}
+                      eliteId={player.elite_id || 'ELITE-2026-----'}
+                      position={player.position}
+                      stats={player.stats || {}}
+                      avatarUrl={player.avatar_url}
+                      age={player.birth_date ? (new Date().getFullYear() - new Date(player.birth_date).getFullYear()) : undefined}
+                      city={player.city}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Details */}

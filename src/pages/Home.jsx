@@ -1,8 +1,11 @@
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import MissionSection from '../components/MissionSection';
-import GoalsSection from '../components/GoalsSection';
+import ImpactStats from '../components/ImpactStats';
 import BubblesGallery from '../components/BubblesGallery';
+import EliteIdShowcase from '../components/EliteIdShowcase';
+import GoalsSection from '../components/GoalsSection';
+import TransferHubSection from '../components/TransferHubSection';
 import TeamSection from '../components/TeamSection';
 import RoadmapSection from '../components/RoadmapSection';
 import ContactSection from '../components/ContactSection';
@@ -15,10 +18,13 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <MissionSection />
-      <GoalsSection />
+      <ImpactStats />
       <BubblesGallery />
+      <EliteIdShowcase />
+      <GoalsSection />
       <TeamSection />
       <RoadmapSection />
+      <TransferHubSection />
       <ContactSection />
       <Footer />
       <SocialFloat />
