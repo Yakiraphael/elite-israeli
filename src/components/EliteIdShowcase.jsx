@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 import { Sliders } from 'lucide-react';
 
 const DEMO = {
-  name: 'שחקן לדוגמה',
+  name: 'ישראל ישראלי',
   eliteId: 'ELITE-2026-0042',
   position: 'קשר התקפי',
   age: 16,
+  avatarUrl: 'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/e80f625a1_generated_image.png',
   stats: { pac: 78, sho: 74, pas: 81, dri: 85, def: 52, phy: 68, mental: 89 },
 };
 
@@ -60,7 +61,7 @@ export default function EliteIdShowcase() {
               stats={stats}
               rating={overall}
               age={DEMO.age}
-              city={DEMO.city}
+              avatarUrl={DEMO.avatarUrl}
             />
             <div className="mt-5 text-center">
               <div className="text-xs text-slate-400">תצוגה חיה — הכרטיס מתרענן בזמן אמת</div>

@@ -1,17 +1,21 @@
 {
+  "name": "User",
+  "type": "object",
   "properties": {
     "role": {
       "type": "string",
       "description": "The role of the user in the app",
       "enum": [
         "admin",
-        "user"
-      ]
+        "user",
+        "elite_admin",
+        "player_guardian",
+        "coach_analyst"
+      ],
+      "default": "user"
     }
   },
   "required": [
     "role"
-  ],
-  "name": "User",
-  "type": "object"
+  ]
 }
