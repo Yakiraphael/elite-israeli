@@ -9,7 +9,6 @@ const DEMO = {
   eliteId: 'ELITE-2026-0042',
   position: 'קשר התקפי',
   age: 16,
-  city: 'קריית גת',
   stats: { pac: 78, sho: 74, pas: 81, dri: 85, def: 52, phy: 68, mental: 89 },
 };
 
@@ -36,7 +35,7 @@ export default function EliteIdShowcase() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
             className="font-display text-4xl md:text-5xl font-black text-navy mt-4 mb-4"
           >
-            כרטיס שחקן עתידני <span className="gold-gradient">FIFA Style</span>
+            כרטיס שחקן <span className="gold-gradient">Elite ID</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ delay: 0.35 }}
