@@ -62,7 +62,7 @@ export default function HeroSection() {
         >
           <img
             src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png"
-            alt="עילית ישראלית"
+            alt="עילית ישראלית — לוגו הארגון"
             className="h-36 md:h-52 w-auto mx-auto drop-shadow-2xl"
           />
         </motion.div>
@@ -107,12 +107,14 @@ export default function HeroSection() {
           >
           <button
             onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })}
+            aria-label="גלילה לחזון והמשימה"
             className="font-body font-bold text-sm bg-gold text-white px-10 py-4 rounded-sm hover:bg-gold-light transition-all duration-300 tracking-wide shadow-lg shadow-gold/30"
           >
             החזון והמשימה
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+            aria-label="גלילה ליצירת קשר"
             className="font-body font-bold text-sm border border-gold/50 text-gold px-10 py-4 rounded-sm hover:bg-gold/10 transition-all duration-300 tracking-wide"
           >
             שיתוף פעולה אסטרטגי
@@ -128,6 +130,7 @@ export default function HeroSection() {
 
       <button
         onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })}
+        aria-label="גלילה למטה"
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gold/60 hover:text-gold transition-colors animate-bounce"
       >
         <ChevronDown size={32} />

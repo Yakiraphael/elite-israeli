@@ -11,6 +11,8 @@ import PlayerProfile from './pages/PlayerProfile';
 import AdminPanel from './pages/AdminPanel';
 import TransferHub from './pages/TransferHub';
 import TransferPortal from './pages/TransferPortal';
+import Pricing from './pages/Pricing';
+import FAQ from './pages/FAQ';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -43,6 +45,8 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<AdminPanel />} />
       <Route path="/transfer-hub" element={<TransferHub />} />
       <Route path="/transfer-portal" element={<TransferPortal />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/faq" element={<FAQ />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

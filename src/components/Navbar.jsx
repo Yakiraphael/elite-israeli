@@ -10,6 +10,8 @@ const navLinks = [
   { label: 'מפת הדרכים', href: '#roadmap' },
   { label: 'מערכת העברות', href: '/transfer-portal' },
   { label: 'הגשת הצעה', href: '/transfer-hub' },
+  { label: 'תמחור', href: '/pricing' },
+  { label: 'שאלות נפוצות', href: '/faq' },
   { label: 'צרו קשר', href: '#contact' },
 ];
 
@@ -31,10 +33,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-slate-100' : 'bg-transparent'}`} dir="rtl">
+    <nav role="navigation" aria-label="ניווט ראשי" className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-slate-100' : 'bg-transparent'}`} dir="rtl">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <button onClick={() => handleNav('#hero')} className="flex items-center gap-3">
-          <img src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png" alt="Elite C.I.C." className={`w-auto transition-all duration-300 ${scrolled ? 'h-12' : 'h-14'}`} style={{ filter: scrolled ? 'invert(1) sepia(1) saturate(0) brightness(0.1)' : 'none' }} />
+        <button onClick={() => handleNav('#hero')} aria-label="חזרה לדף הבית" className="flex items-center gap-3">
+          <img src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png" alt="עילית ישראלית - לוגו" className={`w-auto transition-all duration-300 ${scrolled ? 'h-12' : 'h-14'}`} style={{ filter: scrolled ? 'invert(1) sepia(1) saturate(0) brightness(0.1)' : 'none' }} />
         </button>
 
         {/* Desktop */}
@@ -59,7 +61,7 @@ export default function Navbar() {
         </button>
 
         {/* Mobile */}
-        <button className={`md:hidden ${scrolled ? 'text-navy' : 'text-gold'}`} onClick={() => setOpen(!open)}>
+        <button className={`md:hidden ${scrolled ? 'text-navy' : 'text-gold'}`} onClick={() => setOpen(!open)} aria-label={open ? 'סגירת תפריט' : 'פתיחת תפריט'} aria-expanded={open}>
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
