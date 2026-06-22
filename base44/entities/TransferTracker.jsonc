@@ -1,0 +1,114 @@
+{
+  "name": "TransferTracker",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05e9\u05d7\u05e7\u05df"
+    },
+    "club_from": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05de\u05d5\u05e6\u05d0"
+    },
+    "club_to": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05e7\u05d5\u05dc\u05d8"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1",
+      "enum": [
+        "Trialist",
+        "Contract Pending",
+        "Signed",
+        "Rejected",
+        "Cancelled",
+        "ITC Required"
+      ],
+      "default": "Trialist"
+    },
+    "offer_amount": {
+      "type": "number",
+      "title": "\u05e9\u05d5\u05d5\u05d9 \u05d4\u05e6\u05e2\u05d4"
+    },
+    "currency": {
+      "type": "string",
+      "title": "\u05de\u05d8\u05d1\u05e2",
+      "enum": [
+        "ILS",
+        "EUR",
+        "USD",
+        "GBP"
+      ],
+      "default": "ILS"
+    },
+    "contract_years": {
+      "type": "number",
+      "title": "\u05d0\u05d5\u05e8\u05da \u05d7\u05d5\u05d6\u05d4 (\u05e9\u05e0\u05d9\u05dd)"
+    },
+    "trial_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05de\u05d1\u05d7\u05df"
+    },
+    "is_international": {
+      "type": "boolean",
+      "title": "\u05d4\u05e2\u05d1\u05e8\u05d4 \u05d1\u05d9\u05e0\u05dc\u05d0\u05d5\u05de\u05d9\u05ea",
+      "default": false
+    },
+    "itc_required": {
+      "type": "boolean",
+      "title": "\u05e0\u05d3\u05e8\u05e9 ITC (\u05e4\u05d9\u05e4\u05f4\u05d0)",
+      "default": false
+    },
+    "solidarity_contribution": {
+      "type": "number",
+      "title": "\u05d3\u05de\u05d9 \u05d4\u05e9\u05d1\u05d7\u05d4 (5% FIFA Solidarity)"
+    },
+    "flight_ticket_url": {
+      "type": "string",
+      "title": "\u05db\u05e8\u05d8\u05d9\u05e1 \u05d8\u05d9\u05e1\u05d4 / \u05d4\u05d2\u05e2\u05d4"
+    },
+    "welcome_pack_url": {
+      "type": "string",
+      "title": "\u05d7\u05d1\u05d9\u05dc\u05ea \u05de\u05d9\u05d3\u05e2 (Welcome Pack)"
+    },
+    "contract_url": {
+      "type": "string",
+      "title": "\u05e7\u05d5\u05d1\u05e5 \u05d7\u05d5\u05d6\u05d4 (PDF)"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d7\u05ea\u05d9\u05de\u05d4"
+    },
+    "notes": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05e4\u05e0\u05d9\u05de\u05d9\u05d5\u05ea"
+    },
+    "iefa_fee_amount": {
+      "type": "number",
+      "title": "\u05e2\u05de\u05dc\u05ea IEFA (2%)"
+    },
+    "payment_status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05e1\u05dc\u05d9\u05e7\u05d4",
+      "enum": [
+        "Pending",
+        "Paid",
+        "Refunded",
+        "N/A"
+      ],
+      "default": "N/A"
+    }
+  },
+  "required": [
+    "player_id",
+    "player_name",
+    "status"
+  ]
+}

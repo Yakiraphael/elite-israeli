@@ -1,0 +1,117 @@
+{
+  "name": "MentalAssessment",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "assessment_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05de\u05d1\u05d3\u05e7"
+    },
+    "associated_team": {
+      "type": "string",
+      "title": "\u05e7\u05d1\u05d5\u05e6\u05d4/\u05e9\u05e0\u05ea\u05d5\u05df"
+    },
+    "mental_score_nlp": {
+      "type": "number",
+      "title": "\u05e6\u05d9\u05d5\u05df \u05de\u05e0\u05d8\u05dc\u05d9 \u05db\u05d5\u05dc\u05dc (1-99)"
+    },
+    "analyst_comments": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05d0\u05e0\u05dc\u05d9\u05e1\u05d8"
+    },
+    "is_elite_org": {
+      "type": "boolean",
+      "title": "\u05e9\u05d7\u05e7\u05df \u05d0\u05e8\u05d2\u05d5\u05df \u05e2\u05d9\u05dc\u05d9\u05ea",
+      "default": false
+    },
+    "resilience_error_recovery": {
+      "type": "number",
+      "title": "\u05ea\u05d2\u05d5\u05d1\u05d4 \u05dc\u05d8\u05e2\u05d5\u05ea (1-5)"
+    },
+    "resilience_disadvantage_drive": {
+      "type": "number",
+      "title": "\u05e2\u05de\u05d9\u05d3\u05d4 \u05d1\u05e4\u05d9\u05d2\u05d5\u05e8 (1-5)"
+    },
+    "resilience_squad_status": {
+      "type": "number",
+      "title": "\u05d4\u05ea\u05de\u05d5\u05d3\u05d3\u05d5\u05ea \u05e2\u05dd \u05e1\u05e4\u05e1\u05dc (1-5)"
+    },
+    "resilience_emotional_control": {
+      "type": "number",
+      "title": "\u05d5\u05d9\u05e1\u05d5\u05ea \u05db\u05e2\u05e1\u05d9\u05dd (1-5)"
+    },
+    "leadership_vocal": {
+      "type": "number",
+      "title": "\u05d4\u05db\u05d5\u05d5\u05e0\u05ea \u05d7\u05d1\u05e8\u05d9\u05dd (1-5)"
+    },
+    "leadership_body_language": {
+      "type": "number",
+      "title": "\u05e9\u05e4\u05ea \u05d2\u05d5\u05e3 (1-5)"
+    },
+    "leadership_coachability": {
+      "type": "number",
+      "title": "\u05e7\u05d1\u05dc\u05ea \u05e1\u05de\u05db\u05d5\u05ea (1-5)"
+    },
+    "leadership_clutch": {
+      "type": "number",
+      "title": "\u05dc\u05e7\u05d9\u05d7\u05ea \u05d0\u05d7\u05e8\u05d9\u05d5\u05ea (1-5)"
+    },
+    "cognitive_late_game": {
+      "type": "number",
+      "title": "\u05e8\u05d9\u05db\u05d5\u05d6 \u05d1\u05d3\u05e7\u05d5\u05ea \u05e1\u05d9\u05d5\u05dd (1-5)"
+    },
+    "cognitive_distraction_filter": {
+      "type": "number",
+      "title": "\u05d7\u05d5\u05e1\u05df \u05de\u05e8\u05e2\u05e9\u05d9 \u05e8\u05e7\u05e2 (1-5)"
+    },
+    "cognitive_decision_making": {
+      "type": "number",
+      "title": "\u05e7\u05d1\u05dc\u05ea \u05d4\u05d7\u05dc\u05d8\u05d5\u05ea \u05ea\u05d7\u05ea \u05dc\u05d7\u05e5 (1-5)"
+    },
+    "cognitive_tactical_adaptability": {
+      "type": "number",
+      "title": "\u05d2\u05de\u05d9\u05e9\u05d5\u05ea \u05d8\u05e7\u05d8\u05d9\u05ea (1-5)"
+    },
+    "drive_training_intensity": {
+      "type": "number",
+      "title": "\u05de\u05d5\u05e1\u05e8 \u05e2\u05d1\u05d5\u05d3\u05d4 \u05d1\u05d0\u05d9\u05de\u05d5\u05e0\u05d9\u05dd (1-5)"
+    },
+    "drive_aggression_grit": {
+      "type": "number",
+      "title": "\u05e7\u05e9\u05d9\u05d7\u05d5\u05ea \u05de\u05e0\u05d8\u05dc\u05d9\u05ea \u05e4\u05d9\u05d6\u05d9\u05ea (1-5)"
+    },
+    "drive_consistency": {
+      "type": "number",
+      "title": "\u05e2\u05e7\u05d1\u05d9\u05d5\u05ea (1-5)"
+    },
+    "drive_injury_rehab": {
+      "type": "number",
+      "title": "\u05d4\u05ea\u05d0\u05d5\u05e9\u05e9\u05d5\u05ea \u05e4\u05e6\u05d9\u05e2\u05d5\u05ea (1-5)"
+    },
+    "drive_team_first": {
+      "type": "number",
+      "title": "\u05d0\u05d9\u05e0\u05d8\u05dc\u05d9\u05d2\u05e0\u05e6\u05d9\u05d4 \u05e8\u05d2\u05e9\u05d9\u05ea \u05e7\u05d1\u05d5\u05e6\u05ea\u05d9\u05ea (1-5)"
+    },
+    "free_text_evaluation": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05db\u05d4 \u05d7\u05d5\u05e4\u05e9\u05d9\u05ea (\u05e2\u05d3 200 \u05de\u05d9\u05dc\u05d4)"
+    },
+    "recommender_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05de\u05dc\u05d9\u05e5"
+    },
+    "recommender_linkedin": {
+      "type": "string",
+      "title": "\u05dc\u05d9\u05e0\u05e7\u05d3\u05d0\u05d9\u05df \u05de\u05de\u05dc\u05d9\u05e5 (\u05dc\u05d0\u05d9\u05de\u05d5\u05ea)"
+    }
+  },
+  "required": [
+    "player_id",
+    "assessment_date",
+    "mental_score_nlp"
+  ]
+}

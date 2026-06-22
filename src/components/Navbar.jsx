@@ -9,6 +9,7 @@ const navLinks = [
   { label: 'הצוות', href: '#team' },
   { label: 'מפת הדרכים', href: '#roadmap' },
   { label: 'מערכת העברות', href: '/transfer-portal' },
+  { label: 'סקאוטינג', href: '/scouting' },
   { label: 'הגשת הצעה', href: '/transfer-hub' },
   { label: 'תמחור', href: '/pricing' },
   { label: 'שאלות נפוצות', href: '/faq' },
