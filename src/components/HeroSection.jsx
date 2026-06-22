@@ -133,7 +133,7 @@ export default function HeroSection() {
         aria-label="גלילה למטה"
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gold/60 hover:text-gold transition-colors animate-bounce">
         
-        <ChevronDown size={32} className="hidden" />
+        
       </button>
     </section>);
 
