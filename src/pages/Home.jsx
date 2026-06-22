@@ -3,6 +3,7 @@ import HeroSection from '../components/HeroSection';
 import MissionSection from '../components/MissionSection';
 import ImpactStats from '../components/ImpactStats';
 import BubblesGallery from '../components/BubblesGallery';
+import IEFAPlatformSection from '../components/IEFAPlatformSection';
 import EliteIdShowcase from '../components/EliteIdShowcase';
 import GoalsSection from '../components/GoalsSection';
 import TransferHubSection from '../components/TransferHubSection';
@@ -20,6 +21,7 @@ export default function Home() {
       <MissionSection />
       <ImpactStats />
       <BubblesGallery />
+      <IEFAPlatformSection />
       <EliteIdShowcase />
       <GoalsSection />
       <TeamSection />

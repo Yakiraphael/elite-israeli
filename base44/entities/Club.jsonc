@@ -1,0 +1,72 @@
+{
+  "name": "Club",
+  "type": "object",
+  "properties": {
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "club_tier": {
+      "type": "string",
+      "title": "\u05d3\u05e8\u05d2 \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df (Bidder Tier)",
+      "enum": [
+        "Tier 1 \u2014 \u05e2\u05dc\u05d9\u05ea (\u05dc\u05d9\u05d2\u05ea \u05d4\u05e2\u05dc / \u05d1\u05d9\u05e0\u05dc\u05d0\u05d5\u05de\u05d9)",
+        "Tier 2 \u2014 \u05de\u05e7\u05e6\u05d5\u05e2\u05d9 \u05d1\u05d9\u05e0\u05d5\u05e0\u05d9 (\u05dc\u05d0\u05d5\u05de\u05d9\u05ea / \u05e0\u05d5\u05e2\u05e8 \u05d1')",
+        "Tier 3 \u2014 \u05d7\u05d5\u05d1\u05d1\u05df / \u05dc\u05d9\u05d2\u05d5\u05ea \u05e0\u05de\u05d5\u05db\u05d5\u05ea"
+      ],
+      "default": "Tier 3 \u2014 \u05d7\u05d5\u05d1\u05d1\u05df / \u05dc\u05d9\u05d2\u05d5\u05ea \u05e0\u05de\u05d5\u05db\u05d5\u05ea"
+    },
+    "subscription_plan": {
+      "type": "string",
+      "title": "\u05d7\u05d1\u05d9\u05dc\u05ea \u05de\u05e0\u05d5\u05d9",
+      "enum": [
+        "FREE",
+        "PRO",
+        "ENTERPRISE"
+      ],
+      "default": "FREE"
+    },
+    "max_allowed_users": {
+      "type": "number",
+      "title": "\u05de\u05e1\u05e4\u05e8 \u05de\u05e9\u05ea\u05de\u05e9\u05d9\u05dd \u05de\u05e7\u05e1\u05d9\u05de\u05dc\u05d9 (Seats)",
+      "description": "1 = FREE, 5 = PRO, 999 = ENTERPRISE (\u05dc\u05dc\u05d0 \u05d4\u05d2\u05d1\u05dc\u05d4)"
+    },
+    "billing_status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05d7\u05d9\u05d5\u05d1",
+      "enum": [
+        "FREE",
+        "PRO",
+        "ENTERPRISE",
+        "TRIAL"
+      ],
+      "default": "FREE"
+    },
+    "contact_name": {
+      "type": "string",
+      "title": "\u05d0\u05d9\u05e9 \u05e7\u05e9\u05e8 \u05e8\u05d0\u05e9\u05d9"
+    },
+    "contact_email": {
+      "type": "string",
+      "title": "\u05de\u05d9\u05d9\u05dc \u05e8\u05e9\u05de\u05d9 \u05e9\u05dc \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "contact_phone": {
+      "type": "string",
+      "title": "\u05d8\u05dc\u05e4\u05d5\u05df \u05d0\u05d9\u05e9 \u05e7\u05e9\u05e8"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "title": "\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05de\u05d0\u05d5\u05de\u05ea",
+      "default": false,
+      "description": "\u05d0\u05d9\u05de\u05d5\u05ea \u05d9\u05d3\u05e0\u05d9 \u05e9\u05dc \u05d4\u05de\u05d9\u05d9\u05dc \u05d4\u05e8\u05e9\u05de\u05d9 \u05d5\u05d6\u05d4\u05d5\u05ea \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "city": {
+      "type": "string",
+      "title": "\u05e2\u05d9\u05e8"
+    }
+  },
+  "required": [
+    "club_name",
+    "club_tier"
+  ]
+}
