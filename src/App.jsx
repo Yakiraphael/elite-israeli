@@ -13,6 +13,7 @@ import TransferHub from './pages/TransferHub';
 import TransferPortal from './pages/TransferPortal';
 import Pricing from './pages/Pricing';
 import FAQ from './pages/FAQ';
+import ClubRegistration from './pages/ClubRegistration';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
       <Route path="/transfer-portal" element={<TransferPortal />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/club-registration" element={<ClubRegistration />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
