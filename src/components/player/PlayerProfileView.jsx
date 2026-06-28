@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import EliteIdCard from '../EliteIdCard';
 import MentalJourneyChart from './MentalJourneyChart';
 import TransferTrackerPanel from './TransferTrackerPanel';
+import RequestHub from './RequestHub';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -30,6 +31,7 @@ const TABS = [
   { id: 'vault', label: '🔐 Vault', labelHe: 'הכספת' },
   { id: 'cv', label: '💼 CV Engine', labelHe: 'קורות חיים' },
   { id: 'transfers', label: '🔄 Transfer Hub', labelHe: 'העברות' },
+  { id: 'requests', label: '🎯 בקשות', labelHe: 'מרכז בקשות' },
 ];
 
 export default function PlayerProfileView({ player, events }) {
@@ -336,6 +338,13 @@ export default function PlayerProfileView({ player, events }) {
           {tab === 'transfers' && (
             <motion.div key="transfers" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <TransferTrackerPanel playerId={player.id} playerName={player.full_name} />
+            </motion.div>
+          )}
+
+          {/* 5. REQUESTS */}
+          {tab === 'requests' && (
+            <motion.div key="requests" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <RequestHub playerId={player.id} playerName={player.full_name} />
             </motion.div>
           )}
 

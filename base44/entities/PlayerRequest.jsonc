@@ -1,0 +1,81 @@
+{
+  "name": "PlayerRequest",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e9\u05d7\u05e7\u05df"
+    },
+    "category": {
+      "type": "string",
+      "title": "\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d4",
+      "enum": [
+        "\u05d7\u05d5\u05e4\u05e9\u05d4/\u05d4\u05d9\u05e2\u05d3\u05e8\u05d5\u05ea",
+        "\u05e4\u05d2\u05d9\u05e9\u05d4 \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05ea",
+        "\u05d1\u05e7\u05e9\u05ea \u05de\u05e1\u05de\u05da",
+        "\u05e4\u05e6\u05d9\u05e2\u05d4/\u05d1\u05e8\u05d9\u05d0\u05d5\u05ea",
+        "\u05e9\u05d9\u05e0\u05d5\u05d9 \u05e2\u05de\u05d3\u05d4",
+        "\u05d1\u05e7\u05e9\u05ea \u05e6\u05d9\u05d5\u05d3",
+        "\u05e1\u05d9\u05d5\u05e2 \u05dc\u05d5\u05d2\u05d9\u05e1\u05d8\u05d9",
+        "\u05d0\u05d7\u05e8"
+      ]
+    },
+    "subject": {
+      "type": "string",
+      "title": "\u05e0\u05d5\u05e9\u05d0"
+    },
+    "details": {
+      "type": "string",
+      "title": "\u05e4\u05d9\u05e8\u05d5\u05d8"
+    },
+    "attachment_url": {
+      "type": "string",
+      "title": "\u05e7\u05d5\u05d1\u05e5 \u05de\u05e6\u05d5\u05e8\u05e3"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1",
+      "enum": [
+        "\u05e0\u05e9\u05dc\u05d7",
+        "\u05d1\u05d8\u05d9\u05e4\u05d5\u05dc",
+        "\u05d0\u05d5\u05e9\u05e8",
+        "\u05e0\u05d3\u05d7\u05d4"
+      ],
+      "default": "\u05e0\u05e9\u05dc\u05d7"
+    },
+    "manager_notes": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05de\u05e0\u05d4\u05dc"
+    },
+    "assigned_to": {
+      "type": "string",
+      "title": "\u05d4\u05d5\u05e7\u05e6\u05d4 \u05dc"
+    },
+    "priority": {
+      "type": "string",
+      "title": "\u05e2\u05d3\u05d9\u05e4\u05d5\u05ea",
+      "enum": [
+        "\u05e8\u05d2\u05d9\u05dc",
+        "\u05d3\u05d7\u05d5\u05e3",
+        "\u05e7\u05e8\u05d9\u05d8\u05d9"
+      ],
+      "default": "\u05e8\u05d2\u05d9\u05dc"
+    },
+    "requested_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05de\u05d1\u05d5\u05e7\u05e9"
+    }
+  },
+  "required": [
+    "player_id",
+    "player_name",
+    "category",
+    "subject",
+    "details"
+  ]
+}

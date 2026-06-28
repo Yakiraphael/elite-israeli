@@ -15,6 +15,9 @@ import Pricing from './pages/Pricing';
 import FAQ from './pages/FAQ';
 import ClubRegistration from './pages/ClubRegistration';
 import ScoutingArena from './pages/ScoutingArena';
+import OnboardingFlow from './pages/OnboardingFlow';
+import CoachWorkspace from './pages/CoachWorkspace';
+import DirectorDashboard from './pages/DirectorDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -51,6 +54,9 @@ const AuthenticatedApp = () => {
       <Route path="/faq" element={<FAQ />} />
       <Route path="/club-registration" element={<ClubRegistration />} />
       <Route path="/scouting" element={<ScoutingArena />} />
+      <Route path="/onboarding" element={<OnboardingFlow />} />
+      <Route path="/coach" element={<CoachWorkspace />} />
+      <Route path="/director" element={<DirectorDashboard />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

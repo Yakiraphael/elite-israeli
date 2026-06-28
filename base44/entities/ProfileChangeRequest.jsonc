@@ -1,0 +1,54 @@
+{
+  "name": "ProfileChangeRequest",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e9\u05d7\u05e7\u05df"
+    },
+    "field_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05e9\u05d3\u05d4 \u05dc\u05e9\u05d9\u05e0\u05d5\u05d9"
+    },
+    "field_label": {
+      "type": "string",
+      "title": "\u05ea\u05d5\u05d5\u05d9\u05ea \u05d4\u05e9\u05d3\u05d4"
+    },
+    "old_value": {
+      "type": "string",
+      "title": "\u05e2\u05e8\u05da \u05e7\u05d5\u05d3\u05dd"
+    },
+    "new_value": {
+      "type": "string",
+      "title": "\u05e2\u05e8\u05da \u05d7\u05d3\u05e9 \u05de\u05d1\u05d5\u05e7\u05e9"
+    },
+    "reason": {
+      "type": "string",
+      "title": "\u05e1\u05d9\u05d1\u05ea \u05d4\u05d1\u05e7\u05e9\u05d4"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1",
+      "enum": [
+        "\u05de\u05de\u05ea\u05d9\u05df",
+        "\u05d0\u05d5\u05e9\u05e8",
+        "\u05e0\u05d3\u05d7\u05d4"
+      ],
+      "default": "\u05de\u05de\u05ea\u05d9\u05df"
+    },
+    "manager_notes": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05de\u05e0\u05d4\u05dc"
+    }
+  },
+  "required": [
+    "player_id",
+    "player_name",
+    "field_name",
+    "new_value"
+  ]
+}
