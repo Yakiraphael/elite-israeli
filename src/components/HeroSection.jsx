@@ -50,7 +50,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute top-1/4 left-8 md:left-16 w-48 h-48 border border-gold/15 rotate-45 float-animation hidden" />
+      
       <div className="absolute bottom-1/4 right-8 md:right-16 w-24 h-24 border border-gold/10 rotate-12 float-animation" style={{ animationDelay: '2s' }} />
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
