@@ -190,7 +190,7 @@ export default function Pricing() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 { icon: Building2, title: 'B2B SaaS — מועדונים', desc: 'מנוי חודשי מדרגי לפי שחקנים בסגל + אסימוני סקאוטינג. צמיחה אוטומטית ב-MRR ככל שהמועדון גדל.', color: 'text-[#D4AF37]' },
-                { icon: TrendingDown, title: 'Success Fees — 2%', desc: 'גבייה אוטומטית מכל חוזה שנסגר. 1.5% מהמועדון, 0.5% מהשחקן (מעל 10K ₪). 20% לחל"צ.', color: 'text-emerald-400' },
+                { icon: TrendingDown, title: 'Success Fees — 2%', desc: 'גבייה אוטומטית מכל חוזה שנסגר. 1.5% מהמועדון, 0.5% מהשחקן (מעל 10K ₪).', color: 'text-emerald-400' },
                 { icon: Landmark, title: 'B2G — רשויות מקומיות', desc: 'מכירת רישיונות דאשבורד שנתיים לעיריות ככלי EdTech למניעת נשירה ומעקב חוסן נוער.', color: 'text-blue-400' },
                 { icon: Zap, title: 'Boost Players — Freemium', desc: '19 ₪/חודש לשחקן שרוצה חשיפה מוגברת. ויראליות — שחקנים מביאים שחקנים.', color: 'text-amber-400' },
                 { icon: Coins, title: 'Scouting Token Economy', desc: 'מועדונים קונים חבילות אסימונים לפי צריכה. גמיש למועדונים קטנים, רווחי עבור גדולים.', color: 'text-purple-400' },
