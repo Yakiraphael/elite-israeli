@@ -22,7 +22,9 @@
         "view_contract",
         "delete_player",
         "export_data",
-        "unauthorized_attempt"
+        "unauthorized_attempt",
+        "sign_player",
+        "status_change"
       ]
     },
     "player_id": {

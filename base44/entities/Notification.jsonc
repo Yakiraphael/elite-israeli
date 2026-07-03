@@ -16,7 +16,10 @@
       "enum": [
         "request_new",
         "request_status",
-        "document_expiring"
+        "document_expiring",
+        "contract_pending",
+        "contract_signed",
+        "contract_expiring"
       ]
     },
     "title": {

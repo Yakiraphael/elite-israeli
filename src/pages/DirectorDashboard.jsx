@@ -10,6 +10,8 @@ import {
 import { Link } from 'react-router-dom';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
+import DepthChart from '../components/squad/DepthChart';
+import TrialKanban from '../components/squad/TrialKanban';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -84,6 +86,7 @@ function DashboardContent({ onLogout }) {
   const tabs = [
     { id: 'overview', label: 'סקירה כללית', icon: BarChart3 },
     { id: 'squad', label: 'ניהול סגל', icon: Users },
+    { id: 'scouting', label: 'סקאוטינג ומועמדים', icon: Star },
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
     { id: 'compliance', label: 'Compliance', icon: Shield },
   ];
@@ -139,6 +142,10 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'squad' && (
           <SquadTab players={filtered} loading={loadPlayers} onSelect={setSelectedPlayer} search={search} setSearch={setSearch} />
+        )}
+
+        {tab === 'scouting' && (
+          <TrialKanban />
         )}
 
         {tab === 'requests' && (
@@ -222,6 +229,7 @@ function DirKpi({ label, value, sub, color, icon: Icon, urgent }) {
 // ---- SQUAD TAB ----
 function SquadTab({ players, loading, onSelect }) {
   const [posFilter, setPosFilter] = useState('');
+  const [view, setView] = useState('list');
   const POSITIONS = ['שוער', 'בלם', 'מגן צד', 'קשר מגן', 'קשר', 'קשר התקפי', 'חלוץ צד', 'חלוץ'];
 
   const filtered2 = posFilter ? players.filter(p => p.position === posFilter) : players;
@@ -237,7 +245,13 @@ function SquadTab({ players, loading, onSelect }) {
           {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
         <span className="text-white/30 text-xs">{filtered2.length} שחקנים</span>
+        <div className="flex gap-1 mr-auto bg-[#1B263B] border border-white/10 rounded-lg p-1">
+          <button onClick={() => setView('list')} className={`text-xs font-bold px-3 py-1.5 rounded min-h-[36px] transition-colors ${view === 'list' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/40'}`}>רשימה</button>
+          <button onClick={() => setView('depth')} className={`text-xs font-bold px-3 py-1.5 rounded min-h-[36px] transition-colors ${view === 'depth' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/40'}`}>מפת עומק</button>
+        </div>
       </div>
+      {view === 'depth' && <DepthChart players={filtered2} onSelect={onSelect} />}
+      {view === 'list' && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered2.map(p => {
           const days = calcDaysLeft(p.medical_expiry_date);
@@ -261,6 +275,7 @@ function SquadTab({ players, loading, onSelect }) {
           );
         })}
       </div>
+      )}
     </div>
   );
 }
