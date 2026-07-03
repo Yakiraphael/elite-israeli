@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   ArrowRight, ShieldCheck, Users, Star, Lock, Loader2, LogOut,
   Baby, Building2, Crown, UserPlus, UserCog, ChevronLeft, Sparkles,
-  Trophy, Dumbbell
+  Trophy, Dumbbell, X, Send, CheckCircle2
 } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -156,7 +156,7 @@ export default function TransferPortal() {
           <OnboardingWizard user={user} onSelect={handleSetRole} saving={savingRole} />
         )}
         {view === 'dashboard' && user && (
-          <RoleDashboard user={user} onLogout={handleLogout} onChangeRole={() => setView('onboarding')} navigate={navigate} />
+          <RoleDashboard user={user} onLogout={handleLogout} navigate={navigate} />
         )}
       </div>
     </div>
@@ -263,7 +263,8 @@ function OnboardingWizard({ user, onSelect, saving }) {
 }
 
 // ---- Dashboard after role set ----
-function RoleDashboard({ user, onLogout, onChangeRole, navigate }) {
+function RoleDashboard({ user, onLogout, navigate }) {
+  const [showRoleRequest, setShowRoleRequest] = useState(false);
   const roleInfo = ROLES.find(r => r.value === user.role) || ROLES[0];
 
   return (
@@ -327,13 +328,89 @@ function RoleDashboard({ user, onLogout, onChangeRole, navigate }) {
 
       {/* Footer actions */}
       <div className="flex items-center justify-between mt-4 pt-4 border-t" style={{ borderColor: `${WHITE}10` }}>
-        <button onClick={onChangeRole} className="text-xs transition-colors hover:text-amber-300" style={{ color: `${WHITE}30` }}>
-          שינוי תפקיד
+        <button onClick={() => setShowRoleRequest(true)} className="text-xs transition-colors hover:text-amber-300" style={{ color: `${WHITE}30` }}>
+          בקשת שינוי תפקיד
         </button>
         <button onClick={onLogout} className="text-xs transition-colors hover:text-red-400 flex items-center gap-1" style={{ color: `${WHITE}30` }}>
           <LogOut size={12} /> התנתקות
         </button>
       </div>
+
+      {showRoleRequest && (
+        <RoleChangeRequestModal user={user} currentRole={roleInfo} onClose={() => setShowRoleRequest(false)} />
+      )}
     </motion.div>
+  );
+}
+
+// ---- Role change request modal (requires admin approval, no self-service change) ----
+function RoleChangeRequestModal({ user, currentRole, onClose }) {
+  const [requestedRole, setRequestedRole] = useState('');
+  const [reason, setReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!requestedRole || !reason.trim()) return;
+    setSubmitting(true);
+    try {
+      await base44.entities.RoleChangeRequest.create({
+        user_id: user.id,
+        user_name: user.full_name,
+        user_email: user.email,
+        current_role: user.role,
+        requested_role: requestedRole,
+        reason: reason.trim(),
+      });
+      setSent(true);
+    } catch (e) {
+      console.error(e);
+    }
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} onClick={onClose}>
+      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        className="w-full max-w-sm rounded-xl p-6 border" style={{ backgroundColor: NAVY_LIGHT, borderColor: `${WHITE}10` }}
+        onClick={e => e.stopPropagation()} dir="rtl">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-black text-base" style={{ color: WHITE }}>בקשת שינוי תפקיד</h3>
+          <button onClick={onClose}><X size={16} style={{ color: `${WHITE}40` }} /></button>
+        </div>
+
+        {sent ? (
+          <div className="text-center py-4">
+            <CheckCircle2 size={32} className="mx-auto mb-3 text-green-400" />
+            <p className="text-sm" style={{ color: WHITE }}>הבקשה נשלחה לאישור המנהל המקצועי</p>
+            <button onClick={onClose} className="mt-4 text-xs font-bold" style={{ color: GOLD }}>סגור</button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-xs" style={{ color: `${WHITE}50` }}>
+              שינוי תפקיד לאחר הרשמה מחייב אישור רשמי. תפקידך הנוכחי: <span className="font-bold" style={{ color: GOLD }}>{currentRole.label}</span>
+            </p>
+            <div>
+              <label className="text-xs font-bold mb-1.5 block" style={{ color: GOLD }}>תפקיד מבוקש</label>
+              <select value={requestedRole} onChange={e => setRequestedRole(e.target.value)}
+                className="w-full rounded-sm px-3 py-2.5 text-sm border focus:outline-none" style={{ backgroundColor: NAVY, borderColor: `${WHITE}15`, color: WHITE }}>
+                <option value="">בחר תפקיד</option>
+                {ROLES.filter(r => r.value !== user.role).map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-bold mb-1.5 block" style={{ color: GOLD }}>סיבת הבקשה</label>
+              <textarea value={reason} onChange={e => setReason(e.target.value)} rows={3} placeholder="הסבר קצר לבקשה..."
+                className="w-full rounded-sm px-3 py-2.5 text-sm border placeholder-white/25 focus:outline-none resize-none" style={{ backgroundColor: NAVY, borderColor: `${WHITE}15`, color: WHITE }} />
+            </div>
+            <button onClick={handleSubmit} disabled={!requestedRole || !reason.trim() || submitting}
+              className="w-full font-black text-sm py-3 rounded-lg flex items-center justify-center gap-2 disabled:opacity-40 transition-all"
+              style={{ backgroundColor: ACTION, color: WHITE }}>
+              {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />} שלח בקשה
+            </button>
+          </div>
+        )}
+      </motion.div>
+    </div>
   );
 }
