@@ -9,7 +9,6 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
 import PlayerProfile from './pages/PlayerProfile';
 import AdminPanel from './pages/AdminPanel';
-import TransferHub from './pages/TransferHub';
 import TransferPortal from './pages/TransferPortal';
 import Pricing from './pages/Pricing';
 import FAQ from './pages/FAQ';
@@ -49,7 +48,6 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Home />} />
       <Route path="/player-profile" element={<PlayerProfile />} />
       <Route path="/admin" element={<AdminPanel />} />
-      <Route path="/transfer-hub" element={<TransferHub />} />
       <Route path="/transfer-portal" element={<TransferPortal />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/faq" element={<FAQ />} />

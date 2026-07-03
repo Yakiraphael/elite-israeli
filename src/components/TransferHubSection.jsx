@@ -137,7 +137,7 @@ export default function TransferHubSection() {
               </div>
             </div>
             <Link
-              to="/transfer-hub"
+              to="/scouting"
               className="font-body font-bold text-sm bg-gold text-white px-8 py-3.5 rounded-sm hover:bg-gold-light transition-colors flex items-center gap-2 flex-shrink-0"
             >
               הגשת הצעה <ArrowLeft size={16} />

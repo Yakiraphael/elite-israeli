@@ -50,7 +50,7 @@ const ROLES = [
     sub: 'נציג ארגוני',
     icon: Building2,
     desc: 'דאשבורד סקאוטינג, הגשת הצעות העברה וניהול שחקנים.',
-    redirect: '/transfer-hub',
+    redirect: '/scouting',
     color: '#8B5CF6'
   },
   {
@@ -78,8 +78,14 @@ export default function TransferPortal() {
         if (authed) {
           const u = await base44.auth.me();
           setUser(u);
-          if (u?.role && ROLES.find(r => r.value === u.role)) {
-            setView('dashboard');
+          const roleInfo = ROLES.find(r => r.value === u.role);
+          if (roleInfo) {
+            // מאמן/מנהל/סקאוטר שהוזמנו ושויכו לתפקיד במערכת ניהול המועדון עוברים ישירות לדשבורד שלהם
+            if (['coach', 'director', 'club_scout'].includes(u.role)) {
+              navigate(roleInfo.redirect);
+            } else {
+              setView('dashboard');
+            }
           } else {
             setView('onboarding');
           }
