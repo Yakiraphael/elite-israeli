@@ -12,6 +12,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } fro
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
 import FinanceTab from '../components/director/FinanceTab';
+import AnalyticsTab from '../components/director/AnalyticsTab';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -90,6 +91,7 @@ function DashboardContent({ onLogout }) {
     { id: 'compliance', label: 'Compliance', icon: Shield },
     { id: 'contracts', label: 'חוזים', icon: FileText },
     { id: 'finance', label: 'כספים', icon: Wallet },
+    { id: 'analytics', label: 'ניתוח נתונים', icon: BarChart3 },
   ];
 
   return (
@@ -159,6 +161,10 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'finance' && (
           <FinanceTab />
+        )}
+
+        {tab === 'analytics' && (
+          <AnalyticsTab players={filtered} />
         )}
       </div>
 
