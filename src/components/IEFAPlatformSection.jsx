@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Brain, Database, ShieldCheck, TrendingDown, Target, ArrowLeft, Baby, Building2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SecurityBadge from './SecurityBadge';
 
 const ADVANTAGES = [
   {
@@ -86,6 +87,9 @@ export default function IEFAPlatformSection() {
             className="font-body text-base md:text-lg text-white/60 max-w-3xl mx-auto leading-relaxed italic">
             "הבעיה הגדולה ביותר בכדורגל המודרני היא לא מחסור בכישרון, אלא שוק העברות מיושן, אטום ובירוקרטי."
           </motion.blockquote>
+          <div className="flex justify-center mt-6">
+            <SecurityBadge />
+          </div>
         </div>
 
         {/* Solution banner */}

@@ -212,7 +212,7 @@ export default function PlayerRegistrationForm({ onSuccess }) {
                   <Field label="שם מלא של ההורה *" name="guardian_name" value={form.guardian_name} onChange={handleChange} placeholder="יוסי ישראלי" />
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="תעודת זהות הורה *" name="guardian_id" value={form.guardian_id} onChange={handleChange} placeholder="000000000" />
-                    <Field label="טלפון נייד הורה *" name="parent_phone" value={form.parent_phone} onChange={handleChange} placeholder="05X-XXXXXXX" dir="ltr" hint="עוגן לאימות OTP" />
+                    <Field label="טלפון נייד הורה *" name="parent_phone" value={form.parent_phone} onChange={handleChange} placeholder="05X-XXXXXXX" dir="ltr" hint="יבוצע אימות טלפוני מול ההורה בטרם אישור הרישום" />
                   </div>
                   <Field label="מייל הורה *" name="parent_email" value={form.parent_email} onChange={handleChange} placeholder="parent@email.com" dir="ltr" hint="לשליחת עותקי חוזים" />
                 </>
@@ -240,7 +240,7 @@ export default function PlayerRegistrationForm({ onSuccess }) {
                   value={form.id_suffix_url}
                   onChange={(url) => handleDocChange('id_suffix_url', url)}
                   required
-                  hint="חובה רגולטורית — הוכחת שיוך הורה-קטין"
+                  hint="חובה רגולטורית — הוכחת שיוך הורה-קטין. יש לוודא שפרטי הקטין רשומים על גבי הספח, או לצרף אישור אפוטרופסות חלופי"
                 />
               )}
 

@@ -107,7 +107,13 @@ export default function TransferPortal() {
       await base44.auth.updateMe({ role: roleValue });
       const u = await base44.auth.me();
       setUser(u);
-      setView('dashboard');
+      const roleInfo = ROLES.find(r => r.value === roleValue);
+      // שחקן/הורה/מועדון חייבים להשלים קודם את טופס הרישום המלא — לפני גישה לדשבורד
+      if (roleValue === 'player' || roleValue === 'parent_guardian' || roleValue === 'club_scout') {
+        navigate(roleInfo.redirect);
+      } else {
+        setView('dashboard');
+      }
     } catch (e) {
       console.error(e);
     }
@@ -154,7 +160,7 @@ export default function TransferPortal() {
       <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
         {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} />}
         {view === 'onboarding' && user && (
-          <OnboardingWizard user={user} onSelect={handleSetRole} saving={savingRole} />
+          <OnboardingWizard user={user} onSelect={handleSetRole} saving={savingRole} navigate={navigate} />
         )}
         {view === 'dashboard' && user && (
           <RoleDashboard user={user} onLogout={handleLogout} navigate={navigate} />
@@ -233,6 +239,9 @@ function OnboardingWizard({ user, onSelect, saving }) {
         </h1>
         <p className="text-sm mt-2 max-w-md mx-auto" style={{ color: `${WHITE}50` }}>
           בחר את תפקידך במערכת — ניתן לשנות בהמשך
+        </p>
+        <p className="text-xs mt-3 max-w-md mx-auto" style={{ color: `${WHITE}35` }}>
+          לאחר בחירת התפקיד תועבר להשלמת טופס רישום מלא. הגישה לממשק הייעודי תיפתח רק לאחר אישור צוות המערכת.
         </p>
       </div>
 

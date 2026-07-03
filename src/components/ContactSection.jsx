@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Loader2, ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const RECIPIENT = 'yakirkarmel@gmail.com';
@@ -69,8 +69,12 @@ ${form.message}
             transition={{ delay: 0.3 }}
             className="font-body text-sm text-slate-500 max-w-xl mx-auto leading-relaxed"
           >
-            רשויות מקומיות, מערכות חינוך, גופים פילנתרופיים ומשקיעים חברתיים — פנו אלינו לבחינת שיתוף פעולה אסטרטגי.
+            רשויות מקומיות, מערכות חינוך, גופים פילנתרופיים ומשקיעים חברתיים, מועדונים, שחקנים והורים — פנו אלינו בכל נושא.
           </motion.p>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <ShieldCheck size={13} className="text-gold" />
+            <span className="text-xs text-slate-400 font-semibold">כל פנייה מטופלת באופן מאובטח ונשמרת בסודיות מלאה</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -105,7 +109,7 @@ ${form.message}
             <div className="pillar-card rounded-sm p-6 bg-white">
               <h4 className="font-body text-xs text-gold font-bold tracking-wide uppercase mb-4">סוגי שיתוף פעולה</h4>
               <ul className="space-y-2.5">
-                {['חסות תאגידית ותמיכה פילנתרופית', 'שותפות רשות מקומית', 'שיתוף עם מערכת חינוך', 'השקעה חברתית (Impact Investment)', 'מדיה ויחסי ציבור'].map(r => (
+                {['חסות תאגידית ותמיכה פילנתרופית', 'שותפות רשות מקומית', 'שיתוף עם מערכת חינוך', 'השקעה חברתית (Impact Investment)', 'מדיה ויחסי ציבור', 'שיתוף פעולה עם מועדון כדורגל', 'הצטרפות כשחקן / הורה', 'תמיכה טכנית למשתמשי המערכת', 'הצעת התנדבות ומנטורינג'].map(r => (
                   <li key={r} className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-gold rounded-full flex-shrink-0" />
                     <span className="font-body text-xs text-slate-500 leading-snug">{r}</span>
@@ -173,6 +177,10 @@ ${form.message}
                       <option value="investor">משקיע חברתי / פילנתרופ</option>
                       <option value="corporate">חברה / תאגיד</option>
                       <option value="media">מדיה / עיתונות</option>
+                      <option value="club">מועדון כדורגל / סקאוטר</option>
+                      <option value="player">שחקן / הורה</option>
+                      <option value="volunteer">התנדבות / מנטורינג</option>
+                      <option value="support">תמיכה טכנית</option>
                       <option value="other">אחר</option>
                     </select>
                   </div>

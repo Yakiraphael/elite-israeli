@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import SecurityBadge from './SecurityBadge';
 
 const BG_IMAGES = [
 'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/f76cf2c20_generated_image.png',
@@ -126,6 +127,14 @@ export default function HeroSection() {
             ⚽ הרשמה כשחקן עילית
           </Link>
           </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
+          className="flex justify-center mt-8">
+          <SecurityBadge />
+        </motion.div>
       </div>
 
       <button

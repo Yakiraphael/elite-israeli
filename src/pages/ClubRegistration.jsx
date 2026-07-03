@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Building2, CheckCircle2, Mail, Phone, User, ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import DocumentUpload from '../components/registration/DocumentUpload';
+import SecurityBadge from '../components/SecurityBadge';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -16,6 +18,7 @@ export default function ClubRegistration() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     club_name: '', club_tier: TIERS[0].value, business_id: '', league_name: '', contact_name: '', contact_email: '', contact_phone: '', city: '',
+    incorporation_certificate_url: '',
   });
 
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -66,6 +69,9 @@ export default function ClubRegistration() {
           <span className="text-[#D4AF37] text-xs tracking-[0.3em] font-bold uppercase">אימות מועדון קיים</span>
           <h1 className="text-white text-3xl font-black mt-3 mb-2">אימות מועדון</h1>
           <p className="text-white/50 text-sm">המערכת מיועדת למועדונים קיימים ורשומים בלבד — נדרש אימות ח״פ מול נתוני הליגות</p>
+          <div className="flex justify-center mt-4">
+            <SecurityBadge />
+          </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#1B263B] border border-white/10 rounded-lg p-6 md:p-8 space-y-4">
@@ -123,16 +129,25 @@ export default function ClubRegistration() {
             </div>
           </div>
 
+          <DocumentUpload
+            label="תעודת התאגדות / רישום עמותה"
+            name="incorporation_certificate_url"
+            value={form.incorporation_certificate_url}
+            onChange={(url) => setForm(prev => ({ ...prev, incorporation_certificate_url: url }))}
+            required
+            hint="צילום תעודת התאגדות רשמית מרשם החברות/העמותות — חובה לאימות המועדון"
+          />
+
           <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 mt-2">
             <p className="text-white/50 text-xs leading-relaxed">
-              לאחר שליחת הבקשה, מספר הח״פ והליגה הרשומה יאומתו מול מסדי הנתונים הרלוונטיים.
+              לאחר שליחת הבקשה, מספר הח״פ, הליגה הרשומה ותעודת ההתאגדות יאומתו מול מסדי הנתונים הרלוונטיים.
               רק לאחר אימות מוצלח יופעל חשבון המועדון במערכת.
             </p>
           </div>
 
           <button
             onClick={handleSubmit}
-            disabled={!form.club_name || !form.business_id || !form.league_name || !form.contact_name || !form.contact_email || !form.contact_phone}
+            disabled={!form.club_name || !form.business_id || !form.league_name || !form.contact_name || !form.contact_email || !form.contact_phone || !form.incorporation_certificate_url}
             className="w-full bg-[#D4AF37] text-[#0D1B2A] font-black text-sm py-4 rounded-sm hover:bg-amber-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             שלח לאימות <CheckCircle2 size={16} />
