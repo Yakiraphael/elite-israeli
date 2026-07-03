@@ -36,7 +36,7 @@ const ROLES = [
     color: '#10B981'
   },
   {
-    value: 'parent_guardian',
+    value: 'parent',
     label: 'הורה / אפוטרופוס',
     sub: 'לשחקן נוער',
     icon: Users,
@@ -124,7 +124,7 @@ export default function TransferPortal() {
       setUser(u);
       const roleInfo = ROLES.find(r => r.value === roleValue);
       // שחקן/הורה/מועדון חייבים להשלים קודם את טופס הרישום המלא — לפני גישה לדשבורד
-      if (roleValue === 'player' || roleValue === 'parent_guardian' || roleValue === 'club_scout') {
+      if (roleValue === 'player' || roleValue === 'parent' || roleValue === 'club_scout') {
         navigate(roleInfo.redirect);
       } else {
         setView('dashboard');
