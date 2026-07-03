@@ -12,6 +12,7 @@ const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5
 const NAVY = '#0D1B2A';
 const NAVY_LIGHT = '#1B263B';
 const GOLD = '#D4AF37';
+const ACTION = '#2563EB';
 const WHITE = '#FFFFFF';
 
 const ROLES = [
@@ -114,8 +115,17 @@ export default function TransferPortal() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: NAVY }} dir="rtl">
-        <Loader2 className="animate-spin" size={28} style={{ color: GOLD }} />
+      <div className="min-h-screen p-6" style={{ backgroundColor: NAVY }} dir="rtl">
+        <div className="max-w-3xl mx-auto space-y-4 pt-16 animate-pulse">
+          <div className="h-10 w-40 rounded-lg mx-auto" style={{ backgroundColor: `${WHITE}10` }} />
+          <div className="h-6 w-64 rounded mx-auto" style={{ backgroundColor: `${WHITE}10` }} />
+          <div className="h-14 w-full max-w-sm mx-auto rounded-lg" style={{ backgroundColor: `${WHITE}10` }} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto pt-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-24 rounded-lg" style={{ backgroundColor: `${WHITE}08` }} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -175,8 +185,8 @@ function WelcomeScreen({ onLogin }) {
       <div className="max-w-sm mx-auto space-y-3 mb-12">
         <button
           onClick={onLogin}
-          className="w-full font-black text-base py-4 rounded-lg transition-all flex items-center justify-center gap-3 shadow-lg"
-          style={{ backgroundColor: GOLD, color: NAVY }}
+          className="w-full min-h-[44px] font-black text-base py-4 rounded-lg transition-all flex items-center justify-center gap-3 shadow-lg hover:brightness-110"
+          style={{ backgroundColor: ACTION, color: WHITE }}
         >
           <Lock size={18} /> כניסה / הרשמה למערכת
         </button>
@@ -275,8 +285,8 @@ function RoleDashboard({ user, onLogout, onChangeRole, navigate }) {
       {/* Main CTA */}
       <button
         onClick={() => navigate(roleInfo.redirect)}
-        className="w-full rounded-xl p-6 transition-all group border hover:border-amber-400 mb-4 text-right flex items-center gap-4"
-        style={{ backgroundColor: NAVY_LIGHT, borderColor: `${GOLD}40` }}
+        className="w-full min-h-[44px] rounded-xl p-6 transition-all group border hover:border-blue-400 mb-4 text-right flex items-center gap-4"
+        style={{ backgroundColor: NAVY_LIGHT, borderColor: `${ACTION}50` }}
       >
         <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: `${roleInfo.color}15`, border: `1px solid ${roleInfo.color}40` }}>

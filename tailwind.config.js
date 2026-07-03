@@ -49,6 +49,14 @@ module.exports = {
   			'gold-light': 'hsl(var(--gold-light))',
   			'gold-dark': 'hsl(var(--gold-dark))',
   			cream: 'hsl(var(--cream))',
+  			action: {
+  				DEFAULT: 'hsl(var(--action))',
+  				light: 'hsl(var(--action-light))',
+  				foreground: 'hsl(var(--action-foreground))'
+  			},
+  			'alert-error': { DEFAULT: 'hsl(var(--alert-error))', bg: 'hsl(var(--alert-error-bg))' },
+  			'alert-warning': { DEFAULT: 'hsl(var(--alert-warning))', bg: 'hsl(var(--alert-warning-bg))' },
+  			'alert-success': { DEFAULT: 'hsl(var(--alert-success))', bg: 'hsl(var(--alert-success-bg))' },
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

@@ -34,6 +34,17 @@
     --gold-dark: 43 74% 32%;
     --white: 0 0% 100%;
     --cream: 220 20% 96%;
+
+    /* Transfer system UX tokens: authoritative navy + contrasting action color + soft alerts */
+    --action: 217 91% 55%;
+    --action-light: 217 91% 65%;
+    --action-foreground: 0 0% 100%;
+    --alert-error: 4 70% 60%;
+    --alert-error-bg: 4 70% 96%;
+    --alert-warning: 38 80% 55%;
+    --alert-warning-bg: 45 85% 95%;
+    --alert-success: 152 55% 42%;
+    --alert-success-bg: 152 55% 95%;
   }
 }
 
