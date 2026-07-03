@@ -80,8 +80,11 @@ export default function TransferPortal() {
           setUser(u);
           const roleInfo = ROLES.find(r => r.value === u.role);
           if (roleInfo) {
-            // לא מנתבים אוטומטית — קודם מציגים מסך אישור זהות, כדי למנוע בלבול בין חשבונות/מכשירים
-            setView('confirm');
+            if (['coach', 'director', 'club_scout'].includes(u.role)) {
+              navigate(roleInfo.redirect);
+            } else {
+              setView('dashboard');
+            }
           } else {
             setView('onboarding');
           }
@@ -97,13 +100,8 @@ export default function TransferPortal() {
     base44.auth.redirectToLogin('/transfer-portal');
   };
 
-  const handleConfirmContinue = () => {
-    const roleInfo = ROLES.find(r => r.value === user.role);
-    if (['coach', 'director', 'club_scout'].includes(user.role)) {
-      navigate(roleInfo.redirect);
-    } else {
-      setView('dashboard');
-    }
+  const handleSignup = () => {
+    navigate('/onboarding');
   };
 
   const handleLogout = async () => {
@@ -169,10 +167,7 @@ export default function TransferPortal() {
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
-        {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} />}
-        {view === 'confirm' && user && (
-          <ConfirmAccountScreen user={user} onContinue={handleConfirmContinue} onLogout={handleLogout} />
-        )}
+        {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} onSignup={handleSignup} />}
         {view === 'onboarding' && user && (
           <OnboardingWizard user={user} onSelect={handleSetRole} saving={savingRole} navigate={navigate} />
         )}
@@ -185,7 +180,7 @@ export default function TransferPortal() {
 }
 
 // ---- Welcome Screen ----
-function WelcomeScreen({ onLogin }) {
+function WelcomeScreen({ onLogin, onSignup }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
       <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-8"
@@ -209,7 +204,7 @@ function WelcomeScreen({ onLogin }) {
 
       <div className="max-w-sm mx-auto space-y-3 mb-12">
         <button
-          onClick={onLogin}
+          onClick={onSignup}
           className="w-full min-h-[44px] font-black text-base py-4 rounded-lg transition-all flex items-center justify-center gap-3 shadow-lg hover:brightness-110"
           style={{ backgroundColor: ACTION, color: WHITE }}
         >
@@ -241,42 +236,6 @@ function WelcomeScreen({ onLogin }) {
             <p className="text-[10px] mt-1 leading-relaxed" style={{ color: `${WHITE}35` }}>{r.sub}</p>
           </div>
         ))}
-      </div>
-    </motion.div>
-  );
-}
-
-// ---- Confirm account: shown before auto-routing to a role dashboard, to avoid cross-device account mix-ups ----
-function ConfirmAccountScreen({ user, onContinue, onLogout }) {
-  const roleInfo = ROLES.find(r => r.value === user.role) || ROLES[0];
-  return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-      <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center"
-        style={{ backgroundColor: `${roleInfo.color}20`, border: `2px solid ${roleInfo.color}60` }}>
-        <roleInfo.icon size={26} style={{ color: roleInfo.color }} />
-      </div>
-      <span className="text-xs tracking-[0.3em] font-bold uppercase" style={{ color: GOLD }}>אימות זהות</span>
-      <h1 className="text-2xl font-black mt-3" style={{ color: WHITE }}>
-        מחובר בתור {user.full_name || user.email}
-      </h1>
-      <p className="text-sm mt-2" style={{ color: `${WHITE}50` }}>{user.email}</p>
-      <p className="text-xs mt-1" style={{ color: `${WHITE}35` }}>תפקיד: {roleInfo.label}</p>
-
-      <div className="max-w-sm mx-auto space-y-3 mt-8">
-        <button
-          onClick={onContinue}
-          className="w-full min-h-[44px] font-black text-base py-4 rounded-lg transition-all flex items-center justify-center gap-3 shadow-lg hover:brightness-110"
-          style={{ backgroundColor: ACTION, color: WHITE }}
-        >
-          <ArrowRight size={18} /> כן, זה אני — המשך
-        </button>
-        <button
-          onClick={onLogout}
-          className="w-full min-h-[44px] font-black text-sm py-3 rounded-lg transition-all flex items-center justify-center gap-2 border hover:bg-white/5"
-          style={{ borderColor: `${WHITE}20`, color: WHITE }}
-        >
-          <LogOut size={16} /> זה לא אני — התנתקות
-        </button>
       </div>
     </motion.div>
   );

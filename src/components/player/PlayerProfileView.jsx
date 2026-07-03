@@ -8,6 +8,7 @@ import {
   Video, Link as LinkIcon, AlertTriangle, Vault, Briefcase, RefreshCw, BarChart3
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import RoleToolbar from '../RoleToolbar';
 import EliteIdCard from '../EliteIdCard';
 import MentalJourneyChart from './MentalJourneyChart';
 import TransferTrackerPanel from './TransferTrackerPanel';
@@ -47,6 +48,8 @@ export default function PlayerProfileView({ player, events }) {
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
+      <RoleToolbar activeLabel="הפרופיל שלי" activeIcon={User} />
+
       {/* Header */}
       <div className="border-b border-white/10 py-4 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
