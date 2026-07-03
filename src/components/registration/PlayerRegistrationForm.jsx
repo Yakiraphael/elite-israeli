@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import DocumentUpload from './DocumentUpload';
 import LegalTerms from './LegalTerms';
+import SecurityBadge from '../SecurityBadge';
 
 const POSITIONS = ['שוער', 'בלם', 'מגן צד', 'קשר מגן', 'קשר', 'קשר התקפי', 'חלוץ צד', 'חלוץ'];
 
@@ -32,6 +33,7 @@ export default function PlayerRegistrationForm({ onSuccess }) {
     guardian_name: '', guardian_id: '', parent_phone: '', parent_email: '',
     id_document_url: '', id_suffix_url: '', medical_certificate_url: '', medical_expiry_date: '',
     bank_token: '', event_id: '', event_name: '',
+    verification_link: '', verification_source: '', selfie_url: '',
     legal_terms_accepted: {},
   });
 
@@ -72,15 +74,16 @@ export default function PlayerRegistrationForm({ onSuccess }) {
         ? !!(form.id_document_url && form.medical_certificate_url && allLegalAccepted)
         : !!(form.id_document_url && form.id_suffix_url && form.medical_certificate_url && form.guardian_name && form.guardian_id && form.parent_phone && form.parent_email && allLegalAccepted),
       status: 'IFA Ready',
+      account_status: 'ממתין לאישור',
     };
     register.mutate(data);
   };
 
   const canProceed = () => {
-    if (step === 0) return form.full_name && form.id_number && form.birth_date && form.phone;
+    if (step === 0) return form.full_name && form.id_number && form.birth_date && form.phone && form.verification_link && form.verification_source;
     if (step === 1) return form.position;
     if (step === 2) return isAdult || (form.guardian_name && form.guardian_id && form.parent_phone && form.parent_email);
-    if (step === 3) return form.id_document_url && form.medical_certificate_url && (!isAdult || true) && (isAdult || form.id_suffix_url);
+    if (step === 3) return form.id_document_url && form.medical_certificate_url && form.selfie_url && (!isAdult || true) && (isAdult || form.id_suffix_url);
     if (step === 4) return allLegalAccepted;
     return false;
   };
@@ -92,6 +95,9 @@ export default function PlayerRegistrationForm({ onSuccess }) {
         <span className="text-[#D4AF37] text-xs tracking-[0.3em] font-bold uppercase">רישום שחקן · IEFA Onboarding</span>
         <h1 className="text-white text-3xl md:text-4xl font-black mt-3 mb-2">הצטרף לעילית ישראלית</h1>
         <p className="text-white/50 text-sm">Zero Friction — המערכת מכינה את כל המסמכים מראש</p>
+        <div className="flex justify-center mt-4">
+          <SecurityBadge />
+        </div>
         {age !== null && (
           <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full border" style={{
             backgroundColor: isAdult ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)',
@@ -144,6 +150,20 @@ export default function PlayerRegistrationForm({ onSuccess }) {
                   הזן תאריך לידה כדי לקבוע את מסלול הרישום (נוער/בוגר)
                 </div>
               )}
+
+              <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <ShieldCheck size={14} className="text-[#D4AF37]" />
+                  <span className="text-white font-bold text-sm">אימות זהות חברתי</span>
+                </div>
+                <p className="text-white/40 text-[11px] mb-3">
+                  במקום שירותי אימות יקרים, אנו מצליבים זהות מול פרופיל חברתי/מקצועי קיים — צוות המערכת יאשר את הפרופיל שלך ידנית תוך 24 שעות.
+                </p>
+                <SelectField label="מקור אימות *" name="verification_source" value={form.verification_source} onChange={handleChange} options={['Instagram', 'LinkedIn', 'אתר רשמי']} />
+                <div className="mt-3">
+                  <Field label="קישור לפרופיל *" name="verification_link" value={form.verification_link} onChange={handleChange} placeholder="https://instagram.com/username" dir="ltr" hint="קישור לפרופיל אינסטגרם / לינקדאין / אתר רשמי" />
+                </div>
+              </div>
             </div>
           )}
 
@@ -231,6 +251,16 @@ export default function PlayerRegistrationForm({ onSuccess }) {
                 onChange={(url) => handleDocChange('medical_certificate_url', url)}
                 required
                 hint="מתחנת רפואת ספורט מאושרת (PDF/תמונה)"
+              />
+
+              <DocumentUpload
+                label="תמונת פנים (סלפי)"
+                name="selfie_url"
+                value={form.selfie_url}
+                onChange={(url) => handleDocChange('selfie_url', url)}
+                required
+                hint="לצורך הצלבה מול הפרופיל החברתי שסופק בשלב האימות"
+                accept="image/*"
               />
 
               {form.medical_certificate_url && (

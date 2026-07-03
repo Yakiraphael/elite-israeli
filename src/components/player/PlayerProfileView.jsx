@@ -12,6 +12,7 @@ import EliteIdCard from '../EliteIdCard';
 import MentalJourneyChart from './MentalJourneyChart';
 import TransferTrackerPanel from './TransferTrackerPanel';
 import RequestHub from './RequestHub';
+import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -34,12 +35,15 @@ const TABS = [
   { id: 'requests', label: '🎯 בקשות', labelHe: 'מרכז בקשות' },
 ];
 
+const RESTRICTED_TABS = ['vault', 'transfers', 'requests'];
+
 export default function PlayerProfileView({ player, events }) {
   const [tab, setTab] = useState('showcase');
   const posInfo = POSITIONS_INFO[player.position] || { role: '', skills: [], color: 'from-gray-600 to-gray-800' };
   const playerEvent = events.find(e => e.id === player.event_id);
   const isMedicalExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
   const isMedicalSoon = !isMedicalExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
+  const isApproved = player.account_status === 'מאושר';
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
@@ -53,8 +57,18 @@ export default function PlayerProfileView({ player, events }) {
         </div>
       </div>
 
+      {/* Pending approval banner */}
+      {!isApproved && (
+        <div className="flex items-center gap-3 px-6 py-3 text-sm font-bold bg-amber-500/15 border-b border-amber-500/30 text-amber-400">
+          <Lock size={16} />
+          {player.account_status === 'מושעה'
+            ? '⛔ החשבון שלך מושעה — פנה לצוות המקצועי לבירור.'
+            : 'החשבון שלך בבדיקה. אנו מאמתים את פרטיך מול הפרופיל שסופק — האישור יתקבל תוך 24 שעות.'}
+        </div>
+      )}
+
       {/* Alert bar */}
-      {(isMedicalExpired || isMedicalSoon) && (
+      {isApproved && (isMedicalExpired || isMedicalSoon) && (
         <div className={`flex items-center gap-3 px-6 py-3 text-sm font-bold ${isMedicalExpired ? 'bg-red-500/20 border-b border-red-500/30 text-red-400' : 'bg-amber-500/20 border-b border-amber-500/30 text-amber-400'}`}>
           <AlertTriangle size={16} />
           {isMedicalExpired
@@ -99,12 +113,15 @@ export default function PlayerProfileView({ player, events }) {
       {/* Tabs */}
       <div className="border-b border-white/10 sticky top-0 bg-[#0D1B2A] z-10 overflow-x-auto">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-4 text-xs font-bold whitespace-nowrap transition-colors border-b-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
-              {t.label}
-            </button>
-          ))}
+          {TABS.map(t => {
+            const locked = !isApproved && RESTRICTED_TABS.includes(t.id);
+            return (
+              <button key={t.id} onClick={() => !locked && setTab(t.id)} disabled={locked}
+                className={`px-4 py-4 text-xs font-bold whitespace-nowrap transition-colors border-b-2 flex items-center gap-1.5 ${locked ? 'text-white/20 border-transparent cursor-not-allowed' : tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
+                {t.label} {locked && <Lock size={10} />}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -202,7 +219,7 @@ export default function PlayerProfileView({ player, events }) {
           )}
 
           {/* 2. VAULT */}
-          {tab === 'vault' && (
+          {tab === 'vault' && isApproved && (
             <motion.div key="vault" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl space-y-4">
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
                 <h3 className="text-white font-black text-base mb-1">🔐 הכספת המשפטית</h3>
@@ -335,14 +352,14 @@ export default function PlayerProfileView({ player, events }) {
           )}
 
           {/* 4. TRANSFER HUB */}
-          {tab === 'transfers' && (
+          {tab === 'transfers' && isApproved && (
             <motion.div key="transfers" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <TransferTrackerPanel playerId={player.id} playerName={player.full_name} />
             </motion.div>
           )}
 
           {/* 5. REQUESTS */}
-          {tab === 'requests' && (
+          {tab === 'requests' && isApproved && (
             <motion.div key="requests" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <RequestHub playerId={player.id} playerName={player.full_name} />
             </motion.div>

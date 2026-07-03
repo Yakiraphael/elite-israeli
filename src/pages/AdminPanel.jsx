@@ -222,6 +222,12 @@ function PlayersViewer() {
   });
 
   const STATUS_COLORS = { 'ממתין': 'text-yellow-400 bg-yellow-400/10', 'מאושר': 'text-green-400 bg-green-400/10', 'פעיל': 'text-blue-400 bg-blue-400/10' };
+  const ACCOUNT_STATUS_COLORS = { 'לא מאומת': 'text-white/40 bg-white/5', 'ממתין לאישור': 'text-amber-400 bg-amber-400/10', 'מאושר': 'text-green-400 bg-green-400/10', 'מושעה': 'text-red-400 bg-red-400/10' };
+
+  const updateAccountStatus = useMutation({
+    mutationFn: ({ id, account_status }) => base44.entities.PlayerRegistration.update(id, { account_status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-players'] }),
+  });
 
   return (
     <div>
@@ -236,24 +242,45 @@ function PlayersViewer() {
       ) : (
         <div className="space-y-3">
           {players.map(p => (
-            <div key={p.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-5 flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <div className="text-white font-bold text-sm">{p.full_name}</div>
-                <div className="text-white/50 text-xs mt-1">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}{p.city ? ` · ${p.city}` : ''}</div>
-                {p.event_name && <div className="text-[#D4AF37] text-xs mt-0.5">אירוע: {p.event_name}</div>}
+            <div key={p.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-5 flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <div className="text-white font-bold text-sm">{p.full_name}</div>
+                  <div className="text-white/50 text-xs mt-1">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}{p.city ? ` · ${p.city}` : ''}</div>
+                  {p.event_name && <div className="text-[#D4AF37] text-xs mt-0.5">אירוע: {p.event_name}</div>}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button onClick={() => setEditingPlayer(p)} title="כרטיס Elite ID"
+                    className="w-8 h-8 rounded bg-white/5 hover:bg-[#D4AF37]/20 flex items-center justify-center transition-colors">
+                    <Star size={13} className="text-[#D4AF37]" />
+                  </button>
+                  <select
+                    value={p.status || 'ממתין'}
+                    onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value })}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-full border-0 focus:outline-none cursor-pointer ${STATUS_COLORS[p.status || 'ממתין']}`}
+                    style={{ background: 'transparent' }}
+                  >
+                    {['ממתין', 'מאושר', 'פעיל'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
+                  </select>
+                </div>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button onClick={() => setEditingPlayer(p)} title="כרטיס Elite ID"
-                  className="w-8 h-8 rounded bg-white/5 hover:bg-[#D4AF37]/20 flex items-center justify-center transition-colors">
-                  <Star size={13} className="text-[#D4AF37]" />
-                </button>
+
+              <div className="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-white/40">אימות זהות:</span>
+                  {p.verification_link ? (
+                    <a href={p.verification_link} target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:text-amber-300">
+                      {p.verification_source || 'קישור'} ↗
+                    </a>
+                  ) : <span className="text-white/20">לא סופק</span>}
+                </div>
                 <select
-                  value={p.status || 'ממתין'}
-                  onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value })}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-full border-0 focus:outline-none cursor-pointer ${STATUS_COLORS[p.status || 'ממתין']}`}
+                  value={p.account_status || 'ממתין לאישור'}
+                  onChange={e => updateAccountStatus.mutate({ id: p.id, account_status: e.target.value })}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border-0 focus:outline-none cursor-pointer ${ACCOUNT_STATUS_COLORS[p.account_status || 'ממתין לאישור']}`}
                   style={{ background: 'transparent' }}
                 >
-                  {['ממתין', 'מאושר', 'פעיל'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
+                  {['ממתין לאישור', 'מאושר', 'מושעה'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
                 </select>
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   Baby, Building2, Crown, UserPlus, UserCog, ChevronLeft, Sparkles,
   Trophy, Dumbbell, X, Send, CheckCircle2
 } from 'lucide-react';
+import SecurityBadge from '../components/SecurityBadge';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const NAVY = '#0D1B2A';
@@ -181,6 +182,10 @@ function WelcomeScreen({ onLogin }) {
       <p className="text-sm max-w-md mx-auto mb-10 leading-relaxed" style={{ color: `${WHITE}60` }}>
         הפלטפורמה הדיגיטלית לניהול שוק העברות, פרופילי שחקנים וכלי ניהול מקצועיים לעמותת עילית ישראלית.
       </p>
+
+      <div className="flex justify-center mb-6">
+        <SecurityBadge />
+      </div>
 
       <div className="max-w-sm mx-auto space-y-3 mb-12">
         <button
