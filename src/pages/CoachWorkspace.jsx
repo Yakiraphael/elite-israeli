@@ -49,9 +49,17 @@ export default function CoachWorkspace() {
     queryFn: () => base44.entities.PlayerRequest.filter({ status: 'נשלח' }, '-created_date', 50),
   });
 
+  const { data: settingsList = [] } = useQuery({
+    queryKey: ['compliance-settings'],
+    queryFn: () => base44.entities.ComplianceSettings.list(),
+  });
+  const blockingEnabled = !!settingsList[0]?.enforce_medical_blocking;
+
   const filtered = players.filter(p =>
     !search || p.full_name?.includes(search) || p.team_name?.includes(search)
   );
+  const activeSquad = blockingEnabled ? filtered.filter(p => getMedicalStatus(p).color !== 'red') : filtered;
+  const blockedCount = filtered.length - activeSquad.length;
 
   // KPI computed
   const medicalIssues = players.filter(p => getMedicalStatus(p).color === 'red').length;
@@ -112,7 +120,16 @@ export default function CoachWorkspace() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {tab === 'squad' && <SquadView players={filtered} loading={loadingPlayers} onSelect={setSelectedPlayer} />}
+        {tab === 'squad' && (
+          <>
+            {blockingEnabled && blockedCount > 0 && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4 text-red-400 text-xs font-bold">
+                🚫 {blockedCount} שחקנים חסומים מהסגל הפעיל עקב אישור רפואי לא בתוקף
+              </div>
+            )}
+            <SquadView players={activeSquad} loading={loadingPlayers} onSelect={setSelectedPlayer} />
+          </>
+        )}
         {tab === 'requests' && <RequestsView />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
       </div>
