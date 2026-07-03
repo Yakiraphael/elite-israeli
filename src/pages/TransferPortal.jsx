@@ -97,6 +97,10 @@ export default function TransferPortal() {
     base44.auth.redirectToLogin('/transfer-portal');
   };
 
+  const handleSignup = () => {
+    navigate('/onboarding');
+  };
+
   const handleConfirmContinue = () => {
     const roleInfo = ROLES.find(r => r.value === user.role);
     if (['coach', 'director', 'club_scout'].includes(user.role)) {
@@ -169,7 +173,7 @@ export default function TransferPortal() {
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
-        {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} />}
+        {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} onSignup={handleSignup} />}
         {view === 'confirm' && user && (
           <ConfirmAccountScreen user={user} onContinue={handleConfirmContinue} onLogout={handleLogout} />
         )}
@@ -185,7 +189,7 @@ export default function TransferPortal() {
 }
 
 // ---- Welcome Screen ----
-function WelcomeScreen({ onLogin }) {
+function WelcomeScreen({ onLogin, onSignup }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
       <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-8"
@@ -209,7 +213,7 @@ function WelcomeScreen({ onLogin }) {
 
       <div className="max-w-sm mx-auto space-y-3 mb-12">
         <button
-          onClick={onLogin}
+          onClick={onSignup}
           className="w-full min-h-[44px] font-black text-base py-4 rounded-lg transition-all flex items-center justify-center gap-3 shadow-lg hover:brightness-110"
           style={{ backgroundColor: ACTION, color: WHITE }}
         >
