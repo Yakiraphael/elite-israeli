@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import NotificationBell from '../components/NotificationBell';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -71,12 +72,15 @@ export default function CoachWorkspace() {
       {/* Header */}
       <div className="pt-20 pb-0 border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="flex items-center gap-3 mb-6">
-            <img src={LOGO_URL} alt="" className="h-9" />
-            <div>
-              <h1 className="text-white font-black text-xl">Coach Workspace</h1>
-              <p className="text-white/40 text-xs">מרחב עבודה מאמן — מצב בריאות הסגל</p>
+          <div className="flex items-center gap-3 mb-6 justify-between">
+            <div className="flex items-center gap-3">
+              <img src={LOGO_URL} alt="" className="h-9" />
+              <div>
+                <h1 className="text-white font-black text-xl">Coach Workspace</h1>
+                <p className="text-white/40 text-xs">מרחב עבודה מאמן — מצב בריאות הסגל</p>
+              </div>
             </div>
+            <NotificationBell audience="coach" onNavigate={setTab} />
           </div>
 
           {/* KPI Row */}

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
+import NotificationBell from '../components/NotificationBell';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -106,6 +107,7 @@ function DashboardContent({ onLogout }) {
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חיפוש מהיר — שחקן, עמדה..."
                 className="bg-[#0D1B2A] border border-white/15 rounded-lg pr-9 pl-4 py-2 text-white text-xs placeholder-white/25 focus:outline-none w-56 focus:border-[#D4AF37]/60" />
             </div>
+            <NotificationBell audience="director" onNavigate={setTab} />
             <Link to="/" className="text-white/40 hover:text-white text-xs flex items-center gap-1"><ArrowRight size={12} /> אתר</Link>
             <button onClick={onLogout} className="text-white/30 hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> יציאה</button>
           </div>

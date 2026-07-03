@@ -1,0 +1,57 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "audience": {
+      "type": "string",
+      "title": "\u05e7\u05d4\u05dc \u05d9\u05e2\u05d3",
+      "enum": [
+        "coach",
+        "director"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05d4\u05ea\u05e8\u05d0\u05d4",
+      "enum": [
+        "request_new",
+        "request_status",
+        "document_expiring"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "title": "\u05db\u05d5\u05ea\u05e8\u05ea"
+    },
+    "body": {
+      "type": "string",
+      "title": "\u05ea\u05d5\u05db\u05df"
+    },
+    "player_id": {
+      "type": "string",
+      "title": "\u05e9\u05d7\u05e7\u05df \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e9\u05d7\u05e7\u05df"
+    },
+    "request_id": {
+      "type": "string",
+      "title": "\u05d1\u05e7\u05e9\u05d4 \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9\u05ea"
+    },
+    "link_tab": {
+      "type": "string",
+      "title": "\u05dc\u05e9\u05d5\u05e0\u05d9\u05ea \u05d9\u05e2\u05d3 (Deep Link)"
+    },
+    "is_read": {
+      "type": "boolean",
+      "title": "\u05e0\u05e7\u05e8\u05d0",
+      "default": false
+    }
+  },
+  "required": [
+    "audience",
+    "type",
+    "title"
+  ]
+}
