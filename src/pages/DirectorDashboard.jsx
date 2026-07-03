@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
-  Lock, Star, Activity, Calendar, ArrowRight, Filter
+  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
+import FinanceTab from '../components/director/FinanceTab';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -88,6 +89,7 @@ function DashboardContent({ onLogout }) {
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
     { id: 'compliance', label: 'Compliance', icon: Shield },
     { id: 'contracts', label: 'חוזים', icon: FileText },
+    { id: 'finance', label: 'כספים', icon: Wallet },
   ];
 
   return (
@@ -153,6 +155,10 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'contracts' && (
           <ContractsPanel />
+        )}
+
+        {tab === 'finance' && (
+          <FinanceTab />
         )}
       </div>
 
