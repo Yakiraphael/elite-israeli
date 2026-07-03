@@ -1,0 +1,45 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "actor_id": {
+      "type": "string",
+      "title": "\u05de\u05d9 \u05e6\u05e4\u05d4 (User.id)"
+    },
+    "actor_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d1\u05e6\u05e2"
+    },
+    "actor_role": {
+      "type": "string",
+      "title": "\u05ea\u05e4\u05e7\u05d9\u05d3 \u05d4\u05de\u05d1\u05e6\u05e2"
+    },
+    "action": {
+      "type": "string",
+      "title": "\u05e4\u05e2\u05d5\u05dc\u05d4",
+      "enum": [
+        "view_medical",
+        "view_contract",
+        "delete_player",
+        "export_data",
+        "unauthorized_attempt"
+      ]
+    },
+    "player_id": {
+      "type": "string",
+      "title": "\u05e9\u05d7\u05e7\u05df \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9"
+    },
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "details": {
+      "type": "string",
+      "title": "\u05e4\u05e8\u05d8\u05d9\u05dd \u05e0\u05d5\u05e1\u05e4\u05d9\u05dd"
+    }
+  },
+  "required": [
+    "actor_id",
+    "action"
+  ]
+}

@@ -14,10 +14,25 @@ Deno.serve(async (req) => {
     const club = await base44.asServiceRole.entities.Club.get(clubId);
     if (!club) return Response.json({ error: 'Club not found' }, { status: 404 });
 
+    const logAccess = async (action, playerId, details) => {
+      await base44.asServiceRole.entities.AuditLog.create({
+        actor_id: user.id, actor_name: user.full_name, actor_role: user.role,
+        action, player_id: playerId || '', club_id: clubId, details: details || ''
+      });
+    };
+
+    // Coach sees technical data only - medical files and contract documents are redacted
+    const redactForCoach = (player) => ({
+      ...player,
+      medical_info: player.medical_info ? { last_checkup_date: player.medical_info.last_checkup_date } : undefined,
+      contract_status: player.contract_status ? { status: player.contract_status.status } : undefined
+    });
+
     if (user.role === 'admin') {
       const teams = await base44.asServiceRole.entities.Team.filter({ club_id: clubId });
       const players = await base44.asServiceRole.entities.Player.filter({ club_id: clubId });
       const requests = await base44.asServiceRole.entities.Request.filter({ club_id: clubId });
+      await logAccess('view_medical', '', `admin viewed ${players.length} player records`);
       return Response.json({ club, teams, players, requests });
     }
 
@@ -27,7 +42,8 @@ Deno.serve(async (req) => {
       const playerIds = new Set();
       myTeams.forEach(t => (t.roster || []).forEach(r => playerIds.add(r.player_id)));
       const allPlayers = await base44.asServiceRole.entities.Player.filter({ club_id: clubId });
-      const myPlayers = allPlayers.filter(p => playerIds.has(p.user_id));
+      const myPlayers = allPlayers.filter(p => playerIds.has(p.user_id)).map(redactForCoach);
+      await logAccess('view_contract', '', `coach viewed ${myPlayers.length} player records (redacted)`);
       return Response.json({ club, teams: myTeams, players: myPlayers });
     }
 
@@ -44,6 +60,7 @@ Deno.serve(async (req) => {
       return Response.json({ club, players });
     }
 
+    await logAccess('unauthorized_attempt', '', `role ${user.role} attempted club data access`);
     return Response.json({ error: 'Role not permitted' }, { status: 403 });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
