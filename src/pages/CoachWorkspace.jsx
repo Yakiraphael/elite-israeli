@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import Navbar from '../components/Navbar';
+import RoleToolbar from '../components/RoleToolbar';
 import Footer from '../components/Footer';
 import NotificationBell from '../components/NotificationBell';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
-  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock
+  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase
 } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -75,7 +75,7 @@ export default function CoachWorkspace() {
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
-      <Navbar />
+      <RoleToolbar activeLabel="דשבורד מאמן" activeIcon={Briefcase} />
 
       {/* Header */}
       <div className="pt-20 pb-0 border-b border-white/10 bg-[#1B263B]">

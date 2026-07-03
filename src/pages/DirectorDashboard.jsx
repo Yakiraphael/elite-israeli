@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
-  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet
+  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import RoleToolbar from '../components/RoleToolbar';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
@@ -96,6 +97,8 @@ function DashboardContent({ onLogout }) {
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
+      <RoleToolbar activeLabel="דשבורד מנהל מקצועי" activeIcon={Crown} />
+
       {/* Header */}
       <div className="bg-[#1B263B] border-b border-white/10 py-4 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">

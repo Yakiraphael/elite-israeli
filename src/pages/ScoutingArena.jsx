@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import Navbar from '../components/Navbar';
+import RoleToolbar from '../components/RoleToolbar';
 import Footer from '../components/Footer';
 import SocialFloat from '../components/SocialFloat';
 import MentalJourneyChart from '../components/player/MentalJourneyChart';
+import SquadManagementPanel from '../components/squad/SquadManagementPanel';
 import {
   Search, Filter, Star, MapPin, Baby, Building2, ChevronRight, Lock,
-  Heart, X, Send, BarChart3, Globe, Loader2, CheckCircle2, Zap, Shield
+  Heart, X, Send, BarChart3, Globe, Loader2, CheckCircle2, Zap, Shield, Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -16,6 +17,7 @@ const POSITIONS = ['שוער', 'בלם', 'מגן צד', 'קשר מגן', 'קשר
 const CURRENCY_SYMBOLS = { ILS: '₪', EUR: '€', USD: '$', GBP: '£' };
 
 export default function ScoutingArena() {
+  const [tab, setTab] = useState('discover');
   const [search, setSearch] = useState('');
   const [posFilter, setPosFilter] = useState('');
   const [freeAgentOnly, setFreeAgentOnly] = useState(false);
@@ -47,84 +49,108 @@ export default function ScoutingArena() {
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
-      <Navbar />
+      <RoleToolbar activeLabel="דשבורד סקאוטינג" activeIcon={Search} />
 
       {/* Header */}
-      <section className="pt-28 pb-10 px-6 border-b border-white/10">
+      <section className="pt-10 pb-10 px-6 border-b border-white/10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <span className="text-[#D4AF37] text-xs tracking-[0.3em] font-bold uppercase">IEFA Scouting Arena</span>
-            <h1 className="text-white text-3xl md:text-4xl font-black mt-3 mb-2">חיפוש שחקנים</h1>
-            <p className="text-white/40 text-sm">כרטיסי שחקן ויזואליים · גרף מנטלי · הצעה מהירה בלחיצה</p>
+            <h1 className="text-white text-3xl md:text-4xl font-black mt-3 mb-2">{tab === 'discover' ? 'חיפוש שחקנים' : 'ניהול סגל'}</h1>
+            <p className="text-white/40 text-sm">
+              {tab === 'discover' ? 'כרטיסי שחקן ויזואליים · גרף מנטלי · הצעה מהירה בלחיצה' : 'רשימת הסגל ומבנה עמדות'}
+            </p>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex justify-center gap-2 mb-6">
+            <button onClick={() => setTab('discover')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors border ${tab === 'discover' ? 'bg-[#D4AF37] border-[#D4AF37] text-[#0D1B2A]' : 'border-white/15 text-white/60 hover:border-white/30'}`}>
+              <Search size={14} /> חיפוש שחקנים
+            </button>
+            <button onClick={() => setTab('squad')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors border ${tab === 'squad' ? 'bg-[#D4AF37] border-[#D4AF37] text-[#0D1B2A]' : 'border-white/15 text-white/60 hover:border-white/30'}`}>
+              <Users size={14} /> ניהול סגל
+            </button>
           </div>
 
           {/* Search + Filters */}
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30" />
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="חיפוש לפי שם, קבוצה, עיר..."
-                className="w-full bg-[#1B263B] border border-white/15 rounded-lg pr-10 pl-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60 transition-colors"
-              />
+          {tab === 'discover' && (
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30" />
+                <input
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="חיפוש לפי שם, קבוצה, עיר..."
+                  className="w-full bg-[#1B263B] border border-white/15 rounded-lg pr-10 pl-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60 transition-colors"
+                />
+              </div>
+              <select
+                value={posFilter}
+                onChange={e => setPosFilter(e.target.value)}
+                className="bg-[#1B263B] border border-white/15 rounded-lg px-4 py-3 text-white text-sm focus:outline-none"
+              >
+                <option value="">כל העמדות</option>
+                {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <button
+                onClick={() => setFreeAgentOnly(f => !f)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-bold transition-colors border ${freeAgentOnly ? 'bg-green-500/20 border-green-500/40 text-green-400' : 'border-white/15 text-white/60 hover:border-white/30'}`}
+              >
+                <Zap size={14} /> Free Agent בלבד
+              </button>
             </div>
-            <select
-              value={posFilter}
-              onChange={e => setPosFilter(e.target.value)}
-              className="bg-[#1B263B] border border-white/15 rounded-lg px-4 py-3 text-white text-sm focus:outline-none"
-            >
-              <option value="">כל העמדות</option>
-              {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
-            <button
-              onClick={() => setFreeAgentOnly(f => !f)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-bold transition-colors border ${freeAgentOnly ? 'bg-green-500/20 border-green-500/40 text-green-400' : 'border-white/15 text-white/60 hover:border-white/30'}`}
-            >
-              <Zap size={14} /> Free Agent בלבד
-            </button>
-          </div>
+          )}
         </div>
       </section>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Compare bar */}
-        {compareList.length > 0 && (
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-6 bg-[#1B263B] border border-[#D4AF37]/30 rounded-lg p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <BarChart3 size={18} className="text-[#D4AF37]" />
-              <span className="text-white font-bold text-sm">השוואת שחקנים:</span>
-              {compareList.map(p => (
-                <span key={p.id} className="bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full">{p.full_name}</span>
-              ))}
-            </div>
-            {compareList.length === 2 && (
-              <button onClick={() => setSelectedPlayer({ compare: compareList })} className="bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-4 py-2 rounded-sm hover:bg-amber-400 transition-colors">
-                השווה עכשיו
-              </button>
-            )}
-          </motion.div>
+        {tab === 'squad' && (
+          <SquadManagementPanel players={players} onSelect={setSelectedPlayer} />
         )}
 
-        {isLoading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 size={28} className="animate-spin text-[#D4AF37]" />
-          </div>
-        ) : (
+        {tab === 'discover' && (
           <>
-            <p className="text-white/30 text-xs mb-4">{filtered.length} שחקנים נמצאו</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filtered.map(player => (
-                <PlayerCard
-                  key={player.id}
-                  player={player}
-                  onView={() => setSelectedPlayer(player)}
-                  onOffer={() => setShowOffer(player)}
-                  onCompare={() => toggleCompare(player)}
-                  inCompare={!!compareList.find(p => p.id === player.id)}
-                />
-              ))}
-            </div>
+            {/* Compare bar */}
+            {compareList.length > 0 && (
+              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-6 bg-[#1B263B] border border-[#D4AF37]/30 rounded-lg p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <BarChart3 size={18} className="text-[#D4AF37]" />
+                  <span className="text-white font-bold text-sm">השוואת שחקנים:</span>
+                  {compareList.map(p => (
+                    <span key={p.id} className="bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full">{p.full_name}</span>
+                  ))}
+                </div>
+                {compareList.length === 2 && (
+                  <button onClick={() => setSelectedPlayer({ compare: compareList })} className="bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-4 py-2 rounded-sm hover:bg-amber-400 transition-colors">
+                    השווה עכשיו
+                  </button>
+                )}
+              </motion.div>
+            )}
+
+            {isLoading ? (
+              <div className="flex justify-center py-16">
+                <Loader2 size={28} className="animate-spin text-[#D4AF37]" />
+              </div>
+            ) : (
+              <>
+                <p className="text-white/30 text-xs mb-4">{filtered.length} שחקנים נמצאו</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {filtered.map(player => (
+                    <PlayerCard
+                      key={player.id}
+                      player={player}
+                      onView={() => setSelectedPlayer(player)}
+                      onOffer={() => setShowOffer(player)}
+                      onCompare={() => toggleCompare(player)}
+                      inCompare={!!compareList.find(p => p.id === player.id)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
