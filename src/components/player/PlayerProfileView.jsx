@@ -45,6 +45,14 @@ export default function PlayerProfileView({ player, events }) {
   const isMedicalSoon = !isMedicalExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
   const isApproved = player.account_status === 'מאושר';
 
+  // Traffic-light eligibility: green = fit, yellow = renewal due soon, red = non-eligible
+  const medicalLight = !player.medical_certificate_url ? 'red' : isMedicalExpired ? 'red' : isMedicalSoon ? 'yellow' : 'green';
+  const MEDICAL_LIGHT_INFO = {
+    green: { label: 'כשיר לחלוטין', color: '#10B981' },
+    yellow: { label: 'נדרש חידוש בקרוב', color: '#F59E0B' },
+    red: { label: 'לא כשיר', color: '#EF4444' },
+  };
+
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
       {/* Header */}
@@ -100,6 +108,18 @@ export default function PlayerProfileView({ player, events }) {
             </div>
           </div>
           <div className="flex flex-col gap-2">
+            <div className="rounded-lg px-4 py-2 text-center border" style={{ backgroundColor: `${MEDICAL_LIGHT_INFO[medicalLight].color}20`, borderColor: `${MEDICAL_LIGHT_INFO[medicalLight].color}50` }}>
+              <div className="text-xs font-bold flex items-center justify-center gap-1.5" style={{ color: MEDICAL_LIGHT_INFO[medicalLight].color }}>
+                <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: MEDICAL_LIGHT_INFO[medicalLight].color }} /> כשירות רפואית
+              </div>
+              <div className="text-white/50 text-xs">{MEDICAL_LIGHT_INFO[medicalLight].label}</div>
+            </div>
+            {player.overall_rating != null && (
+              <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 rounded-lg px-4 py-2 text-center">
+                <div className="text-[#D4AF37] text-xs font-bold">ציון משוקלל</div>
+                <div className="text-white font-black text-lg">{player.overall_rating}</div>
+              </div>
+            )}
             {player.ifa_ready && (
               <div className="bg-green-500/20 border border-green-500/40 rounded-lg px-4 py-2 text-center">
                 <div className="text-green-400 text-xs font-bold">✓ IFA Ready</div>
@@ -108,6 +128,21 @@ export default function PlayerProfileView({ player, events }) {
             )}
           </div>
         </div>
+
+        {/* Quick actions — at-a-glance, no scroll needed */}
+        {isApproved && (
+          <div className="relative max-w-5xl mx-auto px-6 pb-6 flex flex-wrap gap-2">
+            <button onClick={() => setTab('vault')} className="flex-1 min-w-[140px] bg-white/10 hover:bg-white/15 text-white text-xs font-bold py-2.5 rounded-sm transition-colors">
+              🩺 עדכון רפואי
+            </button>
+            <button onClick={() => setTab('transfers')} className="flex-1 min-w-[140px] bg-white/10 hover:bg-white/15 text-white text-xs font-bold py-2.5 rounded-sm transition-colors">
+              🔄 העברת שחקן
+            </button>
+            <button onClick={() => setTab('vault')} className="flex-1 min-w-[140px] bg-white/10 hover:bg-white/15 text-white text-xs font-bold py-2.5 rounded-sm transition-colors">
+              📄 הצג חוזה
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Tabs */}

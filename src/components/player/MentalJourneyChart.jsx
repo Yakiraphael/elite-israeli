@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { TrendingUp, Brain, Shield, Zap, Target, Lock } from 'lucide-react';
+import { TrendingUp, Brain, Shield, Zap, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const RADAR_KEYS_17 = [
@@ -60,7 +60,7 @@ function buildTimelineData(assessments) {
     }));
 }
 
-export default function MentalJourneyChart({ playerId, isEliteOrg = false, isPro = false }) {
+export default function MentalJourneyChart({ playerId }) {
   const [activePoint, setActivePoint] = useState(null);
 
   const { data: assessments = [], isLoading } = useQuery({
@@ -73,24 +73,6 @@ export default function MentalJourneyChart({ playerId, isEliteOrg = false, isPro
     return (
       <div className="flex items-center justify-center py-12">
         <div className="w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  // Not PRO and not elite org — show locked state
-  if (!isPro && !isEliteOrg) {
-    return (
-      <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-8 text-center">
-        <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto mb-4">
-          <Lock size={22} className="text-[#D4AF37]" />
-        </div>
-        <h3 className="text-white font-black text-base mb-2">גרף המנטלי — PRO בלבד</h3>
-        <p className="text-white/40 text-sm mb-4">
-          ה-17 מדדי החוסן המנטלי + מסע הגדילה ההיסטורי חשוף למועדוני PRO ו-ENTERPRISE בלבד.
-        </p>
-        <a href="/pricing" className="inline-block bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-5 py-2 rounded-sm hover:bg-amber-400 transition-colors">
-          שדרג לפרימיום
-        </a>
       </div>
     );
   }
