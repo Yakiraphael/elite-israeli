@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Database, ShieldCheck, TrendingDown, Target, ArrowLeft, Baby, Building2, Users } from 'lucide-react';
+import { Brain, Database, ShieldCheck, TrendingDown, Target, Baby, Building2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SecurityBadge from './SecurityBadge';
+import PreRegistrationModal from './PreRegistrationModal';
 
 const ADVANTAGES = [
   {
@@ -36,7 +38,7 @@ const USER_TYPES = [
     title: 'שחקן / נוער',
     desc: 'כרטיס Elite ID, פרופיל ביצועים, מעקב קריירה, בקשות',
     cta: 'הרשמה לשחקן',
-    href: '/onboarding',
+    role: 'שחקן',
     color: 'border-blue-500/30 hover:border-blue-400/60',
     iconColor: 'text-blue-400',
     bg: 'bg-blue-500/10',
@@ -46,7 +48,7 @@ const USER_TYPES = [
     title: 'מועדון / סקאוטר',
     desc: 'ניהול סגל, הצעות העברה, מעקב רפואי וחוזי',
     cta: 'רישום מועדון',
-    href: '/club-registration',
+    role: 'סקאוטר / מועדון',
     color: 'border-[#D4AF37]/30 hover:border-[#D4AF37]/70',
     iconColor: 'text-[#D4AF37]',
     bg: 'bg-[#D4AF37]/10',
@@ -57,7 +59,7 @@ const USER_TYPES = [
     title: 'הורה / אפוטרופוס',
     desc: 'אישורי OTP, מסמכים, מעקב אחר הבן/הבת בצורה בטוחה',
     cta: 'כניסה כהורה',
-    href: '/onboarding',
+    role: 'הורה',
     color: 'border-green-500/30 hover:border-green-400/60',
     iconColor: 'text-green-400',
     bg: 'bg-green-500/10',
@@ -65,6 +67,8 @@ const USER_TYPES = [
 ];
 
 export default function IEFAPlatformSection() {
+  const [preRegRole, setPreRegRole] = useState(null);
+
   return (
     <section id="iefa-platform" className="py-24 md:py-32 relative overflow-hidden bg-[#0D1B2A]" dir="rtl">
       <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-[#D4AF37]/5 blur-3xl" />
@@ -137,10 +141,10 @@ export default function IEFAPlatformSection() {
                 </div>
                 <h4 className="text-white font-black text-lg mb-1">{ut.title}</h4>
                 <p className="text-white/50 text-xs leading-relaxed mb-5">{ut.desc}</p>
-                <Link to={ut.href}
-                  className={`block text-center font-black text-sm py-3 rounded-sm transition-colors ${ut.featured ? 'bg-[#D4AF37] text-[#0D1B2A] hover:bg-amber-400' : 'border border-white/20 text-white hover:bg-white/5'}`}>
+                <button onClick={() => setPreRegRole(ut.role)}
+                  className={`w-full text-center font-black text-sm py-3 rounded-sm transition-colors ${ut.featured ? 'bg-[#D4AF37] text-[#0D1B2A] hover:bg-amber-400' : 'border border-white/20 text-white hover:bg-white/5'}`}>
                   {ut.cta} →
-                </Link>
+                </button>
               </motion.div>
             ))}
           </div>
@@ -163,9 +167,6 @@ export default function IEFAPlatformSection() {
               </div>
             </div>
             <div className="flex flex-col gap-3 flex-shrink-0">
-              <Link to="/transfer-hub" className="font-body font-bold text-sm bg-[#D4AF37] text-[#0D1B2A] px-7 py-3 rounded-sm hover:bg-amber-400 transition-colors flex items-center gap-2">
-                הגש הצעת העברה <ArrowLeft size={16} />
-              </Link>
               <Link to="/pricing" className="font-body font-bold text-sm border border-white/20 text-white/70 px-7 py-3 rounded-sm hover:bg-white/5 transition-colors text-center">
                 מודל עסקי
               </Link>
@@ -173,6 +174,8 @@ export default function IEFAPlatformSection() {
           </div>
         </motion.div>
       </div>
+
+      {preRegRole && <PreRegistrationModal initialRole={preRegRole} onClose={() => setPreRegRole(null)} />}
     </section>
   );
 }

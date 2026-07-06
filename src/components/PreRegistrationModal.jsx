@@ -5,8 +5,8 @@ import { base44 } from '@/api/base44Client';
 
 const ROLE_OPTIONS = ['שחקן', 'מאמן', 'הורה', 'סקאוטר / מועדון', 'מנהל מקצועי', 'אחר'];
 
-export default function PreRegistrationModal({ onClose }) {
-  const [form, setForm] = useState({ full_name: '', email: '', phone: '', role_interest: '', club_name: '', message: '' });
+export default function PreRegistrationModal({ onClose, initialRole = '' }) {
+  const [form, setForm] = useState({ full_name: '', email: '', phone: '', role_interest: initialRole, club_name: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -39,7 +39,7 @@ export default function PreRegistrationModal({ onClose }) {
         {sent ? (
           <div className="text-center py-6">
             <CheckCircle2 size={36} className="mx-auto mb-4 text-green-400" />
-            <p className="text-white text-sm font-bold">תודה! נציג הצוות שלנו יצור איתך קשר לפני ההשקה.</p>
+            <p className="text-white text-sm font-bold">תודה שנרשמת למערכת, ברגע שהמערכת תצא נודיע לך אפילו לפני :)</p>
             <button onClick={onClose} className="mt-6 text-sm font-bold text-[#D4AF37]">סגור</button>
           </div>
         ) : (
