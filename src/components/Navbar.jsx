@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { label: 'בית', href: '#hero' },
-  { label: 'המשימה', href: '#mission' },
-  { label: 'יעדים', href: '#goals' },
-  { label: 'הצוות', href: '#team' },
-  { label: 'מפת הדרכים', href: '#roadmap' },
-  { label: 'מערכת העברות', href: '#transfer-hub' },
-  { label: 'שאלות נפוצות', href: '/faq' },
-  { label: 'צרו קשר', href: '#contact' },
-];
+{ label: 'בית', href: '#hero' },
+{ label: 'המשימה', href: '#mission' },
+{ label: 'יעדים', href: '#goals' },
+{ label: 'הצוות', href: '#team' },
+{ label: 'מפת הדרכים', href: '#roadmap' },
+{ label: "IEFA", href: '#transfer-hub' },
+{ label: 'שאלות נפוצות', href: '/faq' },
+{ label: 'צרו קשר', href: '#contact' }];
+
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,7 +26,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const handleNav = (href) => {
     setOpen(false);
-    if (href.startsWith('/')) { navigate(href); return; }
+    if (href.startsWith('/')) {navigate(href);return;}
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -39,22 +39,22 @@ export default function Navbar() {
 
         {/* Desktop */}
         <ul className="hidden md:flex items-center gap-8">
-          {navLinks.map(link => (
-            <li key={link.label}>
+          {navLinks.map((link) =>
+          <li key={link.label}>
               <button
-                onClick={() => handleNav(link.href)}
-                className={`font-body text-sm font-semibold transition-colors duration-200 tracking-wide ${scrolled ? 'text-navy/70 hover:text-gold' : 'text-cream/80 hover:text-gold'}`}
-              >
+              onClick={() => handleNav(link.href)}
+              className={`font-body text-sm font-semibold transition-colors duration-200 tracking-wide text-[hsl(var(--foreground))] ${scrolled ? "hover:text-gold" : 'text-cream/80 hover:text-gold'}`}>
+              
                 {link.label}
               </button>
             </li>
-          ))}
+          )}
         </ul>
 
         <button
           onClick={() => handleNav('#contact')}
-          className={`hidden md:block font-body text-sm font-bold px-5 py-2 rounded-sm transition-colors duration-200 tracking-wider ${scrolled ? 'bg-navy text-white hover:bg-navy-light' : 'bg-gold text-white hover:bg-gold-light'}`}
-        >
+          className={`hidden md:block font-body text-sm font-bold px-5 py-2 rounded-sm transition-colors duration-200 tracking-wider ${scrolled ? 'bg-navy text-white hover:bg-navy-light' : 'bg-gold text-white hover:bg-gold-light'}`}>
+          
           הצטרפו אלינו
         </button>
 
@@ -64,25 +64,25 @@ export default function Navbar() {
         </button>
       </div>
 
-      {open && (
-        <div className="md:hidden bg-white border-t border-slate-100 shadow-lg px-6 py-6 space-y-4" dir="rtl">
-          {navLinks.map(link => (
-            <button
-              key={link.label}
-              onClick={() => handleNav(link.href)}
-              className="block w-full text-right font-body text-base font-semibold text-navy/80 hover:text-gold transition-colors py-2"
-            >
+      {open &&
+      <div className="md:hidden bg-white border-t border-slate-100 shadow-lg px-6 py-6 space-y-4" dir="rtl">
+          {navLinks.map((link) =>
+        <button
+          key={link.label}
+          onClick={() => handleNav(link.href)}
+          className="block w-full text-right font-body text-base font-semibold text-navy/80 hover:text-gold transition-colors py-2">
+          
               {link.label}
             </button>
-          ))}
+        )}
           <button
-            onClick={() => handleNav('#contact')}
-            className="block w-full text-center font-body text-sm font-bold bg-navy text-white px-5 py-3 rounded-sm mt-4"
-          >
+          onClick={() => handleNav('#contact')}
+          className="block w-full text-center font-body text-sm font-bold bg-navy text-white px-5 py-3 rounded-sm mt-4">
+          
             הצטרפו אלינו
           </button>
         </div>
-      )}
-    </nav>
-  );
+      }
+    </nav>);
+
 }
