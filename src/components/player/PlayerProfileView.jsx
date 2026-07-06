@@ -18,6 +18,9 @@ import PlayerOffersPanel from './PlayerOffersPanel';
 import CertificatesPanel from './CertificatesPanel';
 import VideoHighlightsGallery from './VideoHighlightsGallery';
 import DynamicPlayerCard from './DynamicPlayerCard';
+import PersonalInfoPanel from './PersonalInfoPanel';
+import CVComparisonPanel from './CVComparisonPanel';
+import ContractsQuickAccess from './ContractsQuickAccess';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -173,24 +176,7 @@ export default function PlayerProfileView({ player, events }) {
           {tab === 'showcase' && (
             <motion.div key="showcase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1 space-y-4">
-                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
-                  <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-4">נתוני שחקן</h3>
-                  <div className="space-y-2.5">
-                    {[
-                      { label: '⚡ גובה', value: player.height_cm ? `${player.height_cm} ס״מ` : null },
-                      { label: '💪 משקל', value: player.weight_kg ? `${player.weight_kg} ק״ג` : null },
-                      { label: '📅 ניסיון', value: player.experience_years ? `${player.experience_years} שנים` : null },
-                      { label: '👟 רגל', value: player.dominant_foot },
-                      { label: '🎯 עמדה ב', value: player.secondary_position },
-                      { label: '📄 סיום חוזה', value: player.contract_end_date },
-                    ].filter(i => i.value).map(item => (
-                      <div key={item.label} className="flex justify-between text-xs">
-                        <span className="text-white/60">{item.label}</span>
-                        <span className="text-white font-semibold">{item.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <PersonalInfoPanel player={player} />
 
                 {(player.elite_id || player.stats) && (
                   <DynamicPlayerCard player={player} />
@@ -199,7 +185,7 @@ export default function PlayerProfileView({ player, events }) {
 
               <div className="md:col-span-2 space-y-4">
                 {/* Video highlights */}
-                <VideoHighlightsGallery links={player.media_links || []} />
+                <VideoHighlightsGallery player={player} />
 
                 {/* Unified career timeline — journey + Transfermarkt + in-system transfers */}
                 <UnifiedTimeline player={player} />
@@ -229,6 +215,8 @@ export default function PlayerProfileView({ player, events }) {
           {/* 2. VAULT */}
           {tab === 'vault' && isApproved && (
             <motion.div key="vault" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl space-y-4">
+              <ContractsQuickAccess playerId={player.id} />
+
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
                 <h3 className="text-white font-black text-base mb-1">🔐 הכספת המשפטית</h3>
                 <p className="text-white/40 text-xs mb-5">כל המסמכים הרגולטוריים שלך במקום אחד מאובטח</p>
@@ -349,7 +337,10 @@ export default function PlayerProfileView({ player, events }) {
                 </div>
               </div>
 
-              <CertificatesPanel player={player} />
+              <div className="space-y-4">
+                <CVComparisonPanel player={player} />
+                <CertificatesPanel player={player} />
+              </div>
             </motion.div>
           )}
 
