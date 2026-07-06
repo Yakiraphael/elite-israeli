@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Send, FileText, ExternalLink } from 'lucide-react';
+import { Loader2, Send, FileText, ShieldAlert, CreditCard, Gavel } from 'lucide-react';
+import TransferPipelineStepper from './TransferPipelineStepper';
 
 const STATUSES = [
   'ממתין לאישור הנהלה',
-  'מאושר - ממתין לאפוטרופוס',
+  'מאושר — ממתין לאפוטרופוס',
+  'מאושר — ממתין לשחקן (בוגר)',
+  'ממתין לאימות תשלום (בוגר)',
+  'ממתין לאימות התאחדות (IFA)',
   'אושרה סופית',
   'נדחתה',
   'נסגרה',
@@ -13,52 +17,84 @@ const STATUSES = [
 
 const STATUS_COLORS = {
   'ממתין לאישור הנהלה': 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30',
-  'מאושר - ממתין לאפוטרופוס': 'text-blue-400 bg-blue-400/10 border-blue-400/30',
+  'מאושר — ממתין לאפוטרופוס': 'text-blue-400 bg-blue-400/10 border-blue-400/30',
+  'מאושר — ממתין לשחקן (בוגר)': 'text-blue-400 bg-blue-400/10 border-blue-400/30',
+  'ממתין לאימות תשלום (בוגר)': 'text-purple-400 bg-purple-400/10 border-purple-400/30',
+  'ממתין לאימות התאחדות (IFA)': 'text-cyan-400 bg-cyan-400/10 border-cyan-400/30',
   'אושרה סופית': 'text-green-400 bg-green-400/10 border-green-400/30',
   'נדחתה': 'text-red-400 bg-red-400/10 border-red-400/30',
   'נסגרה': 'text-white/40 bg-white/5 border-white/20',
 };
 
+const PAYMENT_COLORS = { PENDING: 'text-yellow-400', PAID: 'text-green-400', REFUNDED: 'text-red-400', 'N/A': 'text-white/30' };
+const IFA_COLORS = { 'Awaiting Submission': 'text-yellow-400', 'Pending IFA Processing': 'text-cyan-400', 'Verified & Live': 'text-green-400', 'N/A': 'text-white/30' };
+
 export default function TransfersManager() {
   const [expanded, setExpanded] = useState(null);
+  const [filter, setFilter] = useState('all');
   const { data: proposals = [], isLoading } = useQuery({
     queryKey: ['admin-transfers'],
     queryFn: () => base44.entities.TransferProposal.list('-created_date', 100),
   });
 
   const queryClient = useQueryClient();
-  const updateStatus = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.TransferProposal.update(id, { status }),
+  const updateProposal = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.TransferProposal.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-transfers'] }),
   });
 
+  const filtered = useMemo(() => {
+    if (filter === 'all') return proposals;
+    if (filter === 'active') return proposals.filter(p => !['אושרה סופית', 'נדחתה', 'נסגרה'].includes(p.status));
+    if (filter === 'ifa') return proposals.filter(p => p.status === 'ממתין לאימות התאחדות (IFA)');
+    if (filter === 'done') return proposals.filter(p => p.status === 'אושרה סופית');
+    return proposals;
+  }, [proposals, filter]);
+
+  const handleContractValueChange = (p, value) => {
+    const contract_value = Number(value) || 0;
+    updateProposal.mutate({ id: p.id, data: { contract_value, iefa_commission_fee: Math.round(contract_value * 0.05 * 100) / 100 } });
+  };
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-white font-black text-xl">הצעות העברה</h2>
-        <span className="text-white/40 text-xs">{proposals.length} הצעות</span>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <h2 className="text-white font-black text-xl">מרכז ניהול העברות · תאימות רגולטורית</h2>
+        <span className="text-white/40 text-xs">{filtered.length} מתוך {proposals.length} הצעות</span>
+      </div>
+
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {[
+          { id: 'all', label: 'הכל' },
+          { id: 'active', label: 'בתהליך' },
+          { id: 'ifa', label: 'ממתין ל-IFA' },
+          { id: 'done', label: 'אושרו סופית' },
+        ].map(f => (
+          <button key={f.id} onClick={() => setFilter(f.id)}
+            className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${filter === f.id ? 'bg-[#D4AF37] text-[#0D1B2A] border-[#D4AF37]' : 'text-white/50 border-white/15 hover:text-white'}`}>
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
         <div className="text-center py-10"><Loader2 className="animate-spin text-[#D4AF37] mx-auto" /></div>
-      ) : proposals.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <Send size={28} className="text-white/20 mx-auto mb-3" />
-          <div className="text-white/30 text-sm">אין הצעות העברה עדיין</div>
+          <div className="text-white/30 text-sm">אין הצעות העברה תואמות</div>
         </div>
       ) : (
         <div className="space-y-3">
-          {proposals.map(p => (
+          {filtered.map(p => (
             <div key={p.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-white font-bold text-sm">{p.club_name}</span>
-                    {p.status && (
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLORS[p.status] || STATUS_COLORS['ממתין לאישור הנהלה']}`}>
-                        {p.status}
-                      </span>
-                    )}
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${p.is_adult ? 'text-white/60 bg-white/5 border-white/20' : 'text-amber-300 bg-amber-500/10 border-amber-500/30'}`}>
+                      {p.is_adult ? 'בוגר' : 'נוער — נדרש אפוטרופוס'}
+                    </span>
                   </div>
                   <div className="text-white/50 text-xs mt-1">{p.contact_name}</div>
                   <div className="text-[#D4AF37] text-xs mt-1">
@@ -66,6 +102,9 @@ export default function TransfersManager() {
                   </div>
                   <div className="text-white/40 text-xs mt-0.5">
                     {new Date(p.created_date).toLocaleDateString('he-IL')}
+                  </div>
+                  <div className="mt-3">
+                    <TransferPipelineStepper status={p.status} isAdult={p.is_adult} />
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -83,7 +122,7 @@ export default function TransfersManager() {
               </div>
 
               {expanded === p.id && (
-                <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+                <div className="mt-4 pt-4 border-t border-white/10 space-y-4">
                   {p.proposal_details && (
                     <div>
                       <div className="text-[#D4AF37] text-xs font-bold mb-1">פירוט ההצעה</div>
@@ -96,11 +135,55 @@ export default function TransfersManager() {
                       {p.contact_phone && <span dir="ltr">{p.contact_phone}</span>}
                     </div>
                   )}
-                  <div className="flex items-center gap-2">
-                    <span className="text-white/40 text-xs">סטטוס:</span>
+
+                  {/* Regulatory & compliance grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {p.is_adult && (
+                      <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-2"><CreditCard size={11} /> שווי חוזה ועמלת IEFA (5%)</div>
+                        <input
+                          type="number"
+                          value={p.contract_value || ''}
+                          onChange={e => handleContractValueChange(p, e.target.value)}
+                          placeholder="שווי חוזה שנתי (₪)"
+                          className="w-full bg-transparent border border-white/15 rounded-sm px-2 py-1.5 text-white text-xs focus:outline-none focus:border-[#D4AF37]/60 mb-1.5"
+                        />
+                        <div className="text-white/60 text-[10px]">עמלה מחושבת: <span className="text-[#D4AF37] font-bold">₪{(p.iefa_commission_fee || 0).toLocaleString('he-IL')}</span></div>
+                      </div>
+                    )}
+
+                    {p.is_adult && (
+                      <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-2"><ShieldAlert size={11} /> סטטוס תשלום</div>
+                        <select value={p.payment_status || 'N/A'} onChange={e => updateProposal.mutate({ id: p.id, data: { payment_status: e.target.value } })}
+                          className={`w-full text-xs font-bold px-2 py-1.5 rounded-sm border border-white/15 bg-transparent focus:outline-none cursor-pointer ${PAYMENT_COLORS[p.payment_status || 'N/A']}`}>
+                          {['N/A', 'PENDING', 'PAID', 'REFUNDED'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
+                        </select>
+                        {p.payment_transaction_id && <div className="text-white/30 text-[10px] mt-1.5 truncate">אסמכתא: {p.payment_transaction_id}</div>}
+                      </div>
+                    )}
+
+                    <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3">
+                      <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-2"><Gavel size={11} /> אימות התאחדות (IFA / FIFA)</div>
+                      <select value={p.ifa_validation_status || 'N/A'} onChange={e => updateProposal.mutate({ id: p.id, data: { ifa_validation_status: e.target.value } })}
+                        className={`w-full text-xs font-bold px-2 py-1.5 rounded-sm border border-white/15 bg-transparent focus:outline-none cursor-pointer ${IFA_COLORS[p.ifa_validation_status || 'N/A']}`}>
+                        {['N/A', 'Awaiting Submission', 'Pending IFA Processing', 'Verified & Live'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
+                      </select>
+                    </div>
+
+                    {!p.is_adult && (
+                      <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3 flex items-center justify-between">
+                        <span className="text-white/40 text-[10px] font-bold">אימות OTP אפוטרופוס</span>
+                        <span className={`text-xs font-bold ${p.guardian_otp_verified ? 'text-green-400' : 'text-red-400'}`}>{p.guardian_otp_verified ? '✓ אומת' : '✗ טרם אומת'}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="text-white/40 text-xs">שלב תהליך:</span>
                     <select
                       value={p.status || STATUSES[0]}
-                      onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value })}
+                      onChange={e => updateProposal.mutate({ id: p.id, data: { status: e.target.value } })}
                       className="text-xs font-bold px-3 py-1.5 rounded-full border border-white/15 bg-[#0D1B2A] text-white focus:outline-none cursor-pointer"
                     >
                       {STATUSES.map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
