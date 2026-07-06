@@ -7,6 +7,7 @@ import IEFAPlatformSection from '../components/IEFAPlatformSection';
 import EliteIdShowcase from '../components/EliteIdShowcase';
 import GoalsSection from '../components/GoalsSection';
 import TransferHubSection from '../components/TransferHubSection';
+import ROISection from '../components/ROISection';
 import TeamSection from '../components/TeamSection';
 import RoadmapSection from '../components/RoadmapSection';
 import ContactSection from '../components/ContactSection';
@@ -24,6 +25,7 @@ export default function Home() {
       <IEFAPlatformSection />
       <EliteIdShowcase />
       <GoalsSection />
+      <ROISection />
       <TeamSection />
       <RoadmapSection />
       <TransferHubSection />

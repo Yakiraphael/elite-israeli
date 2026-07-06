@@ -1,0 +1,53 @@
+{
+  "name": "PreRegistration",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05de\u05dc\u05d0"
+    },
+    "email": {
+      "type": "string",
+      "title": "\u05de\u05d9\u05d9\u05dc"
+    },
+    "phone": {
+      "type": "string",
+      "title": "\u05d8\u05dc\u05e4\u05d5\u05df"
+    },
+    "role_interest": {
+      "type": "string",
+      "title": "\u05ea\u05d7\u05d5\u05dd \u05e2\u05e0\u05d9\u05d9\u05df",
+      "enum": [
+        "\u05e9\u05d7\u05e7\u05df",
+        "\u05de\u05d0\u05de\u05df",
+        "\u05d4\u05d5\u05e8\u05d4",
+        "\u05e1\u05e7\u05d0\u05d5\u05d8\u05e8 / \u05de\u05d5\u05e2\u05d3\u05d5\u05df",
+        "\u05de\u05e0\u05d4\u05dc \u05de\u05e7\u05e6\u05d5\u05e2\u05d9",
+        "\u05d0\u05d7\u05e8"
+      ]
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05de\u05d5\u05e2\u05d3\u05d5\u05df (\u05d0\u05dd \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9)"
+    },
+    "message": {
+      "type": "string",
+      "title": "\u05d4\u05d5\u05d3\u05e2\u05d4 \u05e0\u05d5\u05e1\u05e4\u05ea"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1",
+      "enum": [
+        "\u05d7\u05d3\u05e9",
+        "\u05e0\u05d5\u05e6\u05e8 \u05e7\u05e9\u05e8",
+        "\u05d4\u05d5\u05de\u05e8 \u05dc\u05dc\u05e7\u05d5\u05d7"
+      ],
+      "default": "\u05d7\u05d3\u05e9"
+    }
+  },
+  "required": [
+    "full_name",
+    "email",
+    "role_interest"
+  ]
+}

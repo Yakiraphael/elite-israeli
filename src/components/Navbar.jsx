@@ -8,8 +8,7 @@ const navLinks = [
   { label: 'יעדים', href: '#goals' },
   { label: 'הצוות', href: '#team' },
   { label: 'מפת הדרכים', href: '#roadmap' },
-  { label: 'מערכת העברות', href: '/transfer-portal' },
-  { label: 'תמחור', href: '/pricing' },
+  { label: 'מערכת העברות', href: '#transfer-hub' },
   { label: 'שאלות נפוצות', href: '/faq' },
   { label: 'צרו קשר', href: '#contact' },
 ];

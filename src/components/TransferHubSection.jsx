@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ShieldCheck, FileText, Users, CheckCircle2, ArrowLeft, CreditCard, Baby, Star, MessageSquare } from 'lucide-react';
+import { ShieldCheck, FileText, Users, CheckCircle2, ArrowLeft, CreditCard, Baby, Star, MessageSquare, Clock } from 'lucide-react';
+import PreRegistrationModal from './PreRegistrationModal';
 
 const YOUTH_STEPS = [
   { icon: FileText, title: 'המועדון מגיש הצעה', desc: 'הצעת הצטרפות + מסמך חוזה PDF רשמי נשלחים דרך המערכת.' },
@@ -19,6 +19,7 @@ const ADULT_STEPS = [
 
 export default function TransferHubSection() {
   const [tab, setTab] = useState('youth');
+  const [showModal, setShowModal] = useState(false);
   const steps = tab === 'youth' ? YOUTH_STEPS : ADULT_STEPS;
 
   return (
@@ -27,9 +28,16 @@ export default function TransferHubSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/30 bg-gold/5 mb-4"
+          >
+            <Clock size={13} className="text-gold" />
+            <span className="font-body text-xs font-bold text-gold">בקרוב · בשלבי פיתוח מתקדמים</span>
+          </motion.div>
           <motion.span
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-            className="font-body text-xs tracking-[0.3em] text-gold font-bold uppercase"
+            className="font-body text-xs tracking-[0.3em] text-gold font-bold uppercase block"
           >
             Transfer Hub · מערכת העברות IEFA
           </motion.span>
@@ -37,7 +45,7 @@ export default function TransferHubSection() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
             className="font-display text-4xl md:text-5xl font-black text-navy mt-4 mb-4"
           >
-            הגשת הצעה רשמית <span className="gold-gradient">לקבוצות וסקאוטים</span>
+            מערכת ההעברות של <span className="gold-gradient">עילית ישראלית</span>
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ delay: 0.35 }}
@@ -47,7 +55,7 @@ export default function TransferHubSection() {
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
             className="font-body text-sm text-slate-600 max-w-3xl mx-auto leading-relaxed"
           >
-            מערכת הליגות וההעברות IEFA — נוער ובוגרים. זרימת עבודה מבוקרת, מאובטחת ואוטומטית לכל סוגי ההעברות.
+            אנחנו בונים זרימת עבודה מבוקרת, מאובטחת ואוטומטית לכל סוגי ההעברות — נוער ובוגרים. הצטרפו לרשימת ההמתנה כדי לקבל גישה מוקדמת עם ההשקה.
           </motion.p>
         </div>
 
@@ -136,15 +144,17 @@ export default function TransferHubSection() {
                 </p>
               </div>
             </div>
-            <Link
-              to="/scouting"
+            <button
+              onClick={() => setShowModal(true)}
               className="font-body font-bold text-sm bg-gold text-white px-8 py-3.5 rounded-sm hover:bg-gold-light transition-colors flex items-center gap-2 flex-shrink-0"
             >
-              הגשת הצעה <ArrowLeft size={16} />
-            </Link>
+              הצטרפו לרשימת ההמתנה <ArrowLeft size={16} />
+            </button>
           </div>
         </motion.div>
       </div>
+
+      {showModal && <PreRegistrationModal onClose={() => setShowModal(false)} />}
     </section>
   );
 }
