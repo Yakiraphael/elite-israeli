@@ -2,6 +2,7 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import MissionSection from '../components/MissionSection';
 import ImpactStats from '../components/ImpactStats';
+import ProgramsSection from '../components/ProgramsSection';
 import BubblesGallery from '../components/BubblesGallery';
 import IEFAPlatformSection from '../components/IEFAPlatformSection';
 import EliteIdShowcase from '../components/EliteIdShowcase';
@@ -21,6 +22,7 @@ export default function Home() {
       <HeroSection />
       <MissionSection />
       <ImpactStats />
+      <ProgramsSection />
       <BubblesGallery />
       <IEFAPlatformSection />
       <EliteIdShowcase />
