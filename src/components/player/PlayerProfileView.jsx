@@ -13,6 +13,8 @@ import MentalJourneyChart from './MentalJourneyChart';
 import TransferTrackerPanel from './TransferTrackerPanel';
 import RequestHub from './RequestHub';
 import TransfermarktCareerPanel from './TransfermarktCareerPanel';
+import UnifiedTimeline from './UnifiedTimeline';
+import PlayerOffersPanel from './PlayerOffersPanel';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -102,8 +104,8 @@ export default function PlayerProfileView({ player, events }) {
               <span className="bg-[#D4AF37] text-[#0D1B2A] text-xs font-black px-3 py-1 rounded-full">{player.position}</span>
               <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">{posInfo.role}</span>
               {player.team_name && <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">{player.team_name}</span>}
-              {player.city && <span className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={10} />{player.city}</span>}
-              <span className={`text-xs font-black px-3 py-1 rounded-full ${player.is_free_agent ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/50'}`}>
+              {player.city && <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={10} />{player.city}</span>}
+              <span className={`text-xs font-black px-3 py-1 rounded-full ${player.is_free_agent ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/70'}`}>
                 {player.is_free_agent ? '🟢 Free Agent' : '⚪ Under Contract'}
               </span>
             </div>
@@ -113,7 +115,7 @@ export default function PlayerProfileView({ player, events }) {
               <div className="text-xs font-bold flex items-center justify-center gap-1.5" style={{ color: MEDICAL_LIGHT_INFO[medicalLight].color }}>
                 <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: MEDICAL_LIGHT_INFO[medicalLight].color }} /> כשירות רפואית
               </div>
-              <div className="text-white/50 text-xs">{MEDICAL_LIGHT_INFO[medicalLight].label}</div>
+              <div className="text-white/70 text-xs">{MEDICAL_LIGHT_INFO[medicalLight].label}</div>
             </div>
             {player.overall_rating != null && (
               <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 rounded-lg px-4 py-2 text-center">
@@ -153,7 +155,7 @@ export default function PlayerProfileView({ player, events }) {
             const locked = !isApproved && RESTRICTED_TABS.includes(t.id);
             return (
               <button key={t.id} onClick={() => !locked && setTab(t.id)} disabled={locked}
-                className={`px-4 py-4 text-xs font-bold whitespace-nowrap transition-colors border-b-2 flex items-center gap-1.5 ${locked ? 'text-white/20 border-transparent cursor-not-allowed' : tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
+                className={`px-4 py-4 text-xs font-bold whitespace-nowrap transition-colors border-b-2 flex items-center gap-1.5 ${locked ? 'text-white/25 border-transparent cursor-not-allowed' : tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 border-transparent hover:text-white/90'}`}>
                 {t.label} {locked && <Lock size={10} />}
               </button>
             );
@@ -180,7 +182,7 @@ export default function PlayerProfileView({ player, events }) {
                       { label: '📄 סיום חוזה', value: player.contract_end_date },
                     ].filter(i => i.value).map(item => (
                       <div key={item.label} className="flex justify-between text-xs">
-                        <span className="text-white/40">{item.label}</span>
+                        <span className="text-white/60">{item.label}</span>
                         <span className="text-white font-semibold">{item.value}</span>
                       </div>
                     ))}
@@ -214,41 +216,21 @@ export default function PlayerProfileView({ player, events }) {
                   </div>
                 )}
 
-                {/* Elite Journey timeline */}
-                {player.elite_journey?.length > 0 && (
-                  <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
-                    <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-4">Career Timeline</h3>
-                    <div className="space-y-3">
-                      {player.elite_journey.map((ev, i) => (
-                        <div key={i} className="flex gap-3">
-                          <div className="flex flex-col items-center">
-                            <div className="w-2 h-2 rounded-full bg-[#D4AF37] mt-1 flex-shrink-0" />
-                            {i < player.elite_journey.length - 1 && <div className="w-px flex-1 bg-white/10 mt-1" />}
-                          </div>
-                          <div className="pb-3">
-                            <div className="text-white font-bold text-sm">{ev.title}</div>
-                            <div className="text-[#D4AF37] text-[10px]">{ev.date} · {ev.category}</div>
-                            {ev.description && <p className="text-white/50 text-xs mt-1">{ev.description}</p>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Unified career timeline — journey + Transfermarkt + in-system transfers */}
+                <UnifiedTimeline player={player} />
 
                 {/* Mental chart */}
                 <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
                   <MentalJourneyChart
                     playerId={player.id}
                     isEliteOrg={!!player.elite_id}
-                    isPro={player.subscription_tier === 'Elite Pro'}
                   />
                 </div>
 
                 {player.achievements && (
                   <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
                     <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2"><Trophy size={12} /> הישגים</h3>
-                    <p className="text-white/70 text-sm leading-relaxed">{player.achievements}</p>
+                    <p className="text-white/80 text-sm leading-relaxed">{player.achievements}</p>
                   </div>
                 )}
 
@@ -394,7 +376,8 @@ export default function PlayerProfileView({ player, events }) {
 
           {/* 4. TRANSFER HUB */}
           {tab === 'transfers' && isApproved && (
-            <motion.div key="transfers" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <motion.div key="transfers" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <PlayerOffersPanel player={player} />
               <TransferTrackerPanel playerId={player.id} playerName={player.full_name} />
             </motion.div>
           )}

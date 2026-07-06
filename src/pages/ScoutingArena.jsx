@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import SocialFloat from '../components/SocialFloat';
 import MentalJourneyChart from '../components/player/MentalJourneyChart';
 import SquadManagementPanel from '../components/squad/SquadManagementPanel';
+import DetailedOfferModal from '../components/scouting/DetailedOfferModal';
 import {
   Search, Filter, Star, MapPin, Baby, Building2, ChevronRight, Lock,
   Heart, X, Send, BarChart3, Globe, Loader2, CheckCircle2, Zap, Shield, Users
@@ -167,7 +168,7 @@ export default function ScoutingArena() {
 
       {/* Offer modal */}
       {showOffer && (
-        <QuickOfferModal player={showOffer} onClose={() => setShowOffer(null)} />
+        <DetailedOfferModal player={showOffer} onClose={() => setShowOffer(null)} />
       )}
 
       <Footer />
@@ -320,70 +321,6 @@ function CompareModal({ players, onClose }) {
               </div>
             ))}
           </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function QuickOfferModal({ player, onClose }) {
-  const [form, setForm] = useState({ salary: '', years: '', currency: 'ILS', bonus: '' });
-  const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
-
-  const handleSend = async () => {
-    setSending(true);
-    await base44.entities.TransferProposal.create({
-      player_elite_id: player.elite_id || player.id,
-      player_name: player.full_name,
-      club_name: 'מועדון',
-      contact_name: 'נציג מועדון',
-      proposal_details: `שכר: ${CURRENCY_SYMBOLS[form.currency]}${form.salary}/חודש · ${form.years} שנים${form.bonus ? ` · בונוס: ${form.bonus}` : ''}`,
-      is_adult: player.is_adult,
-    });
-    setSending(false);
-    setSent(true);
-  };
-
-  if (sent) return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
-      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-[#1B263B] border border-green-500/30 rounded-lg p-8 text-center max-w-sm" onClick={e => e.stopPropagation()} dir="rtl">
-        <CheckCircle2 size={40} className="text-green-400 mx-auto mb-4" />
-        <h3 className="text-white font-black text-base mb-2">ההצעה נשלחה!</h3>
-        <p className="text-white/50 text-sm">ל{player.full_name}. המערכת תעדכן אותך כשהשחקן יגיב.</p>
-        <button onClick={onClose} className="mt-4 w-full bg-[#D4AF37] text-[#0D1B2A] font-black text-sm py-3 rounded-sm">סגור</button>
-      </motion.div>
-    </div>
-  );
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#1B263B] border border-[#D4AF37]/30 rounded-lg p-6 max-w-sm w-full"
-        onClick={e => e.stopPropagation()}
-        dir="rtl"
-      >
-        <h3 className="text-white font-black text-base mb-1">📝 הצעה מהירה</h3>
-        <p className="text-white/50 text-xs mb-4">ל-{player.full_name} · {player.position}</p>
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <input type="number" value={form.salary} onChange={e => setForm(p => ({ ...p, salary: e.target.value }))} placeholder="שכר חודשי" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/25 focus:outline-none" />
-            <select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm">
-              <option value="ILS">₪ ILS</option>
-              <option value="EUR">€ EUR</option>
-              <option value="USD">$ USD</option>
-            </select>
-          </div>
-          <input type="number" value={form.years} onChange={e => setForm(p => ({ ...p, years: e.target.value }))} placeholder="אורך חוזה (שנים)" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/25 focus:outline-none" />
-          <input value={form.bonus} onChange={e => setForm(p => ({ ...p, bonus: e.target.value }))} placeholder="מענקים מיוחדים (אופציונלי)" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/25 focus:outline-none" />
-        </div>
-        <div className="flex gap-3 mt-4">
-          <button onClick={onClose} className="flex-1 border border-white/20 text-white/60 text-sm py-3 rounded-sm">ביטול</button>
-          <button onClick={handleSend} disabled={!form.salary || !form.years || sending} className="flex-1 bg-[#D4AF37] text-[#0D1B2A] font-black text-sm py-3 rounded-sm disabled:opacity-40 flex items-center justify-center gap-2">
-            {sending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} שלח
-          </button>
         </div>
       </motion.div>
     </div>

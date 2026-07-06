@@ -1,4 +1,4 @@
-import { Trophy, Table2, Flag, HeartPulse, ArrowLeftRight, Link as LinkIcon } from 'lucide-react';
+import { Trophy, Table2, Flag, Link as LinkIcon } from 'lucide-react';
 
 function Section({ icon: Icon, title, children }) {
   return (
@@ -12,7 +12,7 @@ function Section({ icon: Icon, title, children }) {
 export default function TransfermarktDetails({ data }) {
   const {
     achievements = [], career_stats = [], national_team = [],
-    injuries = [], transfer_history = [], social_links = [],
+    social_links = [],
   } = data;
 
   return (
@@ -71,30 +71,6 @@ export default function TransfermarktDetails({ data }) {
                 <p className="text-white/40 text-[10px]">משחקים · {n.goals} שערים</p>
               </div>
             ))}
-          </div>
-        </Section>
-      )}
-
-      {(transfer_history.length > 0 || injuries.length > 0) && (
-        <Section icon={ArrowLeftRight} title="ציר זמן — מעברים ופציעות">
-          <div className="space-y-2">
-            {[...transfer_history.map(t => ({ ...t, kind: 'transfer' })), ...injuries.map(inj => ({ ...inj, kind: 'injury' }))]
-              .sort((a, b) => new Date(b.date) - new Date(a.date))
-              .map((item, i) => (
-                <div key={i} className="flex items-start gap-3 text-xs border-b border-white/5 pb-2 last:border-0 last:pb-0">
-                  <span className={item.kind === 'injury' ? 'text-red-400' : 'text-[#D4AF37]'}>
-                    {item.kind === 'injury' ? <HeartPulse size={13} /> : <ArrowLeftRight size={13} />}
-                  </span>
-                  <div className="flex-1">
-                    {item.kind === 'transfer' ? (
-                      <p className="text-white">{item.from_club} ← {item.to_club} <span className="text-white/40">({item.fee})</span></p>
-                    ) : (
-                      <p className="text-white">{item.injury_type} <span className="text-white/40">({item.duration_days} ימים)</span></p>
-                    )}
-                    <p className="text-white/30 text-[10px]">{item.date}</p>
-                  </div>
-                </div>
-              ))}
           </div>
         </Section>
       )}
