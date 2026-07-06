@@ -107,7 +107,166 @@
     },
     "transfermarkt_url": {
       "type": "string",
-      "title": "\u05e7\u05d9\u05e9\u05d5\u05e8 Transfermarkt"
+      "title": "\u05e7\u05d9\u05e9\u05d5\u05e8 Transfermarkt \u2014 \u05e4\u05e8\u05d5\u05e4\u05d9\u05dc"
+    },
+    "transfermarkt_achievements_url": {
+      "type": "string",
+      "title": "\u05e7\u05d9\u05e9\u05d5\u05e8 Transfermarkt \u2014 \u05d4\u05d9\u05e9\u05d2\u05d9\u05dd"
+    },
+    "transfermarkt_stats_url": {
+      "type": "string",
+      "title": "\u05e7\u05d9\u05e9\u05d5\u05e8 Transfermarkt \u2014 \u05e1\u05d8\u05d8\u05d9\u05e1\u05d8\u05d9\u05e7\u05d5\u05ea \u05e7\u05e8\u05d9\u05d9\u05e8\u05d4"
+    },
+    "transfermarkt_national_team_url": {
+      "type": "string",
+      "title": "\u05e7\u05d9\u05e9\u05d5\u05e8 Transfermarkt \u2014 \u05e0\u05d1\u05d7\u05e8\u05ea"
+    },
+    "contract_end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05e1\u05d9\u05d5\u05dd \u05d7\u05d5\u05d6\u05d4 \u05e0\u05d5\u05db\u05d7\u05d9"
+    },
+    "transfermarkt_data": {
+      "type": "object",
+      "title": "\u05e0\u05ea\u05d5\u05e0\u05d9 Transfermarkt (\u05de\u05d8\u05de\u05d5\u05df)",
+      "properties": {
+        "market_value_current": {
+          "type": "string",
+          "title": "\u05e9\u05d5\u05d5\u05d9 \u05e9\u05d5\u05e7 \u05e0\u05d5\u05db\u05d7\u05d9"
+        },
+        "market_value_history": {
+          "type": "array",
+          "title": "\u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d9\u05ea \u05e9\u05d5\u05d5\u05d9 \u05e9\u05d5\u05e7",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "transfer_history": {
+          "type": "array",
+          "title": "\u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d9\u05ea \u05de\u05e2\u05d1\u05e8\u05d9\u05dd",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "from_club": {
+                "type": "string"
+              },
+              "to_club": {
+                "type": "string"
+              },
+              "fee": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "achievements": {
+          "type": "array",
+          "title": "\u05d4\u05d9\u05e9\u05d2\u05d9\u05dd",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "string"
+              },
+              "competition": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "career_stats": {
+          "type": "array",
+          "title": "\u05e0\u05ea\u05d5\u05e0\u05d9 \u05e7\u05e8\u05d9\u05d9\u05e8\u05d4 \u05dc\u05e4\u05d9 \u05e2\u05d5\u05e0\u05d4",
+          "items": {
+            "type": "object",
+            "properties": {
+              "season": {
+                "type": "string"
+              },
+              "club": {
+                "type": "string"
+              },
+              "competition": {
+                "type": "string"
+              },
+              "appearances": {
+                "type": "number"
+              },
+              "goals": {
+                "type": "number"
+              },
+              "assists": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "national_team": {
+          "type": "array",
+          "title": "\u05d4\u05d5\u05e4\u05e2\u05d5\u05ea \u05d1\u05e0\u05d1\u05d7\u05e8\u05ea",
+          "items": {
+            "type": "object",
+            "properties": {
+              "team": {
+                "type": "string"
+              },
+              "matches": {
+                "type": "number"
+              },
+              "goals": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "injuries": {
+          "type": "array",
+          "title": "\u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d9\u05ea \u05e4\u05e6\u05d9\u05e2\u05d5\u05ea",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "injury_type": {
+                "type": "string"
+              },
+              "duration_days": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "social_links": {
+          "type": "array",
+          "title": "\u05e8\u05e9\u05ea\u05d5\u05ea \u05d7\u05d1\u05e8\u05ea\u05d9\u05d5\u05ea",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "transfermarkt_last_checked": {
+      "type": "string",
+      "title": "\u05d1\u05d3\u05d9\u05e7\u05d4 \u05d0\u05d7\u05e8\u05d5\u05e0\u05d4 \u05de\u05d5\u05dc Transfermarkt"
+    },
+    "transfermarkt_last_changed": {
+      "type": "string",
+      "title": "\u05e2\u05d3\u05db\u05d5\u05df \u05ea\u05d5\u05db\u05df \u05d0\u05d7\u05e8\u05d5\u05df \u05de-Transfermarkt"
     },
     "parent_phone": {
       "type": "string",

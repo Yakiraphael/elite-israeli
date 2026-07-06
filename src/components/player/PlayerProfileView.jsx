@@ -177,6 +177,7 @@ export default function PlayerProfileView({ player, events }) {
                       { label: '📅 ניסיון', value: player.experience_years ? `${player.experience_years} שנים` : null },
                       { label: '👟 רגל', value: player.dominant_foot },
                       { label: '🎯 עמדה ב', value: player.secondary_position },
+                      { label: '📄 סיום חוזה', value: player.contract_end_date },
                     ].filter(i => i.value).map(item => (
                       <div key={item.label} className="flex justify-between text-xs">
                         <span className="text-white/40">{item.label}</span>
@@ -252,7 +253,7 @@ export default function PlayerProfileView({ player, events }) {
                 )}
 
                 {isApproved && player.transfermarkt_url && (
-                  <TransfermarktCareerPanel transfermarktUrl={player.transfermarkt_url} />
+                  <TransfermarktCareerPanel player={player} />
                 )}
               </div>
             </motion.div>
