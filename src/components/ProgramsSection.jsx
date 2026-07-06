@@ -52,7 +52,7 @@ const PROGRAMS = [
 
 export default function ProgramsSection() {
   return (
-    <section className="py-24 md:py-28 relative overflow-hidden bg-navy" dir="rtl">
+    <section id="programs" className="py-24 md:py-28 relative overflow-hidden bg-navy" dir="rtl">
       <div className="absolute top-0 left-0 right-0 section-divider" />
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">

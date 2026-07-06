@@ -6,6 +6,7 @@ const navLinks = [
 { label: 'בית', href: '#hero' },
 { label: 'המשימה', href: '#mission' },
 { label: 'יעדים', href: '#goals' },
+{ label: 'התוכניות שלנו', href: '#programs' },
 { label: 'הצוות', href: '#team' },
 { label: 'מפת הדרכים', href: '#roadmap' },
 { label: "IEFA", href: '#transfer-hub' },
