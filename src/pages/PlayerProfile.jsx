@@ -10,11 +10,29 @@ const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5
 
 export default function PlayerProfile() {
   const [savedPlayer, setSavedPlayer] = useState(null);
+  const playerId = new URLSearchParams(window.location.search).get('id');
 
   const { data: events = [] } = useQuery({
     queryKey: ['team-events'],
     queryFn: () => base44.entities.TeamEvent.filter({ is_active: true }, 'date_start', 20),
   });
+
+  const { data: directPlayer, isLoading: loadingDirect } = useQuery({
+    queryKey: ['player-by-id', playerId],
+    queryFn: () => base44.entities.PlayerRegistration.get(playerId),
+    enabled: !!playerId,
+  });
+
+  if (playerId) {
+    if (loadingDirect || !directPlayer) {
+      return (
+        <div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center" dir="rtl">
+          <div className="w-8 h-8 border-4 border-white/10 border-t-[#D4AF37] rounded-full animate-spin" />
+        </div>
+      );
+    }
+    return <PlayerProfileView player={directPlayer} events={events} />;
+  }
 
   if (savedPlayer) {
     return <PlayerProfileView player={savedPlayer} events={events} />;

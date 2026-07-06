@@ -8,6 +8,9 @@ import {
   Trophy, Dumbbell, X, Send, CheckCircle2
 } from 'lucide-react';
 import SecurityBadge from '../components/SecurityBadge';
+import MasterAccessPanel from '../components/MasterAccessPanel';
+
+const MASTER_EMAIL = 'yakirkarmel@gmail.com';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const NAVY = '#0D1B2A';
@@ -78,12 +81,16 @@ export default function TransferPortal() {
         if (authed) {
           const u = await base44.auth.me();
           setUser(u);
-          const roleInfo = ROLES.find(r => r.value === u.role);
-          if (roleInfo) {
-            // לא מנתבים אוטומטית — קודם מציגים מסך אישור זהות, כדי למנוע בלבול בין חשבונות/מכשירים
-            setView('confirm');
+          if (u.email === MASTER_EMAIL) {
+            setView('master');
           } else {
-            setView('onboarding');
+            const roleInfo = ROLES.find(r => r.value === u.role);
+            if (roleInfo) {
+              // לא מנתבים אוטומטית — קודם מציגים מסך אישור זהות, כדי למנוע בלבול בין חשבונות/מכשירים
+              setView('confirm');
+            } else {
+              setView('onboarding');
+            }
           }
         }
       } catch {
@@ -182,6 +189,17 @@ export default function TransferPortal() {
         )}
         {view === 'dashboard' && user && (
           <RoleDashboard user={user} onLogout={handleLogout} navigate={navigate} />
+        )}
+        {view === 'master' && user && (
+          <MasterAccessPanel
+            user={user}
+            navigate={navigate}
+            onLogout={handleLogout}
+            onContinueNormal={() => {
+              const roleInfo = ROLES.find(r => r.value === user.role);
+              setView(roleInfo ? 'confirm' : 'onboarding');
+            }}
+          />
         )}
       </div>
     </div>
