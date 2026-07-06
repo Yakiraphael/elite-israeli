@@ -74,8 +74,8 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mb-5 flex flex-col items-center gap-2">
           
-          <span className="font-body text-xs tracking-[0.35em] text-gold font-bold uppercase">
-            חברה לטובת הציבור · שנת ייסוד 2025
+          <span className="font-body text-xs tracking-[0.35em] text-gold font-bold uppercase">חברה לתועלת הציבור · שנת ייסוד 2025
+
           </span>
         </motion.div>
 
