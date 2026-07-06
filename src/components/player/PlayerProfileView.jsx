@@ -16,6 +16,8 @@ import TransfermarktCareerPanel from './TransfermarktCareerPanel';
 import UnifiedTimeline from './UnifiedTimeline';
 import PlayerOffersPanel from './PlayerOffersPanel';
 import CertificatesPanel from './CertificatesPanel';
+import VideoHighlightsGallery from './VideoHighlightsGallery';
+import DynamicPlayerCard from './DynamicPlayerCard';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -191,31 +193,13 @@ export default function PlayerProfileView({ player, events }) {
                 </div>
 
                 {(player.elite_id || player.stats) && (
-                  <EliteIdCard
-                    name={player.full_name} eliteId={player.elite_id || 'ELITE-2026-----'}
-                    position={player.position} stats={player.stats || {}}
-                    avatarUrl={player.avatar_url}
-                    age={player.birth_date ? (new Date().getFullYear() - new Date(player.birth_date).getFullYear()) : undefined}
-                    city={player.city}
-                  />
+                  <DynamicPlayerCard player={player} />
                 )}
               </div>
 
               <div className="md:col-span-2 space-y-4">
                 {/* Video highlights */}
-                {player.media_links?.length > 0 && (
-                  <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
-                    <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2"><Video size={12} /> Highlights</h3>
-                    <div className="space-y-2">
-                      {player.media_links.map((link, i) => (
-                        <a key={i} href={link} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-xs text-white/60 hover:text-[#D4AF37] transition-colors">
-                          <LinkIcon size={12} /> {link}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <VideoHighlightsGallery links={player.media_links || []} />
 
                 {/* Unified career timeline — journey + Transfermarkt + in-system transfers */}
                 <UnifiedTimeline player={player} />
