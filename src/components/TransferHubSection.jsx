@@ -13,7 +13,7 @@ const YOUTH_STEPS = [
 const ADULT_STEPS = [
   { icon: FileText, title: 'המועדון מגיש הצעה', desc: 'הצעה דיגיטלית לשחקן בוגר חופשי — שכר מוצע + טיוטת חוזה.' },
   { icon: CheckCircle2, title: 'אישור השחקן', desc: 'השחקן הבוגר בוחן את התנאים, לוחץ "מאשר תנאים" וחותם דיגיטלית.' },
-  { icon: CreditCard, title: 'אימות תשלום (Payment Gate)', desc: 'המערכת מייצרת דרישת תשלום לעמלת IEFA (5%). תיק ההעברה נשאר חסום עד אישור תשלום (PAID).' },
+  { icon: CreditCard, title: 'אימות תשלום (Payment Gate)', desc: 'המערכת מייצרת דרישת תשלום לעמלת IEFA (2%). תיק ההעברה נשאר חסום עד אישור תשלום (PAID).' },
   { icon: ShieldCheck, title: 'אימות התאחדות (IFA)', desc: 'המערכת משחררת את תיק הרישום, עוקבת אחר עדכון שם הקבוצה באתר ההתאחדות עד אישור סופי (COMPLETED).' },
 ];
 
