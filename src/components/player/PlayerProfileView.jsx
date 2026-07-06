@@ -15,6 +15,7 @@ import RequestHub from './RequestHub';
 import TransfermarktCareerPanel from './TransfermarktCareerPanel';
 import UnifiedTimeline from './UnifiedTimeline';
 import PlayerOffersPanel from './PlayerOffersPanel';
+import CertificatesPanel from './CertificatesPanel';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -364,13 +365,7 @@ export default function PlayerProfileView({ player, events }) {
                 </div>
               </div>
 
-              <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
-                <h3 className="text-white font-black text-sm mb-3">🏅 Trophy Room — תעודות והישגים</h3>
-                <p className="text-white/40 text-xs mb-4">העלה תעודות מצטיין, אישורי נבחרת, קורסים ואישורי השתתפות</p>
-                <button className="flex items-center gap-2 border border-dashed border-white/20 text-white/40 text-xs px-4 py-3 rounded-lg hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors w-full justify-center">
-                  + הוסף תעודה / קובץ
-                </button>
-              </div>
+              <CertificatesPanel player={player} />
             </motion.div>
           )}
 
