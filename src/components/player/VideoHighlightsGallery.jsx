@@ -82,7 +82,7 @@ export default function VideoHighlightsGallery({ player }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className={links.length > 6 ? 'grid grid-cols-3 gap-3 max-h-[420px] overflow-y-auto pr-1' : 'grid grid-cols-3 gap-3'}>
         {links.map((link, i) => (
           <VideoTile key={`${i}-${link}`} link={link} cardKey={`${i}-${link}`} playingId={playingId} setPlayingId={setPlayingId} onRemove={handleRemove} editing={editing} />
         ))}

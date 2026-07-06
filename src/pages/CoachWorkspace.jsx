@@ -6,6 +6,7 @@ import RoleToolbar from '../components/RoleToolbar';
 import Footer from '../components/Footer';
 import NotificationBell from '../components/NotificationBell';
 import CaseNotesPanel from '../components/player/CaseNotesPanel';
+import CoachTransferApprovals from '../components/coach/CoachTransferApprovals';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -68,10 +69,16 @@ export default function CoachWorkspace() {
   const ifaReady = players.filter(p => p.ifa_ready).length;
   const pendingRequests = requests.length;
 
+  const { data: pendingApprovals = [] } = useQuery({
+    queryKey: ['coach-transfer-approvals'],
+    queryFn: () => base44.entities.TransferProposal.filter({ coach_approval_status: 'ממתין לאישור מאמן' }, '-created_date', 50),
+  });
+
   const tabs = [
-    { id: 'squad', label: 'Squad Health', icon: Shield },
+    { id: 'squad', label: 'בריאות הסגל', icon: Shield },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
-    { id: 'compliance', label: 'Compliance', icon: AlertTriangle },
+    { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
+    { id: 'compliance', label: 'תקינות (Compliance)', icon: AlertTriangle },
   ];
 
   return (
@@ -85,8 +92,8 @@ export default function CoachWorkspace() {
             <div className="flex items-center gap-3">
               <img src={LOGO_URL} alt="" className="h-9" />
               <div>
-                <h1 className="text-white font-black text-xl">Coach Workspace</h1>
-                <p className="text-white/40 text-xs">מרחב עבודה מאמן — מצב בריאות הסגל</p>
+                <h1 className="text-white font-black text-xl">מרחב עבודה למאמן</h1>
+                <p className="text-white/40 text-xs">מעקב בריאות הסגל, בקשות ואישורי העברה</p>
               </div>
             </div>
             <NotificationBell audience="coach" onNavigate={setTab} />
@@ -97,7 +104,7 @@ export default function CoachWorkspace() {
             <KpiCard label="שחקנים פעילים" value={players.length} color="blue" icon={Users} />
             <KpiCard label="בעיות רפואיות" value={medicalIssues} color="red" icon={AlertTriangle} urgent={medicalIssues > 0} />
             <KpiCard label="בקשות פתוחות" value={pendingRequests} color="amber" icon={ClipboardList} urgent={pendingRequests > 0} />
-            <KpiCard label="IFA Ready" value={`${ifaReady}/${players.length}`} color="green" icon={CheckCircle2} />
+            <KpiCard label="מוכנים להתאחדות (IFA)" value={`${ifaReady}/${players.length}`} color="green" icon={CheckCircle2} />
           </div>
 
           {/* Search */}
@@ -132,6 +139,7 @@ export default function CoachWorkspace() {
           </>
         )}
         {tab === 'requests' && <RequestsView />}
+        {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
       </div>
 
@@ -199,7 +207,7 @@ function ComplianceMatrix({ players }) {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-white/10">
-              {['שם שחקן', 'סטטוס רפואי', 'IFA Ready', 'מסמכים', 'פעולה מהירה'].map(h => (
+              {['שם שחקן', 'סטטוס רפואי', 'מוכן IFA', 'מסמכים', 'פעולה מהירה'].map(h => (
                 <th key={h} className="text-white/40 font-bold py-3 px-3 text-right">{h}</th>
               ))}
             </tr>
@@ -348,7 +356,7 @@ function PlayerQuickView({ player, onClose }) {
             ['📍 עיר', player.city],
             ['⚽ קבוצה', player.team_name],
             ['📏 גובה', player.height_cm ? `${player.height_cm}ס״מ` : null],
-            ['IFA Ready', player.ifa_ready ? '✅ כן' : '❌ לא'],
+            ['מוכן IFA', player.ifa_ready ? '✅ כן' : '❌ לא'],
           ].filter(([, v]) => v).map(([l, v]) => (
             <div key={l} className="flex justify-between bg-[#0D1B2A] rounded p-2">
               <span className="text-white/40">{l}</span>

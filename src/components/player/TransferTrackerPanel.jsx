@@ -39,7 +39,7 @@ export default function TransferTrackerPanel({ playerId, playerName, isClubView 
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-white font-black text-base">Transfer Tracker</h3>
+          <h3 className="text-white font-black text-base">מעקב העברות</h3>
           <p className="text-white/40 text-xs">{transfers.length} פעולות מתועדות</p>
         </div>
         {isClubView && (

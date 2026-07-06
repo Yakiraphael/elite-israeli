@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Send, FileText, ShieldAlert, CreditCard, Gavel } from 'lucide-react';
+import { Loader2, Send, FileText, ShieldAlert, CreditCard, Gavel, CheckCircle2, XCircle, UserCheck } from 'lucide-react';
 import TransferPipelineStepper from './TransferPipelineStepper';
 
 const STATUSES = [
@@ -27,7 +27,10 @@ const STATUS_COLORS = {
 };
 
 const PAYMENT_COLORS = { PENDING: 'text-yellow-400', PAID: 'text-green-400', REFUNDED: 'text-red-400', 'N/A': 'text-white/30' };
+const PAYMENT_LABELS = { PENDING: 'ממתין לתשלום', PAID: 'שולם', REFUNDED: 'הוחזר', 'N/A': 'לא רלוונטי' };
 const IFA_COLORS = { 'Awaiting Submission': 'text-yellow-400', 'Pending IFA Processing': 'text-cyan-400', 'Verified & Live': 'text-green-400', 'N/A': 'text-white/30' };
+const IFA_LABELS = { 'Awaiting Submission': 'ממתין להגשה', 'Pending IFA Processing': 'בטיפול ההתאחדות', 'Verified & Live': 'מאומת ופעיל', 'N/A': 'לא רלוונטי' };
+const COACH_APPROVAL_COLORS = { 'לא נדרש': 'text-white/30 bg-white/5 border-white/10', 'ממתין לאישור מאמן': 'text-amber-400 bg-amber-400/10 border-amber-400/30', 'אושר על ידי מאמן': 'text-green-400 bg-green-400/10 border-green-400/30', 'נדחה על ידי מאמן': 'text-red-400 bg-red-400/10 border-red-400/30' };
 
 export default function TransfersManager() {
   const [expanded, setExpanded] = useState(null);
@@ -55,6 +58,23 @@ export default function TransfersManager() {
     const contract_value = Number(value) || 0;
     updateProposal.mutate({ id: p.id, data: { contract_value, iefa_commission_fee: Math.round(contract_value * 0.05 * 100) / 100 } });
   };
+
+  const requestCoachApproval = useMutation({
+    mutationFn: async (p) => {
+      await base44.entities.TransferProposal.update(p.id, { coach_approval_status: 'ממתין לאישור מאמן' });
+      await base44.entities.Notification.create({
+        audience: 'coach',
+        type: 'request_new',
+        title: 'נדרש אישור מאמן להעברת שחקן',
+        body: `מבוקש אישורך להעברת השחקן ${p.player_name || p.player_elite_id} — הבדיקה מתבססת על פרופיל השחקן בלבד`,
+        player_id: p.player_elite_id,
+        player_name: p.player_name,
+        request_id: p.id,
+        link_tab: 'approvals',
+      });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-transfers'] }),
+  });
 
   return (
     <div>
@@ -157,7 +177,7 @@ export default function TransfersManager() {
                         <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-2"><ShieldAlert size={11} /> סטטוס תשלום</div>
                         <select value={p.payment_status || 'N/A'} onChange={e => updateProposal.mutate({ id: p.id, data: { payment_status: e.target.value } })}
                           className={`w-full text-xs font-bold px-2 py-1.5 rounded-sm border border-white/15 bg-transparent focus:outline-none cursor-pointer ${PAYMENT_COLORS[p.payment_status || 'N/A']}`}>
-                          {['N/A', 'PENDING', 'PAID', 'REFUNDED'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
+                          {['N/A', 'PENDING', 'PAID', 'REFUNDED'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{PAYMENT_LABELS[s]}</option>)}
                         </select>
                         {p.payment_transaction_id && <div className="text-white/30 text-[10px] mt-1.5 truncate">אסמכתא: {p.payment_transaction_id}</div>}
                       </div>
@@ -167,8 +187,20 @@ export default function TransfersManager() {
                       <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-2"><Gavel size={11} /> אימות התאחדות (IFA / FIFA)</div>
                       <select value={p.ifa_validation_status || 'N/A'} onChange={e => updateProposal.mutate({ id: p.id, data: { ifa_validation_status: e.target.value } })}
                         className={`w-full text-xs font-bold px-2 py-1.5 rounded-sm border border-white/15 bg-transparent focus:outline-none cursor-pointer ${IFA_COLORS[p.ifa_validation_status || 'N/A']}`}>
-                        {['N/A', 'Awaiting Submission', 'Pending IFA Processing', 'Verified & Live'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
+                        {['N/A', 'Awaiting Submission', 'Pending IFA Processing', 'Verified & Live'].map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{IFA_LABELS[s]}</option>)}
                       </select>
+                    </div>
+
+                    <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3">
+                      <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-2"><UserCheck size={11} /> אישור מאמן (ללא חשיפת ההצעה)</div>
+                      <span className={`inline-block text-xs font-bold px-2 py-1 rounded-full border ${COACH_APPROVAL_COLORS[p.coach_approval_status || 'לא נדרש']}`}>
+                        {p.coach_approval_status || 'לא נדרש'}
+                      </span>
+                      {(!p.coach_approval_status || p.coach_approval_status === 'לא נדרש' || p.coach_approval_status === 'נדחה על ידי מאמן') && (
+                        <button onClick={() => requestCoachApproval.mutate(p)} className="block mt-2 text-[10px] font-bold text-[#D4AF37] hover:text-amber-300 transition-colors">
+                          בקש אישור מאמן →
+                        </button>
+                      )}
                     </div>
 
                     {!p.is_adult && (
@@ -179,7 +211,7 @@ export default function TransfersManager() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex items-center gap-2 pt-1 flex-wrap">
                     <span className="text-white/40 text-xs">שלב תהליך:</span>
                     <select
                       value={p.status || STATUSES[0]}
@@ -188,6 +220,18 @@ export default function TransfersManager() {
                     >
                       {STATUSES.map(s => <option key={s} value={s} className="bg-[#1B263B] text-white">{s}</option>)}
                     </select>
+                    {!['אושרה סופית', 'נדחתה', 'נסגרה'].includes(p.status) && (
+                      <>
+                        <button onClick={() => updateProposal.mutate({ id: p.id, data: { status: 'אושרה סופית' } })}
+                          className="flex items-center gap-1 text-xs font-bold text-green-400 hover:text-green-300 bg-green-400/10 border border-green-400/30 px-3 py-1.5 rounded-full transition-colors">
+                          <CheckCircle2 size={12} /> אשר סופית
+                        </button>
+                        <button onClick={() => updateProposal.mutate({ id: p.id, data: { status: 'נדחתה' } })}
+                          className="flex items-center gap-1 text-xs font-bold text-red-400 hover:text-red-300 bg-red-400/10 border border-red-400/30 px-3 py-1.5 rounded-full transition-colors">
+                          <XCircle size={12} /> דחה
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
