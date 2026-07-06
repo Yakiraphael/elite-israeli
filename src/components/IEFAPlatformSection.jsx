@@ -167,9 +167,9 @@ export default function IEFAPlatformSection() {
               </div>
             </div>
             <div className="flex flex-col gap-3 flex-shrink-0">
-              <Link to="/pricing" className="font-body font-bold text-sm border border-white/20 text-white/70 px-7 py-3 rounded-sm hover:bg-white/5 transition-colors text-center">
+              <a href="#roi" className="font-body font-bold text-sm border border-white/20 text-white/70 px-7 py-3 rounded-sm hover:bg-white/5 transition-colors text-center">
                 מודל עסקי
-              </Link>
+              </a>
             </div>
           </div>
         </motion.div>
