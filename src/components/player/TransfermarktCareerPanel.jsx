@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Globe, Loader2, RefreshCw, ArrowLeftRight } from 'lucide-react';
@@ -7,6 +7,10 @@ export default function TransfermarktCareerPanel({ transfermarktUrl }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (transfermarktUrl) load();
+  }, [transfermarktUrl]);
 
   const load = async () => {
     setLoading(true); setError(false);
@@ -37,12 +41,18 @@ export default function TransfermarktCareerPanel({ transfermarktUrl }) {
       <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5 text-center">
         <Globe size={20} className="text-[#D4AF37] mx-auto mb-2" />
         <h3 className="text-white font-black text-sm mb-1">נתוני Transfermarkt</h3>
-        <p className="text-white/40 text-xs mb-3">שליפת קריירה, שווי שוק והיסטוריית מעברים מהפרופיל הרשמי</p>
+        {loading && (
+          <p className="text-white/40 text-xs mb-3 flex items-center justify-center gap-2">
+            <Loader2 size={14} className="animate-spin" /> טוען נתונים מהפרופיל...
+          </p>
+        )}
         {error && <p className="text-red-400 text-xs mb-2">שגיאה בטעינת הנתונים, נסה שוב</p>}
-        <button onClick={load} disabled={loading}
-          className="bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-4 py-2 rounded-sm hover:bg-amber-400 transition-colors disabled:opacity-50 inline-flex items-center gap-2">
-          {loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />} טען נתונים
-        </button>
+        {!loading && (
+          <button onClick={load}
+            className="bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-4 py-2 rounded-sm hover:bg-amber-400 transition-colors inline-flex items-center gap-2">
+            <RefreshCw size={14} /> טען נתונים
+          </button>
+        )}
       </div>
     );
   }
