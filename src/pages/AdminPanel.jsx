@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star } from 'lucide-react';
+import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TransfersManager from '../components/admin/TransfersManager';
 import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
+import PlayerVerificationModal from '../components/admin/PlayerVerificationModal';
 
 const ADMIN_PASSWORD = 'elite2025';
 
@@ -210,6 +211,7 @@ function EventsManager() {
 // ---- Players Viewer ----
 function PlayersViewer() {
   const [editingPlayer, setEditingPlayer] = useState(null);
+  const [verifyingPlayer, setVerifyingPlayer] = useState(null);
   const { data: players = [], isLoading } = useQuery({
     queryKey: ['admin-players'],
     queryFn: () => base44.entities.PlayerRegistration.list('-created_date', 100),
@@ -250,6 +252,10 @@ function PlayersViewer() {
                   {p.event_name && <div className="text-[#D4AF37] text-xs mt-0.5">אירוע: {p.event_name}</div>}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
+                  <button onClick={() => setVerifyingPlayer(p)} title="בדיקה מקיפה"
+                    className="w-8 h-8 rounded bg-white/5 hover:bg-blue-500/20 flex items-center justify-center transition-colors">
+                    <ShieldCheck size={13} className="text-blue-400" />
+                  </button>
                   <button onClick={() => setEditingPlayer(p)} title="כרטיס Elite ID"
                     className="w-8 h-8 rounded bg-white/5 hover:bg-[#D4AF37]/20 flex items-center justify-center transition-colors">
                     <Star size={13} className="text-[#D4AF37]" />
@@ -288,6 +294,7 @@ function PlayersViewer() {
         </div>
       )}
       {editingPlayer && <EliteIdEditorModal player={editingPlayer} onClose={() => setEditingPlayer(null)} />}
+      {verifyingPlayer && <PlayerVerificationModal player={verifyingPlayer} onClose={() => setVerifyingPlayer(null)} />}
     </div>
   );
 }

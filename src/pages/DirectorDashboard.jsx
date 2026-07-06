@@ -14,6 +14,7 @@ import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
 import FinanceTab from '../components/director/FinanceTab';
 import AnalyticsTab from '../components/director/AnalyticsTab';
+import CaseNotesPanel from '../components/player/CaseNotesPanel';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -470,6 +471,8 @@ function PlayerDeepDive({ player, onClose }) {
               <p className="text-white/60 text-xs">{player.achievements}</p>
             </div>
           )}
+
+          <CaseNotesPanel playerId={player.id} playerName={player.full_name} authorRole="מנהל מקצועי" />
         </div>
       </motion.div>
     </div>

@@ -1,0 +1,35 @@
+{
+  "name": "PlayerCaseNote",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e9\u05d7\u05e7\u05df"
+    },
+    "author_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05db\u05d5\u05ea\u05d1"
+    },
+    "author_role": {
+      "type": "string",
+      "title": "\u05ea\u05e4\u05e7\u05d9\u05d3 \u05d4\u05db\u05d5\u05ea\u05d1",
+      "enum": [
+        "\u05de\u05d0\u05de\u05df",
+        "\u05de\u05e0\u05d4\u05dc \u05de\u05e7\u05e6\u05d5\u05e2\u05d9"
+      ]
+    },
+    "note": {
+      "type": "string",
+      "title": "\u05ea\u05d5\u05db\u05df \u05d4\u05d4\u05e2\u05e8\u05d4"
+    }
+  },
+  "required": [
+    "player_id",
+    "author_role",
+    "note"
+  ]
+}

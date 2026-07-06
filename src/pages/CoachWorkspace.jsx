@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import RoleToolbar from '../components/RoleToolbar';
 import Footer from '../components/Footer';
 import NotificationBell from '../components/NotificationBell';
+import CaseNotesPanel from '../components/player/CaseNotesPanel';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -360,6 +361,9 @@ function PlayerQuickView({ player, onClose }) {
               {med.label}
             </span>
           </div>
+        </div>
+        <div className="mt-4">
+          <CaseNotesPanel playerId={player.id} playerName={player.full_name} authorRole="מאמן" />
         </div>
       </motion.div>
     </div>

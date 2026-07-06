@@ -12,6 +12,7 @@ import EliteIdCard from '../EliteIdCard';
 import MentalJourneyChart from './MentalJourneyChart';
 import TransferTrackerPanel from './TransferTrackerPanel';
 import RequestHub from './RequestHub';
+import TransfermarktCareerPanel from './TransfermarktCareerPanel';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -248,6 +249,10 @@ export default function PlayerProfileView({ player, events }) {
                     <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2"><Trophy size={12} /> הישגים</h3>
                     <p className="text-white/70 text-sm leading-relaxed">{player.achievements}</p>
                   </div>
+                )}
+
+                {isApproved && player.transfermarkt_url && (
+                  <TransfermarktCareerPanel transfermarktUrl={player.transfermarkt_url} />
                 )}
               </div>
             </motion.div>
