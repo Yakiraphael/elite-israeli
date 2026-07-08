@@ -22,6 +22,7 @@ import PersonalInfoPanel from './PersonalInfoPanel';
 import CVComparisonPanel from './CVComparisonPanel';
 import ContractsQuickAccess from './ContractsQuickAccess';
 import PersonalManagerPanel from './PersonalManagerPanel';
+import BackButton from '../BackButton';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -68,9 +69,7 @@ export default function PlayerProfileView({ player, events }) {
       {/* Header */}
       <div className="border-b border-white/10 py-4 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold">
-            <ArrowRight size={16} /> חזרה לאתר
-          </Link>
+          <BackButton label="חזרה" fallback="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold" />
           <img src={LOGO_URL} alt="עילית ישראלית" className="h-10" />
         </div>
       </div>

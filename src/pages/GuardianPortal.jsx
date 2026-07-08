@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Loader2, Users } from 'lucide-react';
+import { Loader2, Users } from 'lucide-react';
 import ChildOverviewCard from '../components/guardian/ChildOverviewCard';
+import BackButton from '../components/BackButton';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -54,9 +55,7 @@ export default function GuardianPortal() {
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
       <div className="border-b border-white/10 py-4 px-6">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link to="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold">
-            <ArrowRight size={16} /> חזרה לפורטל
-          </Link>
+          <BackButton label="חזרה" fallback="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold" />
           <img src={LOGO_URL} alt="עילית ישראלית" className="h-10" />
         </div>
       </div>

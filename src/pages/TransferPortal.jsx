@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import SecurityBadge from '../components/SecurityBadge';
 import MasterAccessPanel from '../components/MasterAccessPanel';
+import BackButton from '../components/BackButton';
 
 const MASTER_EMAIL = 'yakirkarmel@gmail.com';
 
@@ -167,9 +168,7 @@ export default function TransferPortal() {
       {/* Header */}
       <div className="relative z-10 border-b border-white/10 py-4 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 hover:text-amber-300 transition-colors text-sm font-bold" style={{ color: GOLD }}>
-            <ArrowRight size={16} /> חזרה לאתר
-          </Link>
+          <BackButton label="חזרה" fallback="/" className="flex items-center gap-2 hover:text-amber-300 transition-colors text-sm font-bold" style={{ color: GOLD }} />
           <img src={LOGO_URL} alt="עילית ישראלית" className="h-10" />
           {user && (
             <button onClick={handleLogout} className="flex items-center gap-1 text-xs transition-colors hover:text-red-400" style={{ color: `${WHITE}40` }}>
