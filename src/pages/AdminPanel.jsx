@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import TransfersManager from '../components/admin/TransfersManager';
 import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
 import PlayerVerificationModal from '../components/admin/PlayerVerificationModal';
+import PermissionsManager from '../components/admin/PermissionsManager';
 
 const ADMIN_PASSWORD = 'elite2025';
 
@@ -87,7 +88,7 @@ function AdminDashboard({ onLogout }) {
       {/* Tabs */}
       <div className="border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {[{ id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }].map(t => (
+          {[{ id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-6 py-4 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={14} />{t.label}
@@ -100,6 +101,7 @@ function AdminDashboard({ onLogout }) {
         {tab === 'events' && <EventsManager />}
         {tab === 'players' && <PlayersViewer />}
         {tab === 'transfers' && <TransfersManager />}
+        {tab === 'permissions' && <PermissionsManager />}
       </div>
     </div>
   );
