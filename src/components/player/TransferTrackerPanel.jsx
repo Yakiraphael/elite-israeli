@@ -6,6 +6,9 @@ import {
   CheckCircle2, Clock, Truck, FileText, AlertCircle, ArrowRight,
   Building2, Calendar, DollarSign, Globe, ShieldCheck, Loader2, PlusCircle
 } from 'lucide-react';
+import { TRANSFER_CATEGORIES, WORKFLOW_STAGES } from '@/lib/transferDocumentRequirements';
+import TransferDocumentsChecklist from '../transfer/TransferDocumentsChecklist';
+import TransferWorkflowBadge from '../transfer/TransferWorkflowBadge';
 
 const STATUS_CONFIG = {
   'Trialist': { label: 'מבחן', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/30' },
@@ -60,7 +63,7 @@ export default function TransferTrackerPanel({ playerId, playerName, isClubView 
       ) : (
         <div className="space-y-3">
           {transfers.map(t => (
-            <TransferCard key={t.id} transfer={t} />
+            <TransferCard key={t.id} transfer={t} isClubView={isClubView} />
           ))}
         </div>
       )}
@@ -77,7 +80,7 @@ export default function TransferTrackerPanel({ playerId, playerName, isClubView 
   );
 }
 
-function TransferCard({ transfer }) {
+function TransferCard({ transfer, isClubView }) {
   const [expanded, setExpanded] = useState(false);
   const sc = STATUS_CONFIG[transfer.status] || STATUS_CONFIG['Trialist'];
   const sym = CURRENCY_SYMBOLS[transfer.currency] || '₪';
@@ -151,6 +154,9 @@ function TransferCard({ transfer }) {
               </a>
             )}
             {transfer.notes && <p className="text-white/40 text-xs">{transfer.notes}</p>}
+
+            <TransferWorkflowBadge transfer={transfer} canAdvance={isClubView} />
+            <TransferDocumentsChecklist transferId={transfer.id} category={transfer.transfer_category || 'העברת נוער'} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -171,6 +177,7 @@ function NewTransferModal({ playerId, playerName, onClose, onSaved }) {
     trial_date: '',
     is_international: false,
     notes: '',
+    transfer_category: 'העברת נוער',
   });
   const [saving, setSaving] = useState(false);
 
@@ -185,6 +192,7 @@ function NewTransferModal({ playerId, playerName, onClose, onSaved }) {
       iefa_fee_amount: offerNum ? Math.round(offerNum * 0.02) : undefined,
       solidarity_contribution: isIntl && offerNum ? Math.round(offerNum * 0.05) : undefined,
       itc_required: isIntl,
+      approval_stage: (WORKFLOW_STAGES[form.transfer_category] || WORKFLOW_STAGES['העברת נוער'])[0],
     });
     setSaving(false);
     onSaved();
@@ -201,6 +209,10 @@ function NewTransferModal({ playerId, playerName, onClose, onSaved }) {
       >
         <h3 className="text-white font-black text-base mb-4">רישום מעקב העברה חדשה</h3>
         <div className="space-y-3">
+          <select value={form.transfer_category} onChange={e => setForm(p => ({ ...p, transfer_category: e.target.value, is_international: e.target.value === 'בוגרים - בינלאומי' }))}
+            className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm focus:outline-none">
+            {TRANSFER_CATEGORIES.map(c => <option key={c} value={c} className="bg-[#1B263B]">{c}</option>)}
+          </select>
           <input value={form.club_from} onChange={e => setForm(p => ({ ...p, club_from: e.target.value }))} placeholder="מועדון מוצא" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
           <input value={form.club_to} onChange={e => setForm(p => ({ ...p, club_to: e.target.value }))} placeholder="מועדון קולט" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
           <div className="grid grid-cols-2 gap-3">
