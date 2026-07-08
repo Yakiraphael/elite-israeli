@@ -17,6 +17,7 @@ import AnalyticsTab from '../components/director/AnalyticsTab';
 import TransfersManager from '../components/admin/TransfersManager';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import DirectorPlayerProfileModal from '../components/director/DirectorPlayerProfileModal';
+import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -305,6 +306,7 @@ function SquadTab({ players, loading, onSelect }) {
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {medAlert && <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full border border-red-500/20">⚠️ רפואי</span>}
                 {p.ifa_ready && <span className="text-[9px] bg-[#D4AF37]/10 text-[#D4AF37] px-1.5 py-0.5 rounded-full border border-[#D4AF37]/20">IFA</span>}
+                <SubmissionProgressBar player={p} compact />
               </div>
               <ChevronRight size={14} className="text-white/20 group-hover:text-[#D4AF37] transition-colors flex-shrink-0" />
             </button>

@@ -1,4 +1,19 @@
-import { ShieldCheck, FileSignature, HeartPulse, Briefcase, CreditCard } from 'lucide-react';
+import { ShieldCheck, FileSignature, HeartPulse, Briefcase, CreditCard, Video, BookOpen } from 'lucide-react';
+
+const SHARED_TERMS = [
+  {
+    key: 'media_consent',
+    icon: Video,
+    title: 'אישור שימוש במדיה',
+    desc: 'הסכמה לצילום השחקן למטרות שיווק, דפי המועדון, ושידורי ליגה.',
+  },
+  {
+    key: 'club_bylaws',
+    icon: BookOpen,
+    title: 'תקנון מועדון',
+    desc: 'אישור הבנה וקבלה של הקוד האתי והמשמעתי של המועדון.',
+  },
+];
 
 const YOUTH_TERMS = [
   {
@@ -19,6 +34,7 @@ const YOUTH_TERMS = [
     title: 'ויתור סודיות רפואית מוגבל',
     desc: 'אישור להציג את תוקף האישור הרפואי בלבד (תקין/לא תקין) למנהלי קבוצות.',
   },
+  ...SHARED_TERMS,
 ];
 
 const ADULT_TERMS = [
@@ -34,6 +50,7 @@ const ADULT_TERMS = [
     title: 'אישור סליקה מראש (Pre-Authorization)',
     desc: 'השחקן מאשר לחברת הסליקה של המערכת להנפיק דרישות תשלום או לחייב את אמצעי התשלום שלו/של המועדון עבור דמי טיפול רשמיים עם השלמת ההעברה.',
   },
+  ...SHARED_TERMS,
 ];
 
 export default function LegalTerms({ isAdult, accepted, onToggle }) {

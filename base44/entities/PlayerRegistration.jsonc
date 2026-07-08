@@ -359,6 +359,14 @@
         "payment_pre_auth": {
           "type": "boolean",
           "title": "\u05d0\u05d9\u05e9\u05d5\u05e8 \u05e1\u05dc\u05d9\u05e7\u05d4 \u05de\u05e8\u05d0\u05e9"
+        },
+        "media_consent": {
+          "type": "boolean",
+          "title": "\u05d0\u05d9\u05e9\u05d5\u05e8 \u05e9\u05d9\u05de\u05d5\u05e9 \u05d1\u05de\u05d3\u05d9\u05d4"
+        },
+        "club_bylaws": {
+          "type": "boolean",
+          "title": "\u05ea\u05e7\u05e0\u05d5\u05df \u05de\u05d5\u05e2\u05d3\u05d5\u05df"
         }
       }
     },
@@ -596,6 +604,52 @@
       "type": "string",
       "title": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05d7\u05e1\u05d5\u05d9\u05d5\u05ea \u2014 \u05de\u05e0\u05d4\u05dc \u05de\u05e7\u05e6\u05d5\u05e2\u05d9 \u05d1\u05dc\u05d1\u05d3",
       "description": "\u05d7\u05d5\u05d5\u05ea \u05d3\u05e2\u05ea \u05e0\u05d9\u05d4\u05d5\u05dc\u05d9\u05ea \u2014 \u05e0\u05d2\u05d9\u05e9\u05d4 \u05dc\u05de\u05e0\u05d4\u05dc \u05d4\u05de\u05e7\u05e6\u05d5\u05e2\u05d9 \u05d1\u05dc\u05d1\u05d3, \u05d0\u05d9\u05e0\u05d4 \u05e0\u05e8\u05d0\u05d9\u05ea \u05dc\u05de\u05d0\u05de\u05df \u05d0\u05d5 \u05dc\u05e9\u05d7\u05e7\u05df"
+    },
+    "health_declaration": {
+      "type": "object",
+      "title": "\u05d4\u05e6\u05d4\u05e8\u05ea \u05d1\u05e8\u05d9\u05d0\u05d5\u05ea",
+      "properties": {
+        "allergies": {
+          "type": "string",
+          "title": "\u05d0\u05dc\u05e8\u05d2\u05d9\u05d5\u05ea"
+        },
+        "chronic_conditions": {
+          "type": "string",
+          "title": "\u05de\u05d7\u05dc\u05d5\u05ea \u05db\u05e8\u05d5\u05e0\u05d9\u05d5\u05ea"
+        },
+        "past_injuries": {
+          "type": "string",
+          "title": "\u05e4\u05e6\u05d9\u05e2\u05d5\u05ea \u05e2\u05d1\u05e8"
+        }
+      }
+    },
+    "health_declaration_completed": {
+      "type": "boolean",
+      "title": "\u05d4\u05e6\u05d4\u05e8\u05ea \u05d1\u05e8\u05d9\u05d0\u05d5\u05ea \u05d4\u05d5\u05e9\u05dc\u05de\u05d4",
+      "default": false
+    },
+    "insurance_ack": {
+      "type": "boolean",
+      "title": "\u05d0\u05d9\u05e9\u05d5\u05e8 \u05e7\u05e8\u05d9\u05d0\u05ea \u05e4\u05d5\u05dc\u05d9\u05e1\u05ea \u05d1\u05d9\u05d8\u05d5\u05d7 \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df",
+      "default": false
+    },
+    "equipment_size": {
+      "type": "object",
+      "title": "\u05de\u05d9\u05d3\u05d5\u05ea \u05e6\u05d9\u05d5\u05d3",
+      "properties": {
+        "shirt": {
+          "type": "string",
+          "title": "\u05de\u05d9\u05d3\u05ea \u05d7\u05d5\u05dc\u05e6\u05d4"
+        },
+        "pants": {
+          "type": "string",
+          "title": "\u05de\u05d9\u05d3\u05ea \u05de\u05db\u05e0\u05e1"
+        },
+        "shoe": {
+          "type": "string",
+          "title": "\u05de\u05d9\u05d3\u05ea \u05e0\u05e2\u05dc"
+        }
+      }
     }
   },
   "required": [

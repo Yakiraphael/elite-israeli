@@ -9,6 +9,7 @@ import CaseNotesPanel from '../components/player/CaseNotesPanel';
 import CoachTransferApprovals from '../components/coach/CoachTransferApprovals';
 import CoachPlayerProfileModal from '../components/coach/CoachPlayerProfileModal';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
+import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -208,6 +209,7 @@ function SquadView({ players, loading, onSelect }) {
                 🏥 {med.label}
               </span>
               {p.ifa_ready && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">IFA ✓</span>}
+              <SubmissionProgressBar player={p} compact />
             </div>
             <ChevronRight size={14} className="text-white/20 group-hover:text-[#D4AF37] transition-colors flex-shrink-0" />
           </button>
