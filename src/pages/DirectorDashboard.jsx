@@ -9,14 +9,14 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
+import { ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
 import FinanceTab from '../components/director/FinanceTab';
 import AnalyticsTab from '../components/director/AnalyticsTab';
-import CaseNotesPanel from '../components/player/CaseNotesPanel';
 import TransfersManager from '../components/admin/TransfersManager';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
+import DirectorPlayerProfileModal from '../components/director/DirectorPlayerProfileModal';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -184,7 +184,7 @@ function DashboardContent({ onLogout }) {
         )}
       </div>
 
-      {selectedPlayer && <PlayerDeepDive player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />}
+      {selectedPlayer && <DirectorPlayerProfileModal player={selectedPlayer} allPlayers={players} onClose={() => setSelectedPlayer(null)} />}
     </div>
   );
 }
@@ -440,69 +440,6 @@ function ComplianceTab({ players }) {
           </tbody>
         </table>
       </div>
-    </div>
-  );
-}
-
-// ---- PLAYER DEEP DIVE ----
-function PlayerDeepDive({ player, onClose }) {
-  const days = calcDaysLeft(player.medical_expiry_date);
-  const radarData = player.stats ? Object.entries(player.stats).map(([k, v]) => ({
-    subject: k.toUpperCase(), value: v || 0, fullMark: 99
-  })) : [];
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#1B263B] border border-white/10 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()} dir="rtl">
-        <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <div>
-            <h3 className="text-white font-black text-base">{player.full_name}</h3>
-            <p className="text-[#D4AF37] text-xs">{player.position}</p>
-          </div>
-          <button onClick={onClose}><X size={16} className="text-white/30 hover:text-white" /></button>
-        </div>
-        <div className="p-5 space-y-4">
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            {[
-              ['📱 טלפון', player.phone],
-              ['📍 עיר', player.city],
-              ['⚽ קבוצה', player.team_name],
-              ['👟 רגל', player.dominant_foot],
-              ['IFA Ready', player.ifa_ready ? '✅' : '❌'],
-              ['📅 רפואי', days !== null ? (days < 0 ? `🔴 פג ${Math.abs(days)}י` : `${days < 30 ? '🟡' : '🟢'} ${days}י`) : '—'],
-            ].filter(([, v]) => v).map(([l, v]) => (
-              <div key={l} className="bg-[#0D1B2A] rounded p-2 flex justify-between">
-                <span className="text-white/40">{l}</span>
-                <span className="text-white font-semibold">{v}</span>
-              </div>
-            ))}
-          </div>
-
-          {radarData.length > 0 && (
-            <div className="bg-[#0D1B2A] rounded-lg p-3">
-              <p className="text-white/40 text-[10px] mb-2">Performance Radar</p>
-              <ResponsiveContainer width="100%" height={180}>
-                <RadarChart data={radarData}>
-                  <PolarGrid stroke="#ffffff10" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 8, fill: '#ffffff40' }} />
-                  <Radar dataKey="value" stroke="#D4AF37" fill="#D4AF37" fillOpacity={0.15} strokeWidth={2} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-
-          {player.achievements && (
-            <div className="bg-[#0D1B2A] rounded-lg p-3">
-              <p className="text-[#D4AF37] text-[10px] font-bold mb-1">🏆 הישגים</p>
-              <p className="text-white/60 text-xs">{player.achievements}</p>
-            </div>
-          )}
-
-          <CaseNotesPanel playerId={player.id} playerName={player.full_name} authorRole="מנהל מקצועי" />
-        </div>
-      </motion.div>
     </div>
   );
 }
