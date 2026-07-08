@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
@@ -33,6 +33,19 @@ export default function DirectorPlayerProfileModal({ player, allPlayers, onClose
   });
 
   const teammates = allPlayers.filter(p => p.position === player.position && p.team_name === player.team_name);
+
+  useEffect(() => {
+    (async () => {
+      let user = null;
+      try { user = await base44.auth.me(); } catch { /* ignore */ }
+      base44.entities.AuditLog.create({
+        actor_id: user?.id || 'unknown', actor_name: user?.full_name, actor_role: user?.role,
+        action: 'view_contract', player_id: player.id,
+        details: `צפייה בתיק המלא (חוזה/רפואי/היסטוריית העברות) של ${player.full_name}`,
+      });
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player.id]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>

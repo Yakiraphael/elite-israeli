@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck } from 'lucide-react';
+import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TransfersManager from '../components/admin/TransfersManager';
 import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
 import PlayerVerificationModal from '../components/admin/PlayerVerificationModal';
 import PermissionsManager from '../components/admin/PermissionsManager';
+import AuditLogPanel from '../components/admin/AuditLogPanel';
 
 const ADMIN_PASSWORD = 'elite2025';
 
@@ -88,7 +89,7 @@ function AdminDashboard({ onLogout }) {
       {/* Tabs */}
       <div className="border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {[{ id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }].map(t => (
+          {[{ id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }, { id: 'audit', label: 'יומן ביקורת', icon: History }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-6 py-4 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={14} />{t.label}
@@ -102,6 +103,7 @@ function AdminDashboard({ onLogout }) {
         {tab === 'players' && <PlayersViewer />}
         {tab === 'transfers' && <TransfersManager />}
         {tab === 'permissions' && <PermissionsManager />}
+        {tab === 'audit' && <AuditLogPanel />}
       </div>
     </div>
   );
@@ -220,8 +222,19 @@ function PlayersViewer() {
   });
 
   const queryClient = useQueryClient();
+  const logStatusChange = async (playerName, details) => {
+    let user = null;
+    try { user = await base44.auth.me(); } catch { /* ignore */ }
+    base44.entities.AuditLog.create({
+      actor_id: user?.id || 'unknown', actor_name: user?.full_name, actor_role: user?.role,
+      action: 'status_change', details: `${playerName}: ${details}`,
+    });
+  };
   const updateStatus = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.PlayerRegistration.update(id, { status }),
+    mutationFn: async ({ id, status, playerName }) => {
+      await logStatusChange(playerName, `סטטוס רישום עודכן ל-${status}`);
+      return base44.entities.PlayerRegistration.update(id, { status });
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-players'] }),
   });
 
@@ -229,7 +242,10 @@ function PlayersViewer() {
   const ACCOUNT_STATUS_COLORS = { 'לא מאומת': 'text-white/40 bg-white/5', 'ממתין לאישור': 'text-amber-400 bg-amber-400/10', 'מאושר': 'text-green-400 bg-green-400/10', 'מושעה': 'text-red-400 bg-red-400/10' };
 
   const updateAccountStatus = useMutation({
-    mutationFn: ({ id, account_status }) => base44.entities.PlayerRegistration.update(id, { account_status }),
+    mutationFn: async ({ id, account_status, playerName }) => {
+      await logStatusChange(playerName, `סטטוס חשבון עודכן ל-${account_status}`);
+      return base44.entities.PlayerRegistration.update(id, { account_status });
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-players'] }),
   });
 
@@ -264,7 +280,7 @@ function PlayersViewer() {
                   </button>
                   <select
                     value={p.status || 'ממתין'}
-                    onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value })}
+                    onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value, playerName: p.full_name })}
                     className={`text-xs font-bold px-3 py-1.5 rounded-full border-0 focus:outline-none cursor-pointer ${STATUS_COLORS[p.status || 'ממתין']}`}
                     style={{ background: 'transparent' }}
                   >
@@ -284,7 +300,7 @@ function PlayersViewer() {
                 </div>
                 <select
                   value={p.account_status || 'ממתין לאישור'}
-                  onChange={e => updateAccountStatus.mutate({ id: p.id, account_status: e.target.value })}
+                  onChange={e => updateAccountStatus.mutate({ id: p.id, account_status: e.target.value, playerName: p.full_name })}
                   className={`text-xs font-bold px-3 py-1.5 rounded-full border-0 focus:outline-none cursor-pointer ${ACCOUNT_STATUS_COLORS[p.account_status || 'ממתין לאישור']}`}
                   style={{ background: 'transparent' }}
                 >
