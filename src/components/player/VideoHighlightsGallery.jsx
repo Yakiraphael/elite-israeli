@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Play, Link as LinkIcon, Video, Pencil, X, Plus, Check } from 'lucide-react';
+import { Play, Link as LinkIcon, Video, Pencil, X, Plus, Check, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const MAX_VIDEOS = 6;
+const PAGE_SIZE = 6;
 
 function getYoutubeId(url) {
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
@@ -53,6 +54,7 @@ export default function VideoHighlightsGallery({ player }) {
   const [editing, setEditing] = useState(false);
   const [newUrl, setNewUrl] = useState('');
   const [saving, setSaving] = useState(false);
+  const [page, setPage] = useState(0);
 
   const persist = async (updated) => {
     setSaving(true);
@@ -71,21 +73,41 @@ export default function VideoHighlightsGallery({ player }) {
 
   if (!links.length && !editing) return null;
 
+  const totalPages = Math.max(1, Math.ceil(links.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const pageLinks = links.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
   return (
     <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase flex items-center gap-2">
-          <Video size={12} /> Highlights <span className="text-white/30 normal-case">({links.length}/{MAX_VIDEOS})</span>
+          <Video size={12} /> Highlights <span className="text-white/30 normal-case">({links.length})</span>
         </h3>
         <button onClick={() => setEditing(e => !e)} className="text-white/40 hover:text-[#D4AF37] transition-colors flex items-center gap-1 text-[10px] font-bold">
           {editing ? <><Check size={12} /> סיום עריכה</> : <><Pencil size={12} /> ערוך</>}
         </button>
       </div>
 
-      <div className={links.length > 6 ? 'grid grid-cols-3 gap-3 max-h-[420px] overflow-y-auto pr-1' : 'grid grid-cols-3 gap-3'}>
-        {links.map((link, i) => (
-          <VideoTile key={`${i}-${link}`} link={link} cardKey={`${i}-${link}`} playingId={playingId} setPlayingId={setPlayingId} onRemove={handleRemove} editing={editing} />
-        ))}
+      <div className="relative">
+        <div className="grid grid-cols-3 gap-3">
+          {pageLinks.map((link, i) => (
+            <VideoTile key={`${safePage}-${i}-${link}`} link={link} cardKey={`${safePage}-${i}-${link}`} playingId={playingId} setPlayingId={setPlayingId} onRemove={handleRemove} editing={editing} />
+          ))}
+        </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-3">
+            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={safePage === 0}
+              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors">
+              <ChevronRight size={14} className="text-white/70" />
+            </button>
+            <span className="text-white/40 text-[10px] font-bold">{safePage + 1} / {totalPages}</span>
+            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={safePage === totalPages - 1}
+              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors">
+              <ChevronLeft size={14} className="text-white/70" />
+            </button>
+          </div>
+        )}
       </div>
 
       {editing && links.length < MAX_VIDEOS && (

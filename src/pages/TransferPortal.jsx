@@ -44,7 +44,7 @@ const ROLES = [
     sub: 'לשחקן נוער',
     icon: Users,
     desc: 'צפייה בפרופיל ילדך, חתימה על מסמכים ואישורים.',
-    redirect: '/player-profile',
+    redirect: '/guardian-portal',
     color: '#F59E0B'
   },
   {
@@ -130,7 +130,7 @@ export default function TransferPortal() {
       const u = await base44.auth.me();
       setUser(u);
       const roleInfo = ROLES.find(r => r.value === roleValue);
-      // שחקן/הורה/מועדון חייבים להשלים קודם את טופס הרישום המלא — לפני גישה לדשבורד
+      // שחקן/מועדון חייבים להשלים קודם את טופס הרישום המלא — לפני גישה לדשבורד. הורה עובר ישר לפורטל האפוטרופוס.
       if (roleValue === 'player' || roleValue === 'parent' || roleValue === 'club_scout') {
         navigate(roleInfo.redirect);
       } else {

@@ -38,6 +38,7 @@ export default function PlayerOffersPanel({ player }) {
         <div className="space-y-3">
           {offers.map(o => {
             const sc = STATUS_STYLES[o.status] || STATUS_STYLES['ממתין לאישור הנהלה'];
+            const isYouth = !player.is_adult;
             return (
               <div key={o.id} className={`bg-[#0D1B2A] border rounded-lg p-4 ${sc.border}`}>
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
@@ -47,14 +48,22 @@ export default function PlayerOffersPanel({ player }) {
                   </div>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${sc.bg} ${sc.color}`}>{o.status}</span>
                 </div>
-                <p className="text-white/70 text-xs leading-relaxed mb-2">{o.proposal_details}</p>
-                {o.contract_value ? (
-                  <p className="text-[#D4AF37] text-xs font-bold mb-1">שווי חוזה: ₪{o.contract_value.toLocaleString()}</p>
-                ) : null}
-                {o.document_url && (
-                  <a href={o.document_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#D4AF37] text-xs hover:text-amber-300 transition-colors">
-                    <FileText size={12} /> צפה במסמך ההצעה
-                  </a>
+                {isYouth ? (
+                  <p className="text-white/40 text-xs leading-relaxed">
+                    🔒 מאחר שאתה שחקן נוער — פרטי ההצעה המלאים והמסמכים המצורפים חשופים לצפייה ולאישור האפוטרופוס שלך בלבד.
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-white/70 text-xs leading-relaxed mb-2">{o.proposal_details}</p>
+                    {o.contract_value ? (
+                      <p className="text-[#D4AF37] text-xs font-bold mb-1">שווי חוזה: ₪{o.contract_value.toLocaleString()}</p>
+                    ) : null}
+                    {o.document_url && (
+                      <a href={o.document_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#D4AF37] text-xs hover:text-amber-300 transition-colors">
+                        <FileText size={12} /> צפה במסמך ההצעה
+                      </a>
+                    )}
+                  </>
                 )}
               </div>
             );

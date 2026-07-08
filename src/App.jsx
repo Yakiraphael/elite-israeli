@@ -18,6 +18,7 @@ import OnboardingFlow from './pages/OnboardingFlow';
 import CoachWorkspace from './pages/CoachWorkspace';
 import DirectorDashboard from './pages/DirectorDashboard';
 import SignContract from './pages/SignContract';
+import GuardianPortal from './pages/GuardianPortal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -57,6 +58,7 @@ const AuthenticatedApp = () => {
       <Route path="/coach" element={<CoachWorkspace />} />
       <Route path="/director" element={<DirectorDashboard />} />
       <Route path="/sign-contract" element={<SignContract />} />
+      <Route path="/guardian-portal" element={<GuardianPortal />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
