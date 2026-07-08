@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,10 +7,11 @@ import Footer from '../components/Footer';
 import NotificationBell from '../components/NotificationBell';
 import CaseNotesPanel from '../components/player/CaseNotesPanel';
 import CoachTransferApprovals from '../components/coach/CoachTransferApprovals';
+import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
-  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase
+  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase, UserPlus
 } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -74,11 +75,26 @@ export default function CoachWorkspace() {
     queryFn: () => base44.entities.TransferProposal.filter({ coach_approval_status: 'ממתין לאישור מאמן' }, '-created_date', 50),
   });
 
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    (async () => {
+      try { setCurrentUser(await base44.auth.me()); } catch { setCurrentUser(null); }
+    })();
+  }, []);
+
+  const { data: clubUserRecords = [] } = useQuery({
+    queryKey: ['coach-clubuser-approval', currentUser?.email],
+    queryFn: () => base44.entities.ClubUser.filter({ email: currentUser.email, role_title: 'מאמן', is_active: true }),
+    enabled: !!currentUser?.email,
+  });
+  const isApprovedCoach = clubUserRecords.length > 0;
+
   const tabs = [
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
     { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
     { id: 'compliance', label: 'תקינות (Compliance)', icon: AlertTriangle },
+    ...(isApprovedCoach ? [{ id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus }] : []),
   ];
 
   return (
@@ -141,6 +157,7 @@ export default function CoachWorkspace() {
         {tab === 'requests' && <RequestsView />}
         {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
+        {tab === 'invite' && isApprovedCoach && <InvitePlayerPanel />}
       </div>
 
       {selectedPlayer && (

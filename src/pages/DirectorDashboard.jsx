@@ -5,16 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
-  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown
+  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
 import FinanceTab from '../components/director/FinanceTab';
 import AnalyticsTab from '../components/director/AnalyticsTab';
 import CaseNotesPanel from '../components/player/CaseNotesPanel';
+import TransfersManager from '../components/admin/TransfersManager';
+import InvitePlayerPanel from '../components/InvitePlayerPanel';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -92,6 +94,8 @@ function DashboardContent({ onLogout }) {
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
     { id: 'compliance', label: 'Compliance', icon: Shield },
     { id: 'contracts', label: 'חוזים', icon: FileText },
+    { id: 'transfers', label: 'העברות', icon: Send },
+    { id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus },
     { id: 'finance', label: 'כספים', icon: Wallet },
     { id: 'analytics', label: 'ניתוח נתונים', icon: BarChart3 },
   ];
@@ -163,6 +167,14 @@ function DashboardContent({ onLogout }) {
           <ContractsPanel />
         )}
 
+        {tab === 'transfers' && (
+          <TransfersManager />
+        )}
+
+        {tab === 'invite' && (
+          <InvitePlayerPanel />
+        )}
+
         {tab === 'finance' && (
           <FinanceTab />
         )}
@@ -179,24 +191,40 @@ function DashboardContent({ onLogout }) {
 
 // ---- OVERVIEW ----
 function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, contractsAlerts, pendingReqs, ifaReady, transfers, requests }) {
-  const scoreColor = complianceScore >= 90 ? 'text-green-400' : complianceScore >= 70 ? 'text-amber-400' : 'text-red-400';
-  const scoreBg = complianceScore >= 90 ? 'bg-green-500/10 border-green-500/20' : complianceScore >= 70 ? 'bg-amber-500/10 border-amber-500/20' : 'bg-red-500/10 border-red-500/20';
+  const scoreColor = complianceScore >= 90 ? '#10b981' : complianceScore >= 70 ? '#f59e0b' : '#ef4444';
+  const radialData = [{ name: 'compliance', value: complianceScore, fill: scoreColor }];
 
   return (
     <div className="space-y-6">
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className={`rounded-lg p-5 border text-center ${scoreBg}`}>
-          <Shield size={20} className={`mx-auto mb-2 ${scoreColor}`} />
-          <div className={`font-black text-3xl ${scoreColor}`}>{complianceScore}%</div>
-          <div className="text-white/50 text-xs mt-1">Compliance Score</div>
-          <div className="h-1.5 bg-white/10 rounded-full mt-2 overflow-hidden">
-            <div className="h-full rounded-full transition-all" style={{ width: `${complianceScore}%`, backgroundColor: complianceScore >= 90 ? '#10b981' : complianceScore >= 70 ? '#f59e0b' : '#ef4444' }} />
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-l from-[#1B263B] to-[#0D1B2A] p-6 md:p-8">
+        <div className="absolute -top-10 -left-10 w-56 h-56 rounded-full blur-3xl opacity-10" style={{ backgroundColor: '#D4AF37' }} />
+        <div className="relative flex flex-col md:flex-row items-center gap-8">
+          <div className="w-36 h-36 flex-shrink-0 relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart innerRadius="75%" outerRadius="100%" data={radialData} startAngle={90} endAngle={-270}>
+                <RadialBar dataKey="value" cornerRadius={20} background={{ fill: '#ffffff10' }} />
+              </RadialBarChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="font-black text-2xl" style={{ color: scoreColor }}>{complianceScore}%</span>
+              <span className="text-white/30 text-[9px] font-bold uppercase tracking-wide">Compliance</span>
+            </div>
+          </div>
+          <div className="flex-1 text-center md:text-right">
+            <span className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase">חדר בקרה — עילית ישראלית</span>
+            <h2 className="text-white text-2xl font-black mt-1">מבט כללי על מצב הליגה</h2>
+            <p className="text-white/40 text-sm mt-1">{players.length} שחקנים רשומים · {ifaReady} מוכנים IFA · {transfers.length} העברות במעקב</p>
           </div>
         </div>
+      </div>
+
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <DirKpi label="בעיות רפואיות" value={medicalExpired} sub={`${medicalSoon} בסכנה`} color={medicalExpired > 0 ? 'red' : 'green'} icon={Activity} urgent={medicalExpired > 0} />
         <DirKpi label="חוזים להחלטה" value={contractsAlerts} sub="Contract Pending" color={contractsAlerts > 0 ? 'amber' : 'green'} icon={FileText} />
         <DirKpi label="בקשות פתוחות" value={pendingReqs} sub="Action Queue" color={pendingReqs > 0 ? 'amber' : 'green'} icon={ClipboardList} urgent={pendingReqs > 0} />
+        <DirKpi label="שחקנים חופשיים" value={players.filter(p => p.is_free_agent).length} sub="Free Agents" color="blue" icon={Users} />
       </div>
 
       {/* Action Queue preview */}
@@ -217,7 +245,7 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
           { label: 'שחקנים חופשיים', value: players.filter(p => p.is_free_agent).length, icon: '🟢' },
           { label: 'העברות פעילות', value: transfers.filter(t => t.status === 'Trialist' || t.status === 'Contract Pending').length, icon: '🔄' },
         ].map(s => (
-          <div key={s.label} className="bg-[#1B263B] border border-white/10 rounded-lg p-4">
+          <div key={s.label} className="bg-[#1B263B] border border-white/10 rounded-lg p-4 card-hover">
             <div className="text-2xl mb-1">{s.icon}</div>
             <div className="text-white font-black text-xl">{s.value}</div>
             <div className="text-white/40 text-xs">{s.label}</div>
