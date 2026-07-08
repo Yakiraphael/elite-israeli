@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { X, MessageCircle, AlertTriangle, Pencil, Check, Loader2 } from 'lucide-react';
+import { X, MessageCircle, AlertTriangle, Pencil, Check, Loader2, HeartPulse, ShieldCheck, Gavel, ClipboardList } from 'lucide-react';
 import CaseNotesPanel from '../player/CaseNotesPanel';
 import GuardianContactCard from '../player/GuardianContactCard';
+import InjuryLogModal from './InjuryLogModal';
+import { computeEligibility } from '@/lib/playerEligibility';
 
 function calcDaysLeft(dateStr) {
   if (!dateStr) return null;
@@ -60,14 +62,11 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
 
   const toggleAvailability = () => update.mutate({ is_available_next_match: !player.is_available_next_match });
 
-  const [markingInjury, setMarkingInjury] = useState(false);
-  const [injuryReason, setInjuryReason] = useState('');
-  const handleMarkInjury = () => {
-    if (!injuryReason.trim()) return;
-    update.mutate({ is_available_next_match: false, unavailability_reason: injuryReason.trim() });
-    setMarkingInjury(false);
-    setInjuryReason('');
-  };
+  const [showInjuryModal, setShowInjuryModal] = useState(false);
+  const markRecovered = () => update.mutate({ active_injury: false, active_injury_note: '', is_available_next_match: true, unavailability_reason: '' });
+
+  const eligibility = computeEligibility(player);
+  const CATEGORY_LABELS = { medical: '🩺 רפואי', regulatory: '📋 רגולטורי', discipline: '🎽 משמעת ונוכחות' };
 
   const [editingRating, setEditingRating] = useState(false);
   const [ratingVal, setRatingVal] = useState(player.overall_rating || '');
@@ -140,15 +139,43 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
                 <AlertTriangle size={13} /> {player.unavailability_reason}
               </div>
             )}
-            {!markingInjury ? (
-              <button onClick={() => setMarkingInjury(true)} className="text-[11px] font-bold text-white/40 hover:text-white transition-colors">סמן פציעה / הרחקה →</button>
+            <div className="flex gap-2">
+              <button onClick={() => setShowInjuryModal(true)}
+                className="flex-1 flex items-center justify-center gap-1.5 bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-bold py-2 rounded-sm hover:bg-red-500/25 transition-colors">
+                <HeartPulse size={13} /> תיעוד פציעה
+              </button>
+              {player.active_injury && (
+                <button onClick={markRecovered}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/15 text-green-400 border border-green-500/30 text-xs font-bold py-2 rounded-sm hover:bg-green-500/25 transition-colors">
+                  <Check size={13} /> סמן כהחלים
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 2.5 Full compliance breakdown — per-category reasons, no medical diagnosis exposed */}
+          <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
+            <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest flex items-center gap-1.5"><ClipboardList size={12} /> תקינות מפורטת</h4>
+            {eligibility.reasons.length === 0 ? (
+              <p className="text-green-400 text-xs font-bold">✓ כל הנתונים תקינים</p>
             ) : (
-              <div className="flex gap-2">
-                <input value={injuryReason} onChange={e => setInjuryReason(e.target.value)} placeholder="סיבה (למשל: פציעת ברך)"
-                  className="flex-1 bg-[#0D1B2A] border border-white/15 rounded-sm px-2.5 py-1.5 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
-                <button onClick={handleMarkInjury} className="bg-red-500/20 text-red-400 border border-red-500/30 text-[11px] font-bold px-3 rounded-sm">שמור</button>
+              <div className="space-y-1.5">
+                {eligibility.reasons.map((r, i) => (
+                  <div key={i} className={`text-xs flex items-center gap-2 ${r.color === 'red' ? 'text-red-400' : 'text-amber-400'}`}>
+                    <span>{r.color === 'red' ? '✗' : '⚠️'}</span>
+                    <span className="text-white/30 text-[10px]">{CATEGORY_LABELS[r.category]}</span>
+                    <span>{r.msg}</span>
+                  </div>
+                ))}
               </div>
             )}
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-[11px]">
+              <div className="flex items-center gap-1.5 text-white/50"><ShieldCheck size={11} className="text-[#D4AF37]" /> רישום IFA: <span className={player.ifa_ready ? 'text-green-400 font-bold' : 'text-red-400 font-bold'}>{player.ifa_ready ? 'מוכן' : 'חסר'}</span></div>
+              <div className="flex items-center gap-1.5 text-white/50"><Gavel size={11} className="text-[#D4AF37]" /> כרטיסים צהובים: <span className="text-white font-bold">{player.yellow_cards_count || 0}</span></div>
+              <div className="text-white/50">📅 היעדרויות רצופות: <span className="text-white font-bold">{player.consecutive_absences || 0}</span></div>
+              <div className="text-white/50">👕 ציוד: <span className="text-white font-bold">{[player.equipment_size?.shirt, player.equipment_size?.pants, player.equipment_size?.shoe].filter(Boolean).length}/3</span></div>
+              {player.medical_expiry_date && <div className="text-white/50 col-span-2">🩺 תוקף רפואי עד: <span className="text-white font-bold">{player.medical_expiry_date}</span></div>}
+            </div>
           </div>
 
           {/* 3. Tactical profile */}
@@ -236,6 +263,11 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
           <GuardianContactCard player={player} />
         </div>
       </motion.div>
+
+      {showInjuryModal && (
+        <InjuryLogModal player={player} onClose={() => setShowInjuryModal(false)}
+          onSaved={() => { setShowInjuryModal(false); queryClient.invalidateQueries({ queryKey: ['coach-players'] }); }} />
+      )}
     </div>
   );
 }

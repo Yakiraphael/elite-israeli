@@ -10,10 +10,12 @@ import CoachTransferApprovals from '../components/coach/CoachTransferApprovals';
 import CoachPlayerProfileModal from '../components/coach/CoachPlayerProfileModal';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
+import SquadCallupPanel from '../components/coach/SquadCallupPanel';
+import { computeEligibility } from '@/lib/playerEligibility';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
-  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase, UserPlus
+  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase, UserPlus, ListChecks
 } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -43,6 +45,7 @@ export default function CoachWorkspace() {
   const [tab, setTab] = useState('squad');
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [onlyEligible, setOnlyEligible] = useState(false);
 
   const { data: players = [], isLoading: loadingPlayers } = useQuery({
     queryKey: ['coach-players'],
@@ -94,6 +97,7 @@ export default function CoachWorkspace() {
   const tabs = [
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
+    { id: 'callup', label: 'זימון וניהול סגל', icon: ListChecks },
     { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
     { id: 'compliance', label: 'תקינות (Compliance)', icon: AlertTriangle },
     ...(isApprovedCoach ? [{ id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus }] : []),
@@ -153,10 +157,15 @@ export default function CoachWorkspace() {
                 🚫 {blockedCount} שחקנים חסומים מהסגל הפעיל עקב אישור רפואי לא בתוקף
               </div>
             )}
-            <SquadView players={activeSquad} loading={loadingPlayers} onSelect={setSelectedPlayer} />
+            <label className="flex items-center gap-2 text-white/50 text-xs mb-4 cursor-pointer w-fit">
+              <input type="checkbox" checked={onlyEligible} onChange={e => setOnlyEligible(e.target.checked)} className="accent-[#D4AF37]" />
+              הצג רק שחקנים כשירים (Only Eligible Players)
+            </label>
+            <SquadView players={activeSquad} loading={loadingPlayers} onSelect={setSelectedPlayer} onlyEligible={onlyEligible} />
           </>
         )}
         {tab === 'requests' && <RequestsView />}
+        {tab === 'callup' && <SquadCallupPanel players={filtered} />}
         {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
         {tab === 'invite' && isApprovedCoach && <InvitePlayerPanel />}
@@ -187,21 +196,30 @@ function KpiCard({ label, value, color, icon: Icon, urgent }) {
   );
 }
 
-function SquadView({ players, loading, onSelect }) {
+function SquadView({ players, loading, onSelect, onlyEligible }) {
   if (loading) return <div className="flex justify-center py-12"><Loader2 size={24} className="animate-spin text-[#D4AF37]" /></div>;
+
+  const withEligibility = players.map(p => ({ player: p, elig: computeEligibility(p) }));
+  const visible = onlyEligible ? withEligibility.filter(x => x.elig.eligible) : withEligibility;
+  const sorted = [...visible].sort((a, b) => {
+    const rank = { green: 0, yellow: 1, red: 2 };
+    return rank[a.elig.color] - rank[b.elig.color];
+  });
+
   return (
     <div className="space-y-2">
-      {players.length === 0 && <div className="text-center py-12 text-white/30 text-sm">אין שחקנים</div>}
-      {players.map(p => {
+      {sorted.length === 0 && <div className="text-center py-12 text-white/30 text-sm">אין שחקנים תואמים</div>}
+      {sorted.map(({ player: p, elig }) => {
         const med = getMedicalStatus(p);
+        const ineligible = elig.color === 'red';
         return (
           <button key={p.id} onClick={() => onSelect(p)}
-            className="w-full bg-[#1B263B] border border-white/10 hover:border-[#D4AF37]/30 rounded-lg p-4 flex items-center gap-4 transition-all text-right group">
+            className={`w-full border rounded-lg p-4 flex items-center gap-4 transition-all text-right group ${ineligible ? 'bg-[#1B263B]/40 border-white/5 opacity-60' : 'bg-[#1B263B] border-white/10 hover:border-[#D4AF37]/30'}`}>
             <div className="w-9 h-9 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center flex-shrink-0">
-              <Users size={14} className="text-[#D4AF37]" />
+              {ineligible ? <AlertCircle size={14} className="text-white/30" /> : <Users size={14} className="text-[#D4AF37]" />}
             </div>
             <div className="flex-1">
-              <div className="text-white font-bold text-sm">{p.full_name}</div>
+              <div className={`font-bold text-sm ${ineligible ? 'text-white/50' : 'text-white'}`}>{p.full_name}</div>
               <div className="text-white/40 text-xs">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}</div>
             </div>
             <div className="flex items-center gap-2">

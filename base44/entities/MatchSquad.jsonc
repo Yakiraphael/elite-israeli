@@ -1,0 +1,56 @@
+{
+  "name": "MatchSquad",
+  "type": "object",
+  "properties": {
+    "match_label": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05e9\u05d7\u05e7 / \u05d9\u05e8\u05d9\u05d1"
+    },
+    "match_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05de\u05e9\u05d7\u05e7"
+    },
+    "selected_player_ids": {
+      "type": "array",
+      "title": "\u05e9\u05d7\u05e7\u05e0\u05d9\u05dd \u05e9\u05e0\u05d1\u05d7\u05e8\u05d5",
+      "items": {
+        "type": "string"
+      }
+    },
+    "excluded_players": {
+      "type": "array",
+      "title": "\u05e9\u05d7\u05e7\u05e0\u05d9\u05dd \u05db\u05e9\u05d9\u05e8\u05d9\u05dd \u05e9\u05dc\u05d0 \u05d6\u05d5\u05de\u05e0\u05d5 + \u05e1\u05d9\u05d1\u05d4",
+      "items": {
+        "type": "object",
+        "properties": {
+          "player_id": {
+            "type": "string"
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "confirmed": {
+      "type": "boolean",
+      "title": "\u05e1\u05d2\u05dc \u05d0\u05d5\u05e9\u05e8 \u05e1\u05d5\u05e4\u05d9\u05ea",
+      "default": false
+    },
+    "confirmed_by": {
+      "type": "string",
+      "title": "\u05d0\u05d5\u05e9\u05e8 \u05e2\u05dc \u05d9\u05d3\u05d9"
+    },
+    "confirmed_at": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05d0\u05d9\u05e9\u05d5\u05e8 (Timestamp)"
+    }
+  },
+  "required": [
+    "match_label"
+  ]
+}
