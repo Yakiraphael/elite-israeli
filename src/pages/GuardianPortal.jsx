@@ -58,8 +58,8 @@ export default function GuardianPortal() {
           <div className="w-14 h-14 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 flex items-center justify-center mx-auto mb-3">
             <Users size={22} className="text-[#D4AF37]" />
           </div>
-          <h1 className="text-white text-2xl font-black">פורטל האפוטרופוס</h1>
-          <p className="text-white/40 text-xs mt-1">מעקב אחר הילד/ה שלך, מסמכים וחתימות דיגיטליות</p>
+          <h1 className="text-white text-2xl font-black">פורטל האפוטרופוס / הניהול האישי</h1>
+          <p className="text-white/40 text-xs mt-1">מעקב אחר השחקנים המשויכים אליך, מסמכים, חוזים והעברות</p>
         </div>
 
         {loading ? (
