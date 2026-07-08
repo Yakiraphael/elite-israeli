@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History } from 'lucide-react';
+import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History, FolderOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TransfersManager from '../components/admin/TransfersManager';
 import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
 import PlayerVerificationModal from '../components/admin/PlayerVerificationModal';
 import PermissionsManager from '../components/admin/PermissionsManager';
 import AuditLogPanel from '../components/admin/AuditLogPanel';
+import PlayerDocumentsModal from '../components/admin/PlayerDocumentsModal';
 
 const ADMIN_PASSWORD = 'elite2025';
 
@@ -216,6 +217,7 @@ function EventsManager() {
 function PlayersViewer() {
   const [editingPlayer, setEditingPlayer] = useState(null);
   const [verifyingPlayer, setVerifyingPlayer] = useState(null);
+  const [docsPlayer, setDocsPlayer] = useState(null);
   const { data: players = [], isLoading } = useQuery({
     queryKey: ['admin-players'],
     queryFn: () => base44.entities.PlayerRegistration.list('-created_date', 100),
@@ -278,6 +280,10 @@ function PlayersViewer() {
                     className="w-8 h-8 rounded bg-white/5 hover:bg-[#D4AF37]/20 flex items-center justify-center transition-colors">
                     <Star size={13} className="text-[#D4AF37]" />
                   </button>
+                  <button onClick={() => setDocsPlayer(p)} title="כספת מסמכים"
+                    className="w-8 h-8 rounded bg-white/5 hover:bg-green-500/20 flex items-center justify-center transition-colors">
+                    <FolderOpen size={13} className="text-green-400" />
+                  </button>
                   <select
                     value={p.status || 'ממתין'}
                     onChange={e => updateStatus.mutate({ id: p.id, status: e.target.value, playerName: p.full_name })}
@@ -313,6 +319,7 @@ function PlayersViewer() {
       )}
       {editingPlayer && <EliteIdEditorModal player={editingPlayer} onClose={() => setEditingPlayer(null)} />}
       {verifyingPlayer && <PlayerVerificationModal player={verifyingPlayer} onClose={() => setVerifyingPlayer(null)} />}
+      {docsPlayer && <PlayerDocumentsModal player={docsPlayer} onClose={() => setDocsPlayer(null)} />}
     </div>
   );
 }

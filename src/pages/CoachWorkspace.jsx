@@ -11,11 +11,14 @@ import CoachPlayerProfileModal from '../components/coach/CoachPlayerProfileModal
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
 import SquadCallupPanel from '../components/coach/SquadCallupPanel';
+import InjuryLogModal from '../components/coach/InjuryLogModal';
 import { computeEligibility } from '@/lib/playerEligibility';
+import { whatsappLink } from '@/lib/contactLinks';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
-  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase, UserPlus, ListChecks
+  ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase, UserPlus, ListChecks,
+  MessageCircle, HeartPulse, Stethoscope
 } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -197,6 +200,9 @@ function KpiCard({ label, value, color, icon: Icon, urgent }) {
 }
 
 function SquadView({ players, loading, onSelect, onlyEligible }) {
+  const [injuryModalPlayer, setInjuryModalPlayer] = useState(null);
+  const queryClient = useQueryClient();
+
   if (loading) return <div className="flex justify-center py-12"><Loader2 size={24} className="animate-spin text-[#D4AF37]" /></div>;
 
   const withEligibility = players.map(p => ({ player: p, elig: computeEligibility(p) }));
@@ -206,33 +212,59 @@ function SquadView({ players, loading, onSelect, onlyEligible }) {
     return rank[a.elig.color] - rank[b.elig.color];
   });
 
+  const READINESS_DOT = { green: '#10B981', yellow: '#F59E0B', red: '#EF4444' };
+  const READINESS_LABEL = { green: 'כשיר', yellow: 'מוגבל', red: 'לא כשיר' };
+
   return (
     <div className="space-y-2">
       {sorted.length === 0 && <div className="text-center py-12 text-white/30 text-sm">אין שחקנים תואמים</div>}
       {sorted.map(({ player: p, elig }) => {
         const med = getMedicalStatus(p);
         const ineligible = elig.color === 'red';
+        const wa = whatsappLink(p);
         return (
-          <button key={p.id} onClick={() => onSelect(p)}
-            className={`w-full border rounded-lg p-4 flex items-center gap-4 transition-all text-right group ${ineligible ? 'bg-[#1B263B]/40 border-white/5 opacity-60' : 'bg-[#1B263B] border-white/10 hover:border-[#D4AF37]/30'}`}>
-            <div className="w-9 h-9 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center flex-shrink-0">
-              {ineligible ? <AlertCircle size={14} className="text-white/30" /> : <Users size={14} className="text-[#D4AF37]" />}
-            </div>
-            <div className="flex-1">
-              <div className={`font-bold text-sm ${ineligible ? 'text-white/50' : 'text-white'}`}>{p.full_name}</div>
-              <div className="text-white/40 text-xs">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}</div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_BADGE[med.color]}`}>
-                🏥 {med.label}
-              </span>
-              {p.ifa_ready && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">IFA ✓</span>}
+          <div key={p.id}
+            className={`w-full border rounded-lg p-4 flex items-center gap-4 transition-all group ${ineligible ? 'bg-[#1B263B]/40 border-white/5' : 'bg-[#1B263B] border-white/10 hover:border-[#D4AF37]/30'}`}>
+            <button onClick={() => onSelect(p)} className="flex items-center gap-4 flex-1 min-w-0 text-right">
+              {/* Prominent readiness indicator */}
+              <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                <span className="w-3 h-3 rounded-full" style={{ backgroundColor: READINESS_DOT[elig.color] }} />
+                <span className="text-[9px] font-bold" style={{ color: READINESS_DOT[elig.color] }}>{READINESS_LABEL[elig.color]}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className={`font-bold text-sm ${ineligible ? 'text-white/50' : 'text-white'}`}>{p.full_name}</div>
+                <div className="text-white/40 text-xs">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}</div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_BADGE[med.color]}`}>🏥 {med.label}</span>
+                  {p.ifa_ready && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">IFA ✓</span>}
+                </div>
+              </div>
+            </button>
+
+            {/* Guardian/manager quick link + quick medical actions */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {wa && (
+                <a href={wa} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                  title={p.is_adult ? 'וואטסאפ לשחקן' : 'וואטסאפ לאפוטרופוס'}
+                  className="w-8 h-8 rounded bg-green-500/10 hover:bg-green-500/20 flex items-center justify-center transition-colors">
+                  <MessageCircle size={13} className="text-green-400" />
+                </a>
+              )}
+              <button onClick={(e) => { e.stopPropagation(); setInjuryModalPlayer(p); }} title="תיעוד פציעה / עדכון סטטוס רפואי"
+                className="w-8 h-8 rounded bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center transition-colors">
+                <HeartPulse size={13} className="text-red-400" />
+              </button>
               <SubmissionProgressBar player={p} compact />
+              <ChevronRight size={14} className="text-white/20 group-hover:text-[#D4AF37] transition-colors" />
             </div>
-            <ChevronRight size={14} className="text-white/20 group-hover:text-[#D4AF37] transition-colors flex-shrink-0" />
-          </button>
+          </div>
         );
       })}
+
+      {injuryModalPlayer && (
+        <InjuryLogModal player={injuryModalPlayer} onClose={() => setInjuryModalPlayer(null)}
+          onSaved={() => { setInjuryModalPlayer(null); queryClient.invalidateQueries({ queryKey: ['coach-players'] }); }} />
+      )}
     </div>
   );
 }
