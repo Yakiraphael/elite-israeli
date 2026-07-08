@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Pencil, Check, Loader2 } from 'lucide-react';
+import GuardianContactCard from './GuardianContactCard';
 
 const FIELDS = [
   { key: 'height_cm', label: '⚡ גובה (ס״מ)', type: 'number' },
@@ -28,6 +29,7 @@ export default function PersonalInfoPanel({ player }) {
   };
 
   return (
+    <div className="space-y-4">
     <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase">נתוני שחקן</h3>
@@ -76,6 +78,8 @@ export default function PersonalInfoPanel({ player }) {
           ))}
         </div>
       )}
+    </div>
+    <GuardianContactCard player={player} />
     </div>
   );
 }

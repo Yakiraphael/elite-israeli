@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import NotificationBell from '../components/NotificationBell';
 import CaseNotesPanel from '../components/player/CaseNotesPanel';
 import CoachTransferApprovals from '../components/coach/CoachTransferApprovals';
+import CoachPlayerProfileModal from '../components/coach/CoachPlayerProfileModal';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
@@ -161,7 +162,7 @@ export default function CoachWorkspace() {
       </div>
 
       {selectedPlayer && (
-        <PlayerQuickView player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
+        <CoachPlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
       )}
 
       <Footer />
@@ -350,47 +351,5 @@ function RequestCard({ req, statusColors, statusIcons, onApprove, onDeny, onRead
         )}
       </AnimatePresence>
     </motion.div>
-  );
-}
-
-function PlayerQuickView({ player, onClose }) {
-  const med = getMedicalStatus(player);
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#1B263B] border border-white/10 rounded-lg max-w-sm w-full p-6"
-        onClick={e => e.stopPropagation()} dir="rtl">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-white font-black text-base">{player.full_name}</h3>
-            <p className="text-[#D4AF37] text-xs">{player.position}</p>
-          </div>
-          <button onClick={onClose}><X size={16} className="text-white/30 hover:text-white" /></button>
-        </div>
-        <div className="space-y-2 text-xs">
-          {[
-            ['📱 טלפון', player.phone],
-            ['📍 עיר', player.city],
-            ['⚽ קבוצה', player.team_name],
-            ['📏 גובה', player.height_cm ? `${player.height_cm}ס״מ` : null],
-            ['מוכן IFA', player.ifa_ready ? '✅ כן' : '❌ לא'],
-          ].filter(([, v]) => v).map(([l, v]) => (
-            <div key={l} className="flex justify-between bg-[#0D1B2A] rounded p-2">
-              <span className="text-white/40">{l}</span>
-              <span className="text-white font-semibold">{v}</span>
-            </div>
-          ))}
-          <div className="flex justify-between bg-[#0D1B2A] rounded p-2">
-            <span className="text-white/40">🏥 רפואי</span>
-            <span className={`font-bold ${med.color === 'green' ? 'text-green-400' : med.color === 'yellow' ? 'text-amber-400' : 'text-red-400'}`}>
-              {med.label}
-            </span>
-          </div>
-        </div>
-        <div className="mt-4">
-          <CaseNotesPanel playerId={player.id} playerName={player.full_name} authorRole="מאמן" />
-        </div>
-      </motion.div>
-    </div>
   );
 }
