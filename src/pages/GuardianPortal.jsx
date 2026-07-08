@@ -25,7 +25,15 @@ export default function GuardianPortal() {
 
   const { data: children = [], isLoading: loadingChildren } = useQuery({
     queryKey: ['guardian-children', user?.email],
-    queryFn: () => base44.entities.PlayerRegistration.filter({ parent_email: user.email }, '-created_date', 20),
+    queryFn: async () => {
+      const [asGuardian, asManager] = await Promise.all([
+        base44.entities.PlayerRegistration.filter({ parent_email: user.email }, '-created_date', 20),
+        base44.entities.PlayerRegistration.filter({ manager_email: user.email }, '-created_date', 20),
+      ]);
+      const merged = [...asGuardian];
+      asManager.forEach(p => { if (!merged.some(m => m.id === p.id)) merged.push(p); });
+      return merged;
+    },
     enabled: !!user?.email,
   });
 

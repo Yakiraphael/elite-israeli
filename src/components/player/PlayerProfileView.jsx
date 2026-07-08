@@ -21,6 +21,7 @@ import DynamicPlayerCard from './DynamicPlayerCard';
 import PersonalInfoPanel from './PersonalInfoPanel';
 import CVComparisonPanel from './CVComparisonPanel';
 import ContractsQuickAccess from './ContractsQuickAccess';
+import PersonalManagerPanel from './PersonalManagerPanel';
 import { Lock } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -216,6 +217,7 @@ export default function PlayerProfileView({ player, events }) {
           {tab === 'vault' && isApproved && (
             <motion.div key="vault" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl space-y-4">
               <ContractsQuickAccess playerId={player.id} />
+              <PersonalManagerPanel player={player} />
 
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
                 <h3 className="text-white font-black text-base mb-1">🔐 הכספת המשפטית</h3>
