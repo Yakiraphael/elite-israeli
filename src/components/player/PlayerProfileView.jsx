@@ -23,7 +23,8 @@ import CVComparisonPanel from './CVComparisonPanel';
 import ContractsQuickAccess from './ContractsQuickAccess';
 import PersonalManagerPanel from './PersonalManagerPanel';
 import BackButton from '../BackButton';
-import { Lock } from 'lucide-react';
+import PlayerNotificationSettingsModal from './PlayerNotificationSettingsModal';
+import { Lock, Settings } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -50,6 +51,7 @@ const RESTRICTED_TABS = ['vault', 'transfers', 'requests'];
 
 export default function PlayerProfileView({ player, events }) {
   const [tab, setTab] = useState('showcase');
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const posInfo = POSITIONS_INFO[player.position] || { role: '', skills: [], color: 'from-gray-600 to-gray-800' };
   const playerEvent = events.find(e => e.id === player.event_id);
   const isMedicalExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
@@ -71,8 +73,15 @@ export default function PlayerProfileView({ player, events }) {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <BackButton label="חזרה" fallback="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold" />
           <img src={LOGO_URL} alt="עילית ישראלית" className="h-10" />
+          <button onClick={() => setShowNotificationSettings(true)} className="flex items-center gap-1.5 text-white/50 hover:text-white text-xs font-bold transition-colors">
+            <Settings size={13} /> הגדרות התראות
+          </button>
         </div>
       </div>
+
+      {showNotificationSettings && (
+        <PlayerNotificationSettingsModal player={player} onClose={() => setShowNotificationSettings(false)} />
+      )}
 
       {/* Pending approval banner */}
       {!isApproved && (

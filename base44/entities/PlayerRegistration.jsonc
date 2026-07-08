@@ -78,11 +78,11 @@
     },
     "height_cm": {
       "type": "number",
-      "title": "\u05d2\u05d5\u05d1\u05d4 (\u05e1\u05f4\u05de)"
+      "title": "\u05d2\u05d5\u05d1\u05d4 (\u05e1\"\u05de)"
     },
     "weight_kg": {
       "type": "number",
-      "title": "\u05de\u05e9\u05e7\u05dc (\u05e7\u05f4\u05d2)"
+      "title": "\u05de\u05e9\u05e7\u05dc (\u05e7\"\u05d2)"
     },
     "experience_years": {
       "type": "number",
@@ -316,13 +316,13 @@
       "type": "string",
       "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05e8\u05d9\u05e9\u05d5\u05dd",
       "enum": [
-        "\u05de\u05ea\u05d9\u05df",
+        "\u05de\u05de\u05ea\u05d9\u05df",
         "\u05de\u05d0\u05d5\u05e9\u05e8",
         "\u05e4\u05e2\u05d9\u05dc",
         "\u05d4\u05d5\u05e2\u05d1\u05e8",
         "IFA Ready"
       ],
-      "default": "\u05de\u05ea\u05d9\u05df"
+      "default": "\u05de\u05de\u05ea\u05d9\u05df"
     },
     "is_adult": {
       "type": "boolean",
@@ -667,6 +667,32 @@
         "shoe": {
           "type": "string",
           "title": "\u05de\u05d9\u05d3\u05ea \u05e0\u05e2\u05dc"
+        }
+      }
+    },
+    "notification_preferences": {
+      "type": "object",
+      "title": "\u05d4\u05e2\u05d3\u05e4\u05d5\u05ea \u05d4\u05ea\u05e8\u05d0\u05d5\u05ea \u05d1\u05de\u05d9\u05d9\u05dc",
+      "properties": {
+        "medical_expiry": {
+          "type": "boolean",
+          "title": "\u05e4\u05e7\u05d9\u05e2\u05ea \u05ea\u05d5\u05e7\u05e3 \u05d0\u05d9\u05e9\u05d5\u05e8 \u05e8\u05e4\u05d5\u05d0\u05d9",
+          "default": true
+        },
+        "request_status": {
+          "type": "boolean",
+          "title": "\u05e2\u05d3\u05db\u05d5\u05df \u05e1\u05d8\u05d8\u05d5\u05e1 \u05d1\u05e7\u05e9\u05d4",
+          "default": true
+        },
+        "transfer_offer": {
+          "type": "boolean",
+          "title": "\u05d4\u05e6\u05e2\u05ea \u05d4\u05e2\u05d1\u05e8\u05d4 \u05d7\u05d3\u05e9\u05d4",
+          "default": true
+        },
+        "contract_status": {
+          "type": "boolean",
+          "title": "\u05e2\u05d3\u05db\u05d5\u05df \u05e1\u05d8\u05d8\u05d5\u05e1 \u05d7\u05d5\u05d6\u05d4",
+          "default": true
         }
       }
     }

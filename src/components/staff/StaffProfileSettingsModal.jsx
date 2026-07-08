@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import { X, Loader2, Upload, Trash2, Check } from 'lucide-react';
+import NotificationPrefsFields from '../NotificationPrefsFields';
+
+const NOTIFICATION_OPTIONS = [
+  { key: 'new_request', label: 'בקשה חדשה משחקן' },
+  { key: 'document_expiring', label: 'מסמך/אישור רפואי עומד לפוג' },
+  { key: 'contract_expiring', label: 'חוזה עומד לפוג' },
+  { key: 'transfer_approval_needed', label: 'נדרש אישור להעברת שחקן' },
+];
 
 export default function StaffProfileSettingsModal({ onClose }) {
   const [loading, setLoading] = useState(true);
@@ -48,6 +56,12 @@ export default function StaffProfileSettingsModal({ onClose }) {
     const updated = (record.certificates || []).filter((_, i) => i !== idx);
     await base44.entities.ClubUser.update(record.id, { certificates: updated });
     setRecord(r => ({ ...r, certificates: updated }));
+  };
+
+  const updateNotificationPref = async (key, checked) => {
+    const updated = { ...(record.notification_preferences || {}), [key]: checked };
+    await base44.entities.ClubUser.update(record.id, { notification_preferences: updated });
+    setRecord(r => ({ ...r, notification_preferences: updated }));
   };
 
   return (
@@ -111,6 +125,11 @@ export default function StaffProfileSettingsModal({ onClose }) {
                   <input type="file" className="hidden" onChange={handleUploadCert} disabled={uploading} />
                 </label>
               </div>
+            </div>
+
+            <div className="pt-3 border-t border-white/10">
+              <div className="text-white/40 text-xs font-bold mb-2">התראות במייל</div>
+              <NotificationPrefsFields options={NOTIFICATION_OPTIONS} value={record.notification_preferences} onChange={updateNotificationPref} />
             </div>
           </div>
         )}
