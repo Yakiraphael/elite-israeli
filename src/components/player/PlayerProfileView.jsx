@@ -38,11 +38,11 @@ const POSITIONS_INFO = {
 };
 
 const TABS = [
-  { id: 'showcase', label: '📋 Showcase', labelHe: 'הפרופיל הציבורי' },
-  { id: 'vault', label: '🔐 Vault', labelHe: 'הכספת' },
-  { id: 'cv', label: '💼 CV Engine', labelHe: 'קורות חיים' },
-  { id: 'transfers', label: '🔄 Transfer Hub', labelHe: 'העברות' },
-  { id: 'requests', label: '🎯 בקשות', labelHe: 'מרכז בקשות' },
+  { id: 'showcase', label: '📋 פרופיל אישי' },
+  { id: 'vault', label: '🔐 כספת אישית' },
+  { id: 'cv', label: '💼 מחולל קורות חיים' },
+  { id: 'transfers', label: '🔄 מרכז העברות' },
+  { id: 'requests', label: '🎯 בקשות' },
 ];
 
 const RESTRICTED_TABS = ['vault', 'transfers', 'requests'];
@@ -280,8 +280,8 @@ export default function PlayerProfileView({ player, events }) {
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6 mb-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-white font-black text-base">💼 The CV Engine</h3>
-                    <p className="text-white/40 text-xs">מחולל קורות חיים דינמי — דו-לשוני</p>
+                    <h3 className="text-white font-black text-base">💼 מחולל קורות החיים</h3>
+                    <p className="text-white/40 text-xs">מחולל קורות חיים דינמי ומקצועי</p>
                   </div>
                   <button className="flex items-center gap-2 bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-4 py-2 rounded-sm hover:bg-amber-400 transition-colors">
                     <Download size={14} /> ייצוא PDF
@@ -304,36 +304,36 @@ export default function PlayerProfileView({ player, events }) {
 
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
-                      <p className="text-[#D4AF37] font-bold mb-1">Physical Profile</p>
-                      {player.height_cm && <p className="text-white/60">Height: {player.height_cm} cm</p>}
-                      {player.weight_kg && <p className="text-white/60">Weight: {player.weight_kg} kg</p>}
-                      {player.dominant_foot && <p className="text-white/60">Dominant Foot: {player.dominant_foot}</p>}
+                      <p className="text-[#D4AF37] font-bold mb-1">נתונים פיזיים</p>
+                      {player.height_cm && <p className="text-white/60">גובה: {player.height_cm} ס״מ</p>}
+                      {player.weight_kg && <p className="text-white/60">משקל: {player.weight_kg} ק״ג</p>}
+                      {player.dominant_foot && <p className="text-white/60">רגל דומיננטית: {player.dominant_foot}</p>}
                     </div>
                     <div>
-                      <p className="text-[#D4AF37] font-bold mb-1">Professional</p>
-                      {player.team_name && <p className="text-white/60">Current Club: {player.team_name}</p>}
-                      {player.experience_years && <p className="text-white/60">Experience: {player.experience_years} yrs</p>}
-                      {player.ifa_id && <p className="text-white/60">IFA ID: {player.ifa_id}</p>}
+                      <p className="text-[#D4AF37] font-bold mb-1">מקצועי</p>
+                      {player.team_name && <p className="text-white/60">קבוצה נוכחית: {player.team_name}</p>}
+                      {player.experience_years && <p className="text-white/60">ניסיון: {player.experience_years} שנים</p>}
+                      {player.ifa_id && <p className="text-white/60">מספר כרטיס שחקן: {player.ifa_id}</p>}
                     </div>
                   </div>
 
                   {player.previous_clubs && (
                     <div>
-                      <p className="text-[#D4AF37] font-bold text-xs mb-1">Career History</p>
+                      <p className="text-[#D4AF37] font-bold text-xs mb-1">היסטוריית קריירה</p>
                       <p className="text-white/60 text-xs">{player.previous_clubs}</p>
                     </div>
                   )}
 
                   {player.achievements && (
                     <div>
-                      <p className="text-[#D4AF37] font-bold text-xs mb-1">🏆 Achievements</p>
+                      <p className="text-[#D4AF37] font-bold text-xs mb-1">🏆 הישגים</p>
                       <p className="text-white/60 text-xs">{player.achievements}</p>
                     </div>
                   )}
 
                   {player.transfermarkt_url && (
                     <a href={player.transfermarkt_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#D4AF37] text-xs hover:text-amber-300">
-                      <Globe size={12} /> Transfermarkt Profile
+                      <Globe size={12} /> פרופיל Transfermarkt
                     </a>
                   )}
                 </div>
