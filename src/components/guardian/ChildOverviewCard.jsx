@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2 } from 'lucide-react';
+import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings } from 'lucide-react';
+import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
 
 const MEDICAL_LIGHT = {
   green: { label: 'כשיר לחלוטין', color: '#10B981' },
@@ -13,6 +14,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
   const queryClient = useQueryClient();
   const [signName, setSignName] = useState('');
   const [confirm, setConfirm] = useState({});
+  const [showNotifSettings, setShowNotifSettings] = useState(false);
 
   const isExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
   const isSoon = !isExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
@@ -45,7 +47,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
         <div className="w-12 h-12 rounded-full bg-[#D4AF37]/15 border-2 border-[#D4AF37]/50 flex items-center justify-center flex-shrink-0">
           <User size={20} className="text-[#D4AF37]" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="text-white font-black text-base">{player.full_name}</h3>
           <div className="flex items-center gap-2 text-white/40 text-xs">
             <span>{player.position}</span>
@@ -53,7 +55,14 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
             {player.city && <span className="flex items-center gap-0.5"><MapPin size={10} />{player.city}</span>}
           </div>
         </div>
+        <button onClick={() => setShowNotifSettings(true)} title="הגדרות התראות" className="text-white/30 hover:text-white transition-colors flex-shrink-0">
+          <Settings size={15} />
+        </button>
       </div>
+
+      {showNotifSettings && (
+        <GuardianNotificationSettingsModal player={player} onClose={() => setShowNotifSettings(false)} />
+      )}
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="rounded-lg px-3 py-2 border" style={{ backgroundColor: `${MEDICAL_LIGHT[light].color}15`, borderColor: `${MEDICAL_LIGHT[light].color}40` }}>

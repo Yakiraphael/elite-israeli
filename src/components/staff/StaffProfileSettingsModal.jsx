@@ -4,12 +4,27 @@ import { motion } from 'framer-motion';
 import { X, Loader2, Upload, Trash2, Check } from 'lucide-react';
 import NotificationPrefsFields from '../NotificationPrefsFields';
 
-const NOTIFICATION_OPTIONS = [
+const ALL_NOTIFICATION_OPTIONS = [
   { key: 'new_request', label: 'בקשה חדשה משחקן' },
   { key: 'document_expiring', label: 'מסמך/אישור רפואי עומד לפוג' },
   { key: 'contract_expiring', label: 'חוזה עומד לפוג' },
   { key: 'transfer_approval_needed', label: 'נדרש אישור להעברת שחקן' },
 ];
+
+// Each role only sees the notification topics relevant to their job — keeps inboxes focused.
+const ROLE_NOTIFICATION_KEYS = {
+  'מנהל מקצועי': ['new_request', 'contract_expiring', 'transfer_approval_needed'],
+  'מאמן': ['new_request', 'document_expiring'],
+  'סקאוטר': ['new_request', 'transfer_approval_needed'],
+  'אנליסט': ['document_expiring', 'contract_expiring'],
+  'מזכירות': ['new_request', 'document_expiring', 'contract_expiring'],
+};
+
+function getNotificationOptionsForRole(roleTitle) {
+  const keys = ROLE_NOTIFICATION_KEYS[roleTitle];
+  if (!keys) return ALL_NOTIFICATION_OPTIONS;
+  return ALL_NOTIFICATION_OPTIONS.filter(o => keys.includes(o.key));
+}
 
 export default function StaffProfileSettingsModal({ onClose }) {
   const [loading, setLoading] = useState(true);
@@ -129,7 +144,8 @@ export default function StaffProfileSettingsModal({ onClose }) {
 
             <div className="pt-3 border-t border-white/10">
               <div className="text-white/40 text-xs font-bold mb-2">התראות במייל</div>
-              <NotificationPrefsFields options={NOTIFICATION_OPTIONS} value={record.notification_preferences} onChange={updateNotificationPref} />
+              <p className="text-white/25 text-[10px] mb-2">מותאם לתפקידך — {record.role_title}</p>
+              <NotificationPrefsFields options={getNotificationOptionsForRole(record.role_title)} value={record.notification_preferences} onChange={updateNotificationPref} />
             </div>
           </div>
         )}

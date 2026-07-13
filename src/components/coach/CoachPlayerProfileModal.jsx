@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { X, MessageCircle, AlertTriangle, Pencil, Check, Loader2, HeartPulse, ShieldCheck, Gavel, ClipboardList } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { X, MessageCircle, AlertTriangle, Pencil, Check, Loader2, HeartPulse, ShieldCheck, Gavel, ClipboardList, ExternalLink } from 'lucide-react';
 import CaseNotesPanel from '../player/CaseNotesPanel';
 import GuardianContactCard from '../player/GuardianContactCard';
 import InjuryLogModal from './InjuryLogModal';
@@ -41,7 +42,14 @@ const READY_COLORS = {
   red: { dot: '#EF4444', bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400' },
 };
 
+const TABS = [
+  { id: 'overview', label: 'סקירה' },
+  { id: 'professional', label: 'מקצועי ומנטלי' },
+  { id: 'history', label: 'היסטוריה וקשר' },
+];
+
 export default function CoachPlayerProfileModal({ player, onClose }) {
+  const [tab, setTab] = useState('overview');
   const queryClient = useQueryClient();
   const readiness = getReadiness(player);
   const rc = READY_COLORS[readiness.color];
@@ -92,21 +100,27 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80" onClick={onClose}>
       <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-        className="bg-[#1B263B] border border-white/10 rounded-t-2xl sm:rounded-lg w-full sm:max-w-lg max-h-[92vh] overflow-y-auto"
+        className="bg-[#1B263B] border border-white/10 rounded-t-2xl sm:rounded-lg w-full sm:max-w-lg h-[92vh] sm:h-[88vh] flex flex-col"
         onClick={e => e.stopPropagation()} dir="rtl">
 
-        {/* Header */}
-        <div className="sticky top-0 bg-[#1B263B] border-b border-white/10 p-5 z-10">
+        {/* Header — fixed, never scrolls */}
+        <div className="flex-shrink-0 bg-[#1B263B] border-b border-white/10 p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-white font-black text-lg">{player.full_name}</h3>
               <p className="text-white/40 text-xs">{player.position}{player.secondary_position ? ` / ${player.secondary_position}` : ''}{player.team_name ? ` · ${player.team_name}` : ''}</p>
             </div>
-            <button onClick={onClose}><X size={18} className="text-white/40 hover:text-white" /></button>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <Link to={`/player-profile?id=${player.id}`} title="עבור לפרופיל השחקן המלא"
+                className="flex items-center gap-1.5 text-[#D4AF37] hover:text-amber-300 text-xs font-bold transition-colors">
+                <ExternalLink size={13} /> לפרופיל המלא
+              </Link>
+              <button onClick={onClose}><X size={18} className="text-white/40 hover:text-white" /></button>
+            </div>
           </div>
 
-          {/* 1. Readiness header */}
-          <div className={`rounded-lg border p-3 flex items-center justify-between gap-3 ${rc.bg} ${rc.border}`}>
+          {/* Readiness header */}
+          <div className={`rounded-lg border p-3 flex items-center justify-between gap-3 mb-3 ${rc.bg} ${rc.border}`}>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: rc.dot }} />
               <div>
@@ -119,148 +133,167 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
               {player.is_available_next_match ? '✓ זמין למשחק הבא' : '✗ לא זמין'}
             </button>
           </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 -mb-5">
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)}
+                className={`px-3 py-2 text-xs font-bold whitespace-nowrap transition-colors border-b-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="p-5 space-y-5">
-          {/* 2. Actionable alerts */}
-          <div className="space-y-2">
-            {!player.medical_certificate_url && (
-              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/25 rounded-lg p-2.5 text-red-400 text-xs font-bold">
-                <AlertTriangle size={13} /> חסר אישור רפואי – לא לזימון
-              </div>
-            )}
-            {player.yellow_cards_count >= 3 && (
-              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/25 rounded-lg p-2.5 text-red-400 text-xs font-bold">
-                <AlertTriangle size={13} /> צבר {player.yellow_cards_count} כרטיסים צהובים – מורחק מהמשחק הבא
-              </div>
-            )}
-            {player.unavailability_reason && player.is_available_next_match === false && (
-              <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/25 rounded-lg p-2.5 text-amber-400 text-xs font-bold">
-                <AlertTriangle size={13} /> {player.unavailability_reason}
-              </div>
-            )}
-            <div className="flex gap-2">
-              <button onClick={() => setShowInjuryModal(true)}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-bold py-2 rounded-sm hover:bg-red-500/25 transition-colors">
-                <HeartPulse size={13} /> תיעוד פציעה
-              </button>
-              {player.active_injury && (
-                <button onClick={markRecovered}
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/15 text-green-400 border border-green-500/30 text-xs font-bold py-2 rounded-sm hover:bg-green-500/25 transition-colors">
-                  <Check size={13} /> סמן כהחלים
-                </button>
-              )}
-            </div>
-          </div>
+        {/* Scrollable body — only the active tab's content scrolls */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-5">
 
-          {/* 2.5 Full compliance breakdown — per-category reasons, no medical diagnosis exposed */}
-          <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
-            <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest flex items-center gap-1.5"><ClipboardList size={12} /> תקינות מפורטת</h4>
-            {eligibility.reasons.length === 0 ? (
-              <p className="text-green-400 text-xs font-bold">✓ כל הנתונים תקינים</p>
-            ) : (
-              <div className="space-y-1.5">
-                {eligibility.reasons.map((r, i) => (
-                  <div key={i} className={`text-xs flex items-center gap-2 ${r.color === 'red' ? 'text-red-400' : 'text-amber-400'}`}>
-                    <span>{r.color === 'red' ? '✗' : '⚠️'}</span>
-                    <span className="text-white/30 text-[10px]">{CATEGORY_LABELS[r.category]}</span>
-                    <span>{r.msg}</span>
+          {tab === 'overview' && (
+            <>
+              <div className="space-y-2">
+                {!player.medical_certificate_url && (
+                  <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/25 rounded-lg p-2.5 text-red-400 text-xs font-bold">
+                    <AlertTriangle size={13} /> חסר אישור רפואי – לא לזימון
                   </div>
-                ))}
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-[11px]">
-              <div className="flex items-center gap-1.5 text-white/50"><ShieldCheck size={11} className="text-[#D4AF37]" /> רישום IFA: <span className={player.ifa_ready ? 'text-green-400 font-bold' : 'text-red-400 font-bold'}>{player.ifa_ready ? 'מוכן' : 'חסר'}</span></div>
-              <div className="flex items-center gap-1.5 text-white/50"><Gavel size={11} className="text-[#D4AF37]" /> כרטיסים צהובים: <span className="text-white font-bold">{player.yellow_cards_count || 0}</span></div>
-              <div className="text-white/50">📅 היעדרויות רצופות: <span className="text-white font-bold">{player.consecutive_absences || 0}</span></div>
-              <div className="text-white/50">👕 ציוד: <span className="text-white font-bold">{[player.equipment_size?.shirt, player.equipment_size?.pants, player.equipment_size?.shoe].filter(Boolean).length}/3</span></div>
-              {player.medical_expiry_date && <div className="text-white/50 col-span-2">🩺 תוקף רפואי עד: <span className="text-white font-bold">{player.medical_expiry_date}</span></div>}
-            </div>
-          </div>
-
-          {/* 3. Tactical profile */}
-          <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
-            <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">פרופיל מקצועי-טקטי</h4>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-white/50">ציון ביצועים</span>
-              {!editingRating ? (
-                <button onClick={() => setEditingRating(true)} className="flex items-center gap-1 text-white font-bold">
-                  {player.overall_rating ?? '—'} <Pencil size={10} className="text-white/30" />
-                </button>
-              ) : (
-                <div className="flex items-center gap-1">
-                  <input type="number" value={ratingVal} onChange={e => setRatingVal(e.target.value)} className="w-16 bg-[#1B263B] border border-white/15 rounded-sm px-1.5 py-1 text-white text-xs" />
-                  <button onClick={saveRating}><Check size={13} className="text-green-400" /></button>
-                </div>
-              )}
-            </div>
-            <div>
-              <div className="text-white/50 text-xs mb-1.5">מדדי אימפקט</div>
-              <div className="flex flex-wrap gap-1.5 mb-2">
-                {(player.coach_impact_tags || []).map((t, i) => (
-                  <span key={i} onClick={() => removeTag(i)} className="cursor-pointer text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/25 px-2 py-1 rounded-full">
-                    {t} ✕
-                  </span>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="הוסף תיוג (למשל: מהירות גבוהה)"
-                  onKeyDown={e => e.key === 'Enter' && addTag()}
-                  className="flex-1 bg-[#1B263B] border border-white/15 rounded-sm px-2.5 py-1.5 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
-                <button onClick={addTag} className="text-[11px] font-bold text-[#D4AF37]">הוסף</button>
-              </div>
-            </div>
-            <CaseNotesPanel playerId={player.id} playerName={player.full_name} authorRole="מאמן" />
-          </div>
-
-          {/* 4. Mental & social */}
-          <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
-            <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">פרופיל מנטלי וחברתי</h4>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-white/50">מדד חוסן (1-5)</span>
-              <span className="text-white font-bold">{resilienceAvg ?? 'אין נתונים'}</span>
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-white/50">נקודה לשיחה</span>
-                {!editingTalk && <button onClick={() => setEditingTalk(true)}><Pencil size={11} className="text-white/30" /></button>}
-              </div>
-              {!editingTalk ? (
-                <p className="text-white text-xs">{player.coach_talking_point || '—'}</p>
-              ) : (
+                )}
+                {player.yellow_cards_count >= 3 && (
+                  <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/25 rounded-lg p-2.5 text-red-400 text-xs font-bold">
+                    <AlertTriangle size={13} /> צבר {player.yellow_cards_count} כרטיסים צהובים – מורחק מהמשחק הבא
+                  </div>
+                )}
+                {player.unavailability_reason && player.is_available_next_match === false && (
+                  <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/25 rounded-lg p-2.5 text-amber-400 text-xs font-bold">
+                    <AlertTriangle size={13} /> {player.unavailability_reason}
+                  </div>
+                )}
                 <div className="flex gap-2">
-                  <input value={talkVal} onChange={e => setTalkVal(e.target.value)} placeholder="למשל: היה לו יום הולדת אתמול"
-                    className="flex-1 bg-[#1B263B] border border-white/15 rounded-sm px-2.5 py-1.5 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
-                  <button onClick={saveTalk}><Check size={14} className="text-green-400" /></button>
+                  <button onClick={() => setShowInjuryModal(true)}
+                    className="flex-1 flex items-center justify-center gap-1.5 bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-bold py-2 rounded-sm hover:bg-red-500/25 transition-colors">
+                    <HeartPulse size={13} /> תיעוד פציעה
+                  </button>
+                  {player.active_injury && (
+                    <button onClick={markRecovered}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/15 text-green-400 border border-green-500/30 text-xs font-bold py-2 rounded-sm hover:bg-green-500/25 transition-colors">
+                      <Check size={13} /> סמן כהחלים
+                    </button>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* 5. Quick history */}
-          <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
-            <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">היסטוריה מהירה</h4>
-            {minutes.length > 0 ? (
-              <div className="flex items-end gap-2 h-16">
-                {minutes.slice(-5).map((m, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <div className="w-full bg-[#D4AF37]/60 rounded-t-sm" style={{ height: `${Math.max(6, (m / maxMin) * 56)}px` }} />
-                    <span className="text-white/30 text-[9px]">{m}'</span>
-                  </div>
-                ))}
               </div>
-            ) : (
-              <p className="text-white/30 text-xs">אין נתוני דקות משחק</p>
-            )}
-            {wa && (
-              <a href={wa} target="_blank" rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-green-500/25 transition-colors">
-                <MessageCircle size={13} /> {player.is_adult ? 'שלח וואטסאפ לשחקן' : 'שלח וואטסאפ להורה'}
-              </a>
-            )}
-          </div>
 
-          <GuardianContactCard player={player} />
+              <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
+                <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest flex items-center gap-1.5"><ClipboardList size={12} /> תקינות מפורטת</h4>
+                {eligibility.reasons.length === 0 ? (
+                  <p className="text-green-400 text-xs font-bold">✓ כל הנתונים תקינים</p>
+                ) : (
+                  <div className="space-y-1.5">
+                    {eligibility.reasons.map((r, i) => (
+                      <div key={i} className={`text-xs flex items-center gap-2 ${r.color === 'red' ? 'text-red-400' : 'text-amber-400'}`}>
+                        <span>{r.color === 'red' ? '✗' : '⚠️'}</span>
+                        <span className="text-white/30 text-[10px]">{CATEGORY_LABELS[r.category]}</span>
+                        <span>{r.msg}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-[11px]">
+                  <div className="flex items-center gap-1.5 text-white/50"><ShieldCheck size={11} className="text-[#D4AF37]" /> רישום IFA: <span className={player.ifa_ready ? 'text-green-400 font-bold' : 'text-red-400 font-bold'}>{player.ifa_ready ? 'מוכן' : 'חסר'}</span></div>
+                  <div className="flex items-center gap-1.5 text-white/50"><Gavel size={11} className="text-[#D4AF37]" /> כרטיסים צהובים: <span className="text-white font-bold">{player.yellow_cards_count || 0}</span></div>
+                  <div className="text-white/50">📅 היעדרויות רצופות: <span className="text-white font-bold">{player.consecutive_absences || 0}</span></div>
+                  <div className="text-white/50">👕 ציוד: <span className="text-white font-bold">{[player.equipment_size?.shirt, player.equipment_size?.pants, player.equipment_size?.shoe].filter(Boolean).length}/3</span></div>
+                  {player.medical_expiry_date && <div className="text-white/50 col-span-2">🩺 תוקף רפואי עד: <span className="text-white font-bold">{player.medical_expiry_date}</span></div>}
+                </div>
+              </div>
+            </>
+          )}
+
+          {tab === 'professional' && (
+            <>
+              <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
+                <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">פרופיל מקצועי-טקטי</h4>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-white/50">ציון ביצועים</span>
+                  {!editingRating ? (
+                    <button onClick={() => setEditingRating(true)} className="flex items-center gap-1 text-white font-bold">
+                      {player.overall_rating ?? '—'} <Pencil size={10} className="text-white/30" />
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <input type="number" value={ratingVal} onChange={e => setRatingVal(e.target.value)} className="w-16 bg-[#1B263B] border border-white/15 rounded-sm px-1.5 py-1 text-white text-xs" />
+                      <button onClick={saveRating}><Check size={13} className="text-green-400" /></button>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <div className="text-white/50 text-xs mb-1.5">מדדי אימפקט</div>
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {(player.coach_impact_tags || []).map((t, i) => (
+                      <span key={i} onClick={() => removeTag(i)} className="cursor-pointer text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/25 px-2 py-1 rounded-full">
+                        {t} ✕
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="הוסף תיוג (למשל: מהירות גבוהה)"
+                      onKeyDown={e => e.key === 'Enter' && addTag()}
+                      className="flex-1 bg-[#1B263B] border border-white/15 rounded-sm px-2.5 py-1.5 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
+                    <button onClick={addTag} className="text-[11px] font-bold text-[#D4AF37]">הוסף</button>
+                  </div>
+                </div>
+                <CaseNotesPanel playerId={player.id} playerName={player.full_name} authorRole="מאמן" />
+              </div>
+
+              <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
+                <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">פרופיל מנטלי וחברתי</h4>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-white/50">מדד חוסן (1-5)</span>
+                  <span className="text-white font-bold">{resilienceAvg ?? 'אין נתונים'}</span>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-white/50">נקודה לשיחה</span>
+                    {!editingTalk && <button onClick={() => setEditingTalk(true)}><Pencil size={11} className="text-white/30" /></button>}
+                  </div>
+                  {!editingTalk ? (
+                    <p className="text-white text-xs">{player.coach_talking_point || '—'}</p>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input value={talkVal} onChange={e => setTalkVal(e.target.value)} placeholder="למשל: היה לו יום הולדת אתמול"
+                        className="flex-1 bg-[#1B263B] border border-white/15 rounded-sm px-2.5 py-1.5 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
+                      <button onClick={saveTalk}><Check size={14} className="text-green-400" /></button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {tab === 'history' && (
+            <>
+              <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
+                <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">היסטוריה מהירה</h4>
+                {minutes.length > 0 ? (
+                  <div className="flex items-end gap-2 h-16">
+                    {minutes.slice(-5).map((m, i) => (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                        <div className="w-full bg-[#D4AF37]/60 rounded-t-sm" style={{ height: `${Math.max(6, (m / maxMin) * 56)}px` }} />
+                        <span className="text-white/30 text-[9px]">{m}'</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-white/30 text-xs">אין נתוני דקות משחק</p>
+                )}
+                {wa && (
+                  <a href={wa} target="_blank" rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-green-500/25 transition-colors">
+                    <MessageCircle size={13} /> {player.is_adult ? 'שלח וואטסאפ לשחקן' : 'שלח וואטסאפ להורה'}
+                  </a>
+                )}
+              </div>
+
+              <GuardianContactCard player={player} />
+            </>
+          )}
         </div>
       </motion.div>
 

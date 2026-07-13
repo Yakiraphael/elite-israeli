@@ -10,7 +10,7 @@ import SquadManagementPanel from '../components/squad/SquadManagementPanel';
 import DetailedOfferModal from '../components/scouting/DetailedOfferModal';
 import {
   Search, Filter, Star, MapPin, Baby, Building2, ChevronRight, Lock,
-  Heart, X, Send, BarChart3, Globe, Loader2, CheckCircle2, Zap, Shield, Users
+  Heart, X, Send, BarChart3, Globe, Loader2, CheckCircle2, Zap, Shield, Users, ExternalLink
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -249,7 +249,13 @@ function PlayerDetailModal({ player, onClose, onOffer }) {
       >
         <div className="flex items-center justify-between p-5 border-b border-white/10">
           <h3 className="text-white font-black text-base">{player.full_name}</h3>
-          <button onClick={onClose} className="text-white/30 hover:text-white"><X size={18} /></button>
+          <div className="flex items-center gap-3">
+            <Link to={`/player-profile?id=${player.id}`} title="עבור לפרופיל השחקן המלא"
+              className="flex items-center gap-1.5 text-[#D4AF37] hover:text-amber-300 text-xs font-bold transition-colors">
+              <ExternalLink size={13} /> לפרופיל המלא
+            </Link>
+            <button onClick={onClose} className="text-white/30 hover:text-white"><X size={18} /></button>
+          </div>
         </div>
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-3 text-xs">

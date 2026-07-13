@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { X, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { X, Loader2, ExternalLink } from 'lucide-react';
 import ExecutiveSummaryCard from './ExecutiveSummaryCard';
 import AssetContractTab from './AssetContractTab';
 import ProgressionTab from './ProgressionTab';
@@ -50,18 +51,24 @@ export default function DirectorPlayerProfileModal({ player, allPlayers, onClose
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
       <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#1B263B] border border-white/10 rounded-lg max-w-lg w-full max-h-[92vh] overflow-y-auto"
+        className="bg-[#1B263B] border border-white/10 rounded-lg max-w-lg w-full h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()} dir="rtl">
 
-        <div className="sticky top-0 bg-[#1B263B] border-b border-white/10 p-5 z-10 flex items-center justify-between">
+        <div className="flex-shrink-0 bg-[#1B263B] border-b border-white/10 p-5 flex items-center justify-between">
           <div>
             <h3 className="text-white font-black text-lg">{player.full_name}</h3>
             <p className="text-white/40 text-xs">{player.position}{player.team_name ? ` · ${player.team_name}` : ''}</p>
           </div>
-          <button onClick={onClose}><X size={18} className="text-white/40 hover:text-white" /></button>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <Link to={`/player-profile?id=${player.id}`} title="עבור לפרופיל השחקן המלא"
+              className="flex items-center gap-1.5 text-[#D4AF37] hover:text-amber-300 text-xs font-bold transition-colors">
+              <ExternalLink size={13} /> לפרופיל המלא
+            </Link>
+            <button onClick={onClose}><X size={18} className="text-white/40 hover:text-white" /></button>
+          </div>
         </div>
 
-        <div className="p-5 space-y-4">
+        <div className="flex-shrink-0 p-5 pb-0 space-y-4">
           <ExecutiveSummaryCard player={player} contracts={contracts} latestMental={mentalHistory[mentalHistory.length - 1]} />
 
           <div className="flex gap-1 overflow-x-auto border-b border-white/10 pb-0.5">
@@ -72,7 +79,9 @@ export default function DirectorPlayerProfileModal({ player, allPlayers, onClose
               </button>
             ))}
           </div>
+        </div>
 
+        <div className="flex-1 overflow-y-auto p-5 pt-4">
           {loadingContracts ? (
             <div className="flex justify-center py-10"><Loader2 size={20} className="animate-spin text-[#D4AF37]" /></div>
           ) : (
