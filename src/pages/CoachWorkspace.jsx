@@ -203,6 +203,11 @@ function SquadView({ players, loading, onSelect, onlyEligible }) {
   const [injuryModalPlayer, setInjuryModalPlayer] = useState(null);
   const queryClient = useQueryClient();
 
+  const toggleAvailability = useMutation({
+    mutationFn: (p) => base44.entities.PlayerRegistration.update(p.id, { is_available_next_match: !p.is_available_next_match }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['coach-players'] }),
+  });
+
   if (loading) return <div className="flex justify-center py-12"><Loader2 size={24} className="animate-spin text-[#D4AF37]" /></div>;
 
   const withEligibility = players.map(p => ({ player: p, elig: computeEligibility(p) }));
@@ -241,7 +246,7 @@ function SquadView({ players, loading, onSelect, onlyEligible }) {
               </div>
             </button>
 
-            {/* Guardian/manager quick link + quick medical actions */}
+            {/* Prominent one-click actions — no need to open the profile or scroll */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
               {wa && (
                 <a href={wa} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
@@ -250,9 +255,14 @@ function SquadView({ players, loading, onSelect, onlyEligible }) {
                   <MessageCircle size={13} className="text-green-400" />
                 </a>
               )}
-              <button onClick={(e) => { e.stopPropagation(); setInjuryModalPlayer(p); }} title="תיעוד פציעה / עדכון סטטוס רפואי"
-                className="w-8 h-8 rounded bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center transition-colors">
-                <HeartPulse size={13} className="text-red-400" />
+              <button onClick={(e) => { e.stopPropagation(); toggleAvailability.mutate(p); }}
+                title="עדכון כשירות למשחק הבא"
+                className={`flex items-center gap-1 px-2.5 h-8 rounded text-[10px] font-bold border transition-colors ${p.is_available_next_match ? 'bg-green-500/10 border-green-500/25 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 border-red-500/25 text-red-400 hover:bg-red-500/20'}`}>
+                {p.is_available_next_match ? '✓ זמין' : '✗ לא זמין'}
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setInjuryModalPlayer(p); }} title="דיווח פציעה"
+                className="flex items-center gap-1 px-2.5 h-8 rounded text-[10px] font-bold bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 text-red-400 transition-colors">
+                <HeartPulse size={13} /> פציעה
               </button>
               <SubmissionProgressBar player={p} compact />
               <ChevronRight size={14} className="text-white/20 group-hover:text-[#D4AF37] transition-colors" />

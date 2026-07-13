@@ -7,6 +7,8 @@ import { X, MessageCircle, AlertTriangle, Pencil, Check, Loader2, HeartPulse, Sh
 import CaseNotesPanel from '../player/CaseNotesPanel';
 import GuardianContactCard from '../player/GuardianContactCard';
 import InjuryLogModal from './InjuryLogModal';
+import PlayerProgressChart from './PlayerProgressChart';
+import PlayerCentralDashboard from './PlayerCentralDashboard';
 import { computeEligibility } from '@/lib/playerEligibility';
 
 function calcDaysLeft(dateStr) {
@@ -44,6 +46,8 @@ const READY_COLORS = {
 
 const TABS = [
   { id: 'overview', label: 'סקירה' },
+  { id: 'dashboard', label: 'לוח בקרה' },
+  { id: 'progress', label: 'התקדמות' },
   { id: 'professional', label: 'מקצועי ומנטלי' },
   { id: 'history', label: 'היסטוריה וקשר' },
 ];
@@ -135,7 +139,7 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 -mb-5">
+          <div className="flex gap-1 -mb-5 overflow-x-auto">
             {TABS.map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
                 className={`px-3 py-2 text-xs font-bold whitespace-nowrap transition-colors border-b-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
@@ -205,6 +209,10 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
               </div>
             </>
           )}
+
+          {tab === 'dashboard' && <PlayerCentralDashboard player={player} />}
+
+          {tab === 'progress' && <PlayerProgressChart player={player} />}
 
           {tab === 'professional' && (
             <>
