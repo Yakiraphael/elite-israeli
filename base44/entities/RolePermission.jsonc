@@ -19,37 +19,91 @@
     },
     "data_points": {
       "type": "object",
-      "title": "\u05de\u05d8\u05e8\u05d9\u05e6\u05ea \u05d2\u05d9\u05e9\u05d4 \u05dc\u05e0\u05ea\u05d5\u05e0\u05d9\u05dd",
+      "title": "\u05de\u05d8\u05e8\u05d9\u05e6\u05ea \u05d2\u05d9\u05e9\u05d4 \u05dc\u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u2014 \u05e6\u05e4\u05d9\u05d9\u05d4 \u05d5\u05e2\u05e8\u05d9\u05db\u05d4",
       "properties": {
         "personal_info": {
-          "type": "boolean",
+          "type": "object",
           "title": "\u05e4\u05e8\u05d8\u05d9\u05dd \u05d0\u05d9\u05e9\u05d9\u05d9\u05dd",
-          "default": false
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         },
         "medical_status_light": {
-          "type": "boolean",
+          "type": "object",
           "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05e8\u05e4\u05d5\u05d0\u05d9 (\u05e8\u05de\u05d6\u05d5\u05e8)",
-          "default": false
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         },
         "full_medical_record": {
-          "type": "boolean",
+          "type": "object",
           "title": "\u05ea\u05d9\u05e7 \u05e8\u05e4\u05d5\u05d0\u05d9 \u05de\u05dc\u05d0",
-          "default": false
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         },
         "salary_contracts": {
-          "type": "boolean",
+          "type": "object",
           "title": "\u05e0\u05ea\u05d5\u05e0\u05d9 \u05e9\u05db\u05e8/\u05d7\u05d5\u05d6\u05d9\u05dd",
-          "default": false
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         },
         "performance_scores": {
-          "type": "boolean",
+          "type": "object",
           "title": "\u05e6\u05d9\u05d5\u05e0\u05d9 \u05d1\u05d9\u05e6\u05d5\u05e2\u05d9\u05dd",
-          "default": false
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         },
         "transfer_history": {
-          "type": "boolean",
+          "type": "object",
           "title": "\u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d9\u05ea \u05d4\u05e2\u05d1\u05e8\u05d5\u05ea",
-          "default": false
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         }
       }
     },
