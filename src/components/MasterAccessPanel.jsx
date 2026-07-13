@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Crown, Briefcase, Search, Shield, Settings, User, LogOut, ArrowRight, Loader2, KeyRound } from 'lucide-react';
+import { Crown, Briefcase, Search, Shield, Settings, User, LogOut, ArrowRight, Loader2, KeyRound, Users } from 'lucide-react';
 
 const NAVY = '#0D1B2A';
 const NAVY_LIGHT = '#1B263B';
@@ -14,6 +14,7 @@ const DASHBOARDS = [
   { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גישה חופשית' },
   { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025' },
   { label: 'פאנל ניהול (אירועים/שחקנים)', path: '/admin', icon: Settings, color: '#3B82F6', note: 'סיסמה: elite2025' },
+  { label: 'פורטל אפוטרופוס', path: '/guardian-portal', icon: Users, color: '#F59E0B', note: 'גישת בדיקה — הורה/אפוטרופוס' },
 ];
 
 export default function MasterAccessPanel({ user, navigate, onContinueNormal, onLogout }) {

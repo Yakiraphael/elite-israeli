@@ -40,3 +40,24 @@ export function getNextStage(category, currentStage) {
   if (idx === -1 || idx >= stages.length - 1) return null;
   return stages[idx + 1];
 }
+
+// Smart validation gate for TransferProposal final approval — checks every regulatory
+// rule the professional manager needs before signing off on a transfer to the federation.
+export function computeTransferReadiness(proposal, docs = []) {
+  const category = proposal.transfer_category || (proposal.is_adult ? 'בוגרים - תוך ארצי' : 'העברת נוער');
+  const requiredDocs = (REQUIRED_DOCS[category] || []).filter(d => !d.optional);
+  const missingDocs = requiredDocs.filter(d => !docs.some(sd => sd.doc_type === d.doc_type));
+
+  const checks = [
+    { label: 'אישור מאמן להעברה', passed: proposal.coach_approval_status === 'אושר על ידי מאמן' },
+    proposal.is_adult
+      ? { label: 'הסכמת השחקן (ניהול עצמי)', passed: !!proposal.player_consent }
+      : { label: 'חתימת אפוטרופוס (OTP)', passed: !!proposal.guardian_otp_verified },
+    { label: `מסמכים נדרשים (${requiredDocs.length - missingDocs.length}/${requiredDocs.length})`, passed: missingDocs.length === 0, missingDocs },
+  ];
+  if (proposal.is_adult && proposal.contract_value > 0) {
+    checks.push({ label: 'תשלום עמלת IEFA אושר', passed: proposal.payment_status === 'PAID' });
+  }
+
+  return { category, checks, ready: checks.every(c => c.passed) };
+}

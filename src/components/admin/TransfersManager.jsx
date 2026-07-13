@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Send, FileText, ShieldAlert, CreditCard, Gavel, CheckCircle2, XCircle, UserCheck } from 'lucide-react';
 import TransferPipelineStepper from './TransferPipelineStepper';
+import TransferApprovalGate from './TransferApprovalGate';
+import { TRANSFER_CATEGORIES } from '@/lib/transferDocumentRequirements';
 
 const STATUSES = [
   'ממתין לאישור הנהלה',
@@ -35,6 +37,7 @@ const COACH_APPROVAL_COLORS = { 'לא נדרש': 'text-white/30 bg-white/5 borde
 export default function TransfersManager() {
   const [expanded, setExpanded] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [readyMap, setReadyMap] = useState({});
   const { data: proposals = [], isLoading } = useQuery({
     queryKey: ['admin-transfers'],
     queryFn: () => base44.entities.TransferProposal.list('-created_date', 100),
@@ -126,6 +129,13 @@ export default function TransfersManager() {
                   <div className="mt-3">
                     <TransferPipelineStepper status={p.status} isAdult={p.is_adult} />
                   </div>
+                  <div className="mt-2">
+                    <select value={p.transfer_category || 'העברת נוער'}
+                      onChange={e => updateProposal.mutate({ id: p.id, data: { transfer_category: e.target.value } })}
+                      className="text-[10px] font-bold px-2 py-1 rounded-sm border border-white/15 bg-transparent text-white/50 focus:outline-none cursor-pointer">
+                      {TRANSFER_CATEGORIES.map(c => <option key={c} value={c} className="bg-[#1B263B] text-white">{c}</option>)}
+                    </select>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {p.document_url && (
@@ -211,6 +221,8 @@ export default function TransfersManager() {
                     )}
                   </div>
 
+                  <TransferApprovalGate proposal={p} onReadyChange={r => setReadyMap(m => ({ ...m, [p.id]: r }))} />
+
                   <div className="flex items-center gap-2 pt-1 flex-wrap">
                     <span className="text-white/40 text-xs">שלב תהליך:</span>
                     <select
@@ -223,7 +235,9 @@ export default function TransfersManager() {
                     {!['אושרה סופית', 'נדחתה', 'נסגרה'].includes(p.status) && (
                       <>
                         <button onClick={() => updateProposal.mutate({ id: p.id, data: { status: 'אושרה סופית' } })}
-                          className="flex items-center gap-1 text-xs font-bold text-green-400 hover:text-green-300 bg-green-400/10 border border-green-400/30 px-3 py-1.5 rounded-full transition-colors">
+                          disabled={!readyMap[p.id]}
+                          title={!readyMap[p.id] ? 'יש להשלים את כל דרישות מנגנון האימות למעלה' : ''}
+                          className="flex items-center gap-1 text-xs font-bold text-green-400 hover:text-green-300 bg-green-400/10 border border-green-400/30 px-3 py-1.5 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-green-400">
                           <CheckCircle2 size={12} /> אשר סופית
                         </button>
                         <button onClick={() => updateProposal.mutate({ id: p.id, data: { status: 'נדחתה' } })}
