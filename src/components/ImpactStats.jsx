@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 const STATS = [
-  { value: '250,000', label: 'נוער בסיכון בישראל' },
+  { value: '310,000', label: 'נוער בסיכון בישראל' },
   { value: '68%', label: 'שיעור נשירה ממסגרות חינוכיות בקרב נוער בסיכון' },
   { value: '387', label: 'שעות התערבות שנתיות לכל נער בתכנית' },
   { value: '+50%', label: 'שיפור במדדי חוסן מנטלי לאחר שנת השתתפות' },
