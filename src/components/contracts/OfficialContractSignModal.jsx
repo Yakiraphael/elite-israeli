@@ -7,6 +7,8 @@ import {
   MessageSquarePlus, PenLine, Eye, ChevronDown, ChevronUp, Info
 } from 'lucide-react';
 import { getOfficialForm } from '@/lib/ifaOfficialForms';
+import { signOriginalPdf } from '@/lib/signOriginalIfoPdf';
+import SignatureCanvas from './SignatureCanvas';
 
 // ============================================================
 // מודל חתימה על חוזה רשמי ההתאחדות + משא ומתן על סעיפים.
@@ -41,6 +43,8 @@ export default function OfficialContractSignModal({
   const [showPdf, setShowPdf] = useState(false);
   const [signed, setSigned] = useState(false);
   const [signerIp, setSignerIp] = useState('');
+  const [signatureDataUrl, setSignatureDataUrl] = useState(null);
+  const [signingPdf, setSigningPdf] = useState(false);
 
   // סמכות חתימה — רק שחקן בוגר / הורה / מאמן (לא מנהל אישי)
   const hasSigningAuthority = ['player', 'guardian', 'coach', 'club', 'director'].includes(signerRole);
@@ -111,8 +115,30 @@ export default function OfficialContractSignModal({
 
   const signContract = useMutation({
     mutationFn: async () => {
+      setSigningPdf(true);
       const now = new Date().toISOString();
       const patch = {};
+
+      // ===== 1. חתימה על גבי ה-PDF המקורי של ההתאחדות =====
+      let documentUrl = contract?.document_url;
+      try {
+        const blob = await signOriginalPdf({
+          pdfUrl: form?.pdf_url,
+          signatureDataUrl,
+          signerName: signatureName.trim(),
+          signerRoleLabel: SIGNER_LABELS[signerRole] || signerRole,
+          signerIp,
+          contractLabel: form?.label,
+        });
+        const file = new File([blob], `contract-${contract.id}.pdf`, { type: 'application/pdf' });
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        documentUrl = file_url;
+        patch.document_url = file_url;
+      } catch (e) {
+        console.error('PDF signing failed', e);
+        // נמשיך גם אם עריכת ה-PDF נכשלה — החתימה המטא-דאטית עדיין נשמרת
+      }
+
       if (signerRole === 'player' || signerRole === 'coach') {
         patch.player_signature_name = signatureName.trim();
         patch.player_signed_at = now;
@@ -123,7 +149,6 @@ export default function OfficialContractSignModal({
         patch.guardian_signed_ip = signerIp;
       }
 
-      // בדיקה האם החוזה הושלם (שני חותמים)
       const needsGuardian = form?.requires_guardian || contract?.requires_guardian;
       const alreadyPlayerSigned = contract?.player_signed_at || signerRole === 'player';
       const alreadyGuardianSigned = contract?.guardian_signed_at || signerRole === 'guardian';
@@ -133,7 +158,6 @@ export default function OfficialContractSignModal({
 
       await base44.entities.Contract.update(contract.id, patch);
 
-      // תיעוד
       await base44.entities.AuditLog.create({
         actor_id: currentUser?.id,
         actor_name: currentUser?.full_name || signatureName,
@@ -142,12 +166,14 @@ export default function OfficialContractSignModal({
         player_id: player?.id,
         details: `${SIGNER_LABELS[signerRole]} חתם על ${form?.label || contractKey} — ${player?.full_name || contract?.player_name} (IP: ${signerIp})`,
       });
+      setSigningPdf(false);
     },
     onSuccess: () => {
       setSigned(true);
       queryClient.invalidateQueries({ queryKey: ['contracts'] });
       onSigned?.();
     },
+    onError: () => setSigningPdf(false),
   });
 
   if (!form) return null;
@@ -326,11 +352,11 @@ export default function OfficialContractSignModal({
                   <div className="bg-white/[0.02] border border-white/10 rounded-lg p-5 space-y-4">
                     <div className="flex items-center gap-2 text-white/60 text-xs font-bold">
                       <Lock size={13} />
-                      חתימה דיגיטלית — {SIGNER_LABELS[signerRole]}
+                      חתימה דיגיטלית על ה-PDF הרשמי — {SIGNER_LABELS[signerRole]}
                     </div>
 
                     <div className="bg-[#1B263B] border border-white/5 rounded-lg p-3 text-[11px] text-white/50">
-                      בחתימה מאשר/ת {SIGNER_LABELS[signerRole]} שקרא/ה את הטופס הרשמי במלואו, מבין/ה את תוכנו, ומסכים/ה לכל הוראותיו. החתימה תתועד עם שם, תאריך ו-IP לצרכים משפטיים.
+                      בחתימה מאשר/ת {SIGNER_LABELS[signerRole]} קריאת הטופס הרשמי של ההתאחדות במלואו. החתימה תשובץ ישירות על קובץ ה-PDF המקורי, יחד עם שם, תאריך ו-IP לתיעוד משפטי.
                     </div>
 
                     <input
@@ -340,6 +366,9 @@ export default function OfficialContractSignModal({
                       placeholder={`שם מלא של ${SIGNER_LABELS[signerRole]}`}
                       className="w-full bg-[#1B263B] border border-white/15 rounded-sm px-3 py-2.5 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60"
                     />
+
+                    <SignatureCanvas onDrawn={setSignatureDataUrl} />
+
                     <div className="text-white/30 text-[10px]">IP לתיעוד: {signerIp || 'טוען...'}</div>
 
                     <button
@@ -347,9 +376,9 @@ export default function OfficialContractSignModal({
                       disabled={signatureName.trim().length < 2 || signContract.isPending}
                       className="w-full flex items-center justify-center gap-2 bg-[#D4AF37] text-[#0D1B2A] font-bold py-3 rounded-sm hover:bg-amber-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      {signContract.isPending
-                        ? <><Loader2 size={15} className="animate-spin" /> שומר חתימה...</>
-                        : <><FileSignature size={15} /> חתום דיגיטלית</>}
+                      {signContract.isPending || signingPdf
+                        ? <><Loader2 size={15} className="animate-spin" /> שומר חתימה על ה-PDF...</>
+                        : <><FileSignature size={15} /> חתום וצור PDF חתום</>}
                     </button>
                   </div>
                 )}
