@@ -30,64 +30,56 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
   const [error, setError] = useState(null);
   const draftInputRef = useRef(null);
 
-  // טעינת PDF + רינדור עמודים
+  // טעינת PDF — משתמשים ב-pdf.js אך ורק לשליפת מספר העמודים ויחס העמוד.
+  // את ה-PDF עצמו מציגים ישירות ב-iframe דרך ה-viewer המובנה של הדפדפן (Chrome PDFium),
+  // שמטפל בעברית בצורה תקינה. pdf.js canvas rendering מתקשה עם פונטים עבריים מוטמעים
+  // ומרנדר את הגליפים מרווחים/שבורים — ולכן איננו נשען עליו לתצוגה עוד.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const loadingTask = pdfjsLib.getDocument({
-          url: pdfUrl,
-          cMapUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/cmaps/`,
-          cMapPacked: true,
-          useSystemFonts: true,
-        });
-        const pdf = await loadingTask.promise;
-        pagesRef.current = [];
-        const pages = [];
-        for (let i = 1; i <= pdf.numPages; i++) pages.push(await pdf.getPage(i));
+        setLoading(true);
+        setError(null);
+        const pdf = await pdfjsLib.getDocument({ url: pdfUrl, useSystemFonts: true }).promise;
+        if (cancelled) { pdf.destroy(); return; }
+        const n = pdf.numPages;
+        const firstPage = await pdf.getPage(1);
+        const vp = firstPage.getViewport({ scale: 1 });
+        const pageAspect = vp.height / vp.width;
+        pdf.destroy();
 
         const container = containerRef.current;
         container.innerHTML = '';
+        pagesRef.current = [];
 
-        for (const page of pages) {
-          const baseScale = 2;
-          const viewport = page.getViewport({ scale: baseScale });
-          // רינדור ברזולוציית HiDPI כדי שהעברית תיראה חדה גם במסכי Retina
-          const dpr = Math.min(window.devicePixelRatio || 1, 3);
-          const pageWrap = document.createElement('div');
-          pageWrap.style.cssText = 'position:relative;margin:0 auto 16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);';
+        const pageWrap = document.createElement('div');
+        // יחס העמוד × מספר העמודים → גובה המעטפת שיכיל את כל העמודים מוערמים
+        pageWrap.style.cssText = `position:relative;margin:0 auto 16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);aspect-ratio: 1 / ${(pageAspect * n).toFixed(4)};`;
 
-          const canvas = document.createElement('canvas');
-          canvas.width = Math.floor(viewport.width * dpr);
-          canvas.height = Math.floor(viewport.height * dpr);
-          canvas.style.cssText = 'display:block;width:100%;height:auto;';
-          pageWrap.appendChild(canvas);
+        const iframe = document.createElement('iframe');
+        iframe.src = `${pdfUrl}#toolbar=0&navpanes=0&view=FitH`;
+        iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;background:#fff;';
+        pageWrap.appendChild(iframe);
 
-          const clickLayer = document.createElement('div');
-          clickLayer.style.cssText = 'position:absolute;inset:0;cursor:crosshair;';
-          pageWrap.appendChild(clickLayer);
+        const clickLayer = document.createElement('div');
+        clickLayer.style.cssText = 'position:absolute;inset:0;cursor:crosshair;';
+        pageWrap.appendChild(clickLayer);
 
-          container.appendChild(pageWrap);
+        container.appendChild(pageWrap);
+        pagesRef.current = [{ pageNumber: 'all', clickLayer, numPages: n }];
 
-          const ctx = canvas.getContext('2d');
-          ctx.scale(dpr, dpr);
-          await page.render({ canvasContext: ctx, viewport, intent: 'display' }).promise;
-          if (cancelled) return;
+        clickLayer.addEventListener('click', (e) => {
+          const rect = clickLayer.getBoundingClientRect();
+          const xRatio = (e.clientX - rect.left) / rect.width;
+          const yRatioFull = (e.clientY - rect.top) / rect.height;
+          const pageNumber = Math.min(n, Math.floor(yRatioFull * n) + 1);
+          const yRatio = yRatioFull * n - (pageNumber - 1);
+          setActiveDraft({ pageNumber, xRatio, yRatio });
+          setDraftText('');
+          setDraftFontSize(13);
+          setTimeout(() => draftInputRef.current?.focus(), 30);
+        });
 
-          const pageNumber = page.pageNumber;
-          const record = { pageNumber, viewport, canvas, clickLayer, pageWrap };
-          pagesRef.current.push(record);
-
-          clickLayer.addEventListener('click', (e) => {
-            const rect = clickLayer.getBoundingClientRect();
-            const xRatio = (e.clientX - rect.left) / rect.width;
-            const yRatio = (e.clientY - rect.top) / rect.height;
-            setActiveDraft({ pageNumber, xRatio, yRatio });
-            setDraftText('');
-            setDraftFontSize(13);
-            setTimeout(() => draftInputRef.current?.focus(), 30);
-          });
-        }
         setLoading(false);
       } catch (e) {
         console.error('pdf load failed', e);
@@ -98,20 +90,17 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
     return () => { cancelled = true; };
   }, [pdfUrl]);
 
-  // הצמדת אנוטציות קיימות על העמודים
+  // הצמדת אנוטציות קיימות — מיקום יחסי לעמוד בתוך כל ה-PDF
   useEffect(() => {
-    // נשאף למחדש את ההצגה בכל פעם שהרשימה משתנה
-    // מסיר ישנים ומוסיף חדשים
-    pagesRef.current.forEach((p) => {
-      const existing = p.clickLayer.querySelectorAll('[data-ann]');
-      existing.forEach((el) => el.remove());
-    });
+    const rec = pagesRef.current[0];
+    if (!rec) return;
+    const existing = rec.clickLayer.querySelectorAll('[data-ann]');
+    existing.forEach((el) => el.remove());
     for (const a of annotations) {
-      const page = pagesRef.current.find((p) => p.pageNumber === a.pageNumber);
-      if (!page) continue;
       const el = document.createElement('div');
       el.dataset.ann = a.id;
-      el.style.cssText = `position:absolute;left:${a.xRatio * 100}%;top:${a.yRatio * 100}%;transform:translate(-50%,-50%);
+      const topPct = ((a.pageNumber - 1 + a.yRatio) / rec.numPages) * 100;
+      el.style.cssText = `position:absolute;left:${a.xRatio * 100}%;top:${topPct}%;transform:translate(-50%,-50%);
         background:rgba(212,175,55,0.18);border:1px dashed #D4AF37;padding:2px 6px;border-radius:3px;
         font-size:${(a.fontSize || 13) - 1}px;color:#0D1B2A;font-weight:bold;white-space:nowrap;pointer-events:auto;
         cursor:pointer;font-family:Arial,sans-serif;`;
@@ -121,27 +110,27 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
         ev.stopPropagation();
         setAnnotations((arr) => arr.filter((x) => x.id !== a.id));
       });
-      page.clickLayer.appendChild(el);
+      rec.clickLayer.appendChild(el);
     }
   }, [annotations]);
 
-  // הדראפט מוצג בראש הקליק-לייר
+  // הדראפט מוצג בראש שכבת הקליק
   useEffect(() => {
-    if (!activeDraft) return;
-    pagesRef.current.forEach((p) => {
-      const d = p.clickLayer.querySelector('[data-draft]');
+    const rec = pagesRef.current[0];
+    if (rec) {
+      const d = rec.clickLayer.querySelector('[data-draft]');
       if (d) d.remove();
-    });
-    const page = pagesRef.current.find((p) => p.pageNumber === activeDraft.pageNumber);
-    if (!page) return;
+    }
+    if (!activeDraft || !rec) return;
     const el = document.createElement('div');
     el.dataset.draft = '1';
-    el.style.cssText = `position:absolute;left:${activeDraft.xRatio * 100}%;top:${activeDraft.yRatio * 100}%;
+    const topPct = ((activeDraft.pageNumber - 1 + activeDraft.yRatio) / rec.numPages) * 100;
+    el.style.cssText = `position:absolute;left:${activeDraft.xRatio * 100}%;top:${topPct}%;
       transform:translate(-50%,-50%);background:rgba(13,27,42,0.95);color:#fff;padding:4px 10px;border-radius:4px;
       font-size:${draftFontSize}px;font-weight:bold;font-family:Arial,sans-serif;box-shadow:0 2px 6px rgba(0,0,0,0.4);
       white-space:nowrap;`;
     el.textContent = draftText || 'הקלד טקסט...';
-    page.clickLayer.appendChild(el);
+    rec.clickLayer.appendChild(el);
   }, [activeDraft, draftText, draftFontSize]);
 
   const commitDraft = () => {
