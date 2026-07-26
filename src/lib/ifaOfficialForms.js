@@ -35,9 +35,9 @@ export const IFA_OFFICIAL_FORMS = {
 
   player_agreement_he: {
     key: 'player_agreement_he',
-    label: 'הסכם שחקן 2026/2027 (עברית — חובבניות)',
+    label: 'הסכם שחקן 2026/2027 (עברית — מקצועניות / חובבניות)',
     category: 'player_contract',
-    league_type: 'amateur',
+    league_type: 'all',
     age_group: 'adult',
     language: 'he',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/efea5a7f1_26-27.pdf',
@@ -257,6 +257,65 @@ export const IFA_OFFICIAL_FORMS = {
     requires_guardian: false,
     signers: ['player', 'club'],
     negotiable_fields: [],
+  },
+
+  // ==========================================
+  // קטגוריה: טפסי השאלה — נוער ובוגרים
+  // ==========================================
+
+  player_loan_form_minor: {
+    key: 'player_loan_form_minor',
+    label: 'טופס השאלת שחקן — נוער (קטין)',
+    category: 'transfer',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    requires_pdf_upload: true,
+    requires_guardian: true,
+    signers: ['player', 'guardian', 'club'],
+    negotiable_fields: [
+      { key: 'loan_start_date', label: 'תחילת השאלה', type: 'date', clause: 'תקופת השאלה' },
+      { key: 'loan_end_date', label: 'סיום השאלה', type: 'date', clause: 'תקופת השאלה' },
+      { key: 'owning_club', label: 'מועדון בעלים', type: 'text', clause: '1' },
+      { key: 'loaning_club', label: 'מועדון שואל', type: 'text', clause: '1' },
+    ],
+  },
+
+  player_loan_form_adult_local: {
+    key: 'player_loan_form_adult_local',
+    label: 'טופס השאלת שחקן — בוגר (תוך-ארצי)',
+    category: 'transfer',
+    league_type: 'amateur',
+    age_group: 'adult',
+    language: 'he',
+    requires_pdf_upload: true,
+    requires_guardian: false,
+    signers: ['player', 'club'],
+    negotiable_fields: [
+      { key: 'loan_start_date', label: 'תחילת השאלה', type: 'date', clause: 'תקופת השאלה' },
+      { key: 'loan_end_date', label: 'סיום השאלה', type: 'date', clause: 'תקופת השאלה' },
+      { key: 'owning_club', label: 'מועדון בעלים', type: 'text', clause: '1' },
+      { key: 'loaning_club', label: 'מועדון שואל', type: 'text', clause: '1' },
+    ],
+  },
+
+  player_loan_form_adult_intl: {
+    key: 'player_loan_form_adult_intl',
+    label: 'טופס השאלת שחקן — בוגר (בינלאומי)',
+    category: 'transfer',
+    league_type: 'professional',
+    age_group: 'adult',
+    language: 'he',
+    requires_pdf_upload: true,
+    requires_guardian: false,
+    signers: ['player', 'club'],
+    negotiable_fields: [
+      { key: 'loan_start_date', label: 'תחילת השאלה', type: 'date', clause: 'תקופת השאלה' },
+      { key: 'loan_end_date', label: 'סיום השאלה', type: 'date', clause: 'תקופת השאלה' },
+      { key: 'owning_club', label: 'מועדון בעלים', type: 'text', clause: '1' },
+      { key: 'loaning_club', label: 'מועדון שואל', type: 'text', clause: '1' },
+      { key: 'itc_required', label: 'נדרש ITC בינלאומי', type: 'select', options: ['כן', 'לא'], clause: 'בינלאומי', default: 'כן' },
+    ],
   },
 
   // ==========================================
@@ -709,10 +768,10 @@ export function recommendContractForm({ is_adult, league_type = 'amateur', langu
   }
 
   const byLeagueAndLang = forms.find(f =>
-    f.league_type === league_type && f.language === language && f.age_group === 'adult'
+    (f.league_type === league_type || f.league_type === 'all') && f.language === language && f.age_group === 'adult'
   );
   if (byLeagueAndLang) return byLeagueAndLang;
 
-  const byLeague = forms.find(f => f.league_type === league_type && f.age_group === 'adult');
+  const byLeague = forms.find(f => (f.league_type === league_type || f.league_type === 'all') && f.age_group === 'adult');
   return byLeague || forms[0];
 }

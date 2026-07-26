@@ -35,7 +35,7 @@ const LEAGUE_LABELS = {
   all: 'כל הליגות',
 };
 
-export default function TemplatesPanel({ onCreate }) {
+export default function TemplatesPanel({ onOpenForm }) {
   const [ageFilter, setAgeFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [collapsed, setCollapsed] = useState({});
@@ -118,7 +118,7 @@ export default function TemplatesPanel({ onCreate }) {
               {!isCollapsed && (
                 <div className="px-4 pb-4 grid grid-cols-1 md:grid-cols-2 gap-2.5 border-t border-white/5 pt-3">
                   {cat.forms.map(form => (
-                    <FormCard key={form.key} form={form} onCreate={onCreate} />
+                    <FormCard key={form.key} form={form} onOpenForm={onOpenForm} />
                   ))}
                 </div>
               )}
@@ -141,12 +141,12 @@ export default function TemplatesPanel({ onCreate }) {
   );
 }
 
-function FormCard({ form, onCreate }) {
+function FormCard({ form, onOpenForm }) {
   const [initiating, setInitiating] = useState(false);
   const handleCreate = () => {
-    if (!onCreate) return;
+    if (!onOpenForm) return;
     setInitiating(true);
-    onCreate(form);
+    onOpenForm(form.key);
     setTimeout(() => setInitiating(false), 800);
   };
 
@@ -167,6 +167,11 @@ function FormCard({ form, onCreate }) {
 
       {/* Badges */}
       <div className="flex flex-wrap gap-1.5 mb-3">
+        {form.requires_pdf_upload && (
+          <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20 flex items-center gap-1">
+            <FileText size={9} /> ממתין ל-PDF
+          </span>
+        )}
         <span className="text-[10px] bg-white/5 text-white/50 px-2 py-0.5 rounded-full border border-white/10">
           {LEAGUE_LABELS[form.league_type] || form.league_type}
         </span>
@@ -198,11 +203,11 @@ function FormCard({ form, onCreate }) {
 
       <button
         onClick={handleCreate}
-        disabled={initiating || !onCreate}
+        disabled={initiating || !onOpenForm}
         className="w-full mt-3 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 font-bold text-xs py-2.5 rounded-sm hover:bg-[#D4AF37]/20 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-40"
       >
         {initiating ? <Loader2 size={12} className="animate-spin" /> : <ArrowLeft size={11} />}
-        {form.category?.includes('contract') ? 'צור חוזה' : 'פתח טופס'}
+        {form.requires_pdf_upload ? 'פתח והעלה PDF' : (form.category?.includes('contract') ? 'צור חוזה' : 'פתח ומלא טופס')}
       </button>
     </div>
   );

@@ -13,6 +13,7 @@ import { ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
 import TemplatesPanel from '../components/director/TemplatesPanel';
+import UniversalPdfFormModal from '../components/director/UniversalPdfFormModal';
 import FinanceTab from '../components/director/FinanceTab';
 import AnalyticsTab from '../components/director/AnalyticsTab';
 import TransfersManager from '../components/admin/TransfersManager';
@@ -46,7 +47,7 @@ export default function DirectorDashboard() {
         <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto mb-4">
           <Lock size={22} className="text-[#D4AF37]" />
         </div>
-        <h1 className="text-white font-black text-xl mb-1">Director Dashboard</h1>
+        <h1 className="text-white font-black text-xl mb-1">דשבורד מנהל מקצועי</h1>
         <p className="text-white/40 text-sm mb-6">ממשק מנהל מקצועי</p>
         <form onSubmit={tryLogin} className="space-y-3">
           <input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder="סיסמה"
@@ -66,6 +67,7 @@ function DashboardContent({ onLogout }) {
   const [tab, setTab] = useState('overview');
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [openFormKey, setOpenFormKey] = useState(null);
 
   const { data: players = [], isLoading: loadPlayers } = useQuery({
     queryKey: ['dir-players'],
@@ -97,7 +99,7 @@ function DashboardContent({ onLogout }) {
     { id: 'squad', label: 'ניהול סגל', icon: Users },
     { id: 'contracts', label: 'חוזים', icon: FileText },
     { id: 'transfers', label: 'העברות', icon: Send },
-    { id: 'compliance', label: 'Compliance', icon: Shield },
+    { id: 'compliance', label: 'תאימות רגולטורית', icon: Shield },
     { id: 'templates', label: 'בנק תבניות', icon: Crown },
     { id: 'finance', label: 'כספים', icon: Wallet },
     { id: 'analytics', label: 'ניתוח נתונים', icon: BarChart3 },
@@ -114,7 +116,7 @@ function DashboardContent({ onLogout }) {
           <div className="flex items-center gap-3">
             <img src={LOGO_URL} alt="" className="h-9" />
             <div>
-              <span className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase">Director Dashboard</span>
+              <span className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase">דשבורד מנהל מקצועי</span>
               <div className="text-white/40 text-[10px]">חדר בקרה מנהל מקצועי</div>
             </div>
           </div>
@@ -172,7 +174,7 @@ function DashboardContent({ onLogout }) {
         )}
 
         {tab === 'templates' && (
-          <TemplatesPanel onCreate={() => setTab('contracts')} />
+          <TemplatesPanel onOpenForm={setOpenFormKey} />
         )}
 
         {tab === 'transfers' && (
@@ -193,6 +195,13 @@ function DashboardContent({ onLogout }) {
       </div>
 
       {selectedPlayer && <DirectorPlayerProfileModal player={selectedPlayer} allPlayers={players} onClose={() => setSelectedPlayer(null)} />}
+      {openFormKey && (
+        <UniversalPdfFormModal
+          formKey={openFormKey}
+          signerRole="director"
+          onClose={() => setOpenFormKey(null)}
+        />
+      )}
     </div>
   );
 }
@@ -216,7 +225,7 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="font-black text-2xl" style={{ color: scoreColor }}>{complianceScore}%</span>
-              <span className="text-white/30 text-[9px] font-bold uppercase tracking-wide">Compliance</span>
+              <span className="text-white/30 text-[9px] font-bold uppercase tracking-wide">תאימות רגולטורית</span>
             </div>
           </div>
           <div className="flex-1 text-center md:text-right">
@@ -230,9 +239,9 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <DirKpi label="בעיות רפואיות" value={medicalExpired} sub={`${medicalSoon} בסכנה`} color={medicalExpired > 0 ? 'red' : 'green'} icon={Activity} urgent={medicalExpired > 0} />
-        <DirKpi label="חוזים להחלטה" value={contractsAlerts} sub="Contract Pending" color={contractsAlerts > 0 ? 'amber' : 'green'} icon={FileText} />
-        <DirKpi label="בקשות פתוחות" value={pendingReqs} sub="Action Queue" color={pendingReqs > 0 ? 'amber' : 'green'} icon={ClipboardList} urgent={pendingReqs > 0} />
-        <DirKpi label="שחקנים חופשיים" value={players.filter(p => p.is_free_agent).length} sub="Free Agents" color="blue" icon={Users} />
+        <DirKpi label="חוזים להחלטה" value={contractsAlerts} sub="חוזה ממתין" color={contractsAlerts > 0 ? 'amber' : 'green'} icon={FileText} />
+        <DirKpi label="בקשות פתוחות" value={pendingReqs} sub="תור פעולות" color={pendingReqs > 0 ? 'amber' : 'green'} icon={ClipboardList} urgent={pendingReqs > 0} />
+        <DirKpi label="שחקנים חופשיים" value={players.filter(p => p.is_free_agent).length} sub="שחקנים חופשיים" color="blue" icon={Users} />
       </div>
 
       {/* Action Queue preview */}
@@ -249,7 +258,7 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: 'סה״כ שחקנים', value: players.length, icon: '👥' },
-          { label: 'IFA Ready', value: ifaReady, icon: '✅' },
+          { label: 'מוכן להתאחדות (IFA)', value: ifaReady, icon: '✅' },
           { label: 'שחקנים חופשיים', value: players.filter(p => p.is_free_agent).length, icon: '🟢' },
           { label: 'העברות פעילות', value: transfers.filter(t => t.status === 'Trialist' || t.status === 'Contract Pending').length, icon: '🔄' },
         ].map(s => (
@@ -345,7 +354,7 @@ function RequestsTab({ requests }) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-white font-black text-base mb-1">Action Queue — {pending.length} ממתינות</h3>
+      <h3 className="text-white font-black text-base mb-1">תור פעולות — {pending.length} ממתינות</h3>
       {pending.length === 0 && <div className="text-center py-10 text-white/30 text-sm">🎉 אין בקשות פתוחות</div>}
       {pending.map(req => (
         <div key={req.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
@@ -398,7 +407,7 @@ function ComplianceTab({ players }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-black text-base">Compliance Matrix</h3>
+        <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית</h3>
         <button className="text-xs bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 px-3 py-1.5 rounded hover:bg-[#D4AF37]/20 transition-colors">
           📄 הפק דוח PDF
         </button>
@@ -407,7 +416,7 @@ function ComplianceTab({ players }) {
         <table className="w-full text-xs">
           <thead className="bg-[#1B263B]">
             <tr>
-              {['שם שחקן', 'עמדה', 'סטטוס רפואי', 'IFA Ready', 'מסמכים', 'ימים לתוקף', 'פעולה'].map(h => (
+              {['שם שחקן', 'עמדה', 'סטטוס רפואי', 'מוכן IFA', 'מסמכים', 'ימים לתוקף', 'פעולה'].map(h => (
                 <th key={h} className="text-white/40 font-bold py-3 px-4 text-right whitespace-nowrap">{h}</th>
               ))}
             </tr>
