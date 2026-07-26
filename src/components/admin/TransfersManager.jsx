@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Loader2, Send, FileText, ShieldAlert, CreditCard, Gavel, CheckCircle2, XCircle, UserCheck } from 'lucide-react';
 import TransferPipelineStepper from './TransferPipelineStepper';
 import TransferApprovalGate from './TransferApprovalGate';
+import NegotiationPanel from '@/components/negotiation/NegotiationPanel';
 import { TRANSFER_CATEGORIES } from '@/lib/transferDocumentRequirements';
 
 const STATUSES = [
@@ -232,6 +233,8 @@ export default function TransfersManager() {
                       </div>
                     )}
                   </div>
+
+                  <NegotiationPanel proposal={p} />
 
                   <TransferApprovalGate proposal={p} onReadyChange={r => setReadyMap(m => ({ ...m, [p.id]: r }))} />
 

@@ -41,8 +41,15 @@ export default function GuardianPortal() {
   const { data: allOffers = [] } = useQuery({
     queryKey: ['guardian-offers', children.map(c => c.elite_id || c.id).join(',')],
     queryFn: async () => {
+      // שחקן קטין — הצעות ממתינות לחתימת אפוטרופוס; שחקן בוגר — ממתינות לאישור השחקן עצמו (המנהל רק מנהל משא ומתן).
+      const statuses = ['מאושר — ממתין לאפוטרופוס', 'מאושר — ממתין לשחקן (בוגר)'];
       const results = await Promise.all(
-        children.map(c => base44.entities.TransferProposal.filter({ player_elite_id: c.elite_id || c.id, status: 'מאושר — ממתין לאפוטרופוס' }, '-created_date', 20))
+        children.map(async (c) => {
+          const cols = await Promise.all(
+            statuses.map(s => base44.entities.TransferProposal.filter({ player_elite_id: c.elite_id || c.id, status: s }, '-created_date', 20))
+          );
+          return [...cols[0], ...cols[1]];
+        })
       );
       return results;
     },

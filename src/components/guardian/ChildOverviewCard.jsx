@@ -5,6 +5,7 @@ import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, L
 import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
+import NegotiationHub from '@/components/negotiation/NegotiationHub';
 
 // מכאן מתבצעת החתימה הדיגיטלית האינטראקטיבית על טופס ההתאחדות — אפוטרופוס/שחקן ממלא השלמות וחותם.
 function primaryFormKeyForOffer(offer, player, role) {
@@ -139,7 +140,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
       {pendingOffers.length > 0 && (
         <div className="space-y-3 pt-4 border-t border-white/10">
           <div className="text-amber-400 text-xs font-bold flex items-center gap-1.5">
-            <PenLine size={13} /> {player.is_adult ? 'ממתין לאישורך כמנהל אישי' : 'ממתין לחתימתך'} — {pendingOffers.length} {pendingOffers.length === 1 ? (pendingOffers[0] && isLoanOffer(pendingOffers[0]) ? 'השאלה' : 'העברה') : 'פעולות'}
+            <PenLine size={13} /> {player.is_adult ? 'ממתין למשא ומתן מול המועדון' : 'ממתין לחתימתך כאפוטרופוס'} — {pendingOffers.length} {pendingOffers.length === 1 ? (pendingOffers[0] && isLoanOffer(pendingOffers[0]) ? 'השאלה' : 'העברה') : 'פעולות'}
           </div>
           {pendingOffers.map(offer => (
             <div key={offer.id} className="bg-[#0D1B2A] border border-amber-500/20 rounded-lg p-4">
@@ -156,53 +157,63 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
                   <PenLine size={11} /> תקופת השאלה: {offer.loan_start_date} → {offer.loan_end_date || '—'}
                 </div>
               )}
-              <div className="flex gap-2 mb-3 flex-wrap">
-                <button
-                  onClick={() => setSignModal({ offer, formKey: primaryFormKeyForOffer(offer, player) })}
-                  className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37] text-[#0D1B2A] border border-[#D4AF37] px-2.5 py-1.5 rounded-sm hover:bg-amber-400 transition-colors"
-                >
-                  <FileSignature size={11} /> מלא וחתום על טופס {isLoanOffer(offer) ? 'ההשאלה' : 'ההעברה'}
-                </button>
-                <button
-                  onClick={() => handleGenerateForm(offer)}
-                  disabled={generatingForm[offer.id]}
-                  className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/20 transition-colors disabled:opacity-40"
-                >
-                  {generatingForm[offer.id] ? <Loader2 size={11} className="animate-spin" /> : <FileSignature size={11} />}
-                  הורד טיוטת PDF
-                </button>
-                {!player.is_adult && (
-                  <button
-                    onClick={() => setSignModal({ offer, formKey: 'guardian_consent_form' })}
-                    className="flex items-center gap-1.5 text-[10px] font-bold bg-white/5 text-white/70 border border-white/15 px-2.5 py-1.5 rounded-sm hover:bg-white/10 transition-colors"
-                  >
-                    <FileSignature size={11} /> טופס הסכמת אפוטרופוס
-                  </button>
-                )}
-              </div>
 
-              {!confirm[offer.id] ? (
-                <button onClick={() => setConfirm(c => ({ ...c, [offer.id]: true }))}
-                  className="w-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-amber-500/25 transition-colors">
-                  {player.is_adult ? 'לחץ לאישור ההעברה כמנהל אישי' : 'לחץ לאישור וחתימה על ההעברה'}
-                </button>
+              {/* הורדת טיוטת PDF — משותף לכל התפקידים, לעיון בלבד */}
+              <button
+                onClick={() => handleGenerateForm(offer)}
+                disabled={generatingForm[offer.id]}
+                className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/20 transition-colors disabled:opacity-40 mb-3"
+              >
+                {generatingForm[offer.id] ? <Loader2 size={11} className="animate-spin" /> : <FileSignature size={11} />}
+                הורד טיוטת PDF לעיון
+              </button>
+
+              {player.is_adult ? (
+                // שחקן בוגר עם מנהל אישי — המנהל אינו חותם, רק מנהל משא ומתן על סעיפי החוזה.
+                // השחקן הבוגר חותם בעצמו דרך פרופיל השחקן שלו.
+                <NegotiationHub offer={offer} player={player} currentUser={guardianUser} />
               ) : (
-                <div className="space-y-2">
-                  <input
-                    value={signName}
-                    onChange={e => setSignName(e.target.value)}
-                    placeholder={player.is_adult ? 'הקלד את שמך המלא כאישור ניהול' : 'הקלד את שמך המלא כאישור לחתימה דיגיטלית'}
-                    className="w-full bg-[#1B263B] border border-white/15 rounded-sm px-3 py-2 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60"
-                  />
-                  <button
-                    onClick={() => signOffer.mutate(offer)}
-                    disabled={!signName.trim() || signOffer.isPending}
-                    className="w-full bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-green-500/25 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
-                  >
-                    {signOffer.isPending ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
-                    {player.is_adult ? 'אני מאשר/ת את ההעברה כמנהל אישי' : 'אני מאשר/ת את ההעברה בחתימה דיגיטלית'}
-                  </button>
-                </div>
+                // קטין — אפוטרופוס חותם בלבד
+                <>
+                  <div className="flex gap-2 mb-3 flex-wrap">
+                    <button
+                      onClick={() => setSignModal({ offer, formKey: primaryFormKeyForOffer(offer, player) })}
+                      className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37] text-[#0D1B2A] border border-[#D4AF37] px-2.5 py-1.5 rounded-sm hover:bg-amber-400 transition-colors"
+                    >
+                      <FileSignature size={11} /> מלא וחתום על טופס {isLoanOffer(offer) ? 'ההשאלה' : 'ההעברה'}
+                    </button>
+                    <button
+                      onClick={() => setSignModal({ offer, formKey: 'guardian_consent_form' })}
+                      className="flex items-center gap-1.5 text-[10px] font-bold bg-white/5 text-white/70 border border-white/15 px-2.5 py-1.5 rounded-sm hover:bg-white/10 transition-colors"
+                    >
+                      <FileSignature size={11} /> טופס הסכמת אפוטרופוס
+                    </button>
+                  </div>
+
+                  {!confirm[offer.id] ? (
+                    <button onClick={() => setConfirm(c => ({ ...c, [offer.id]: true }))}
+                      className="w-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-amber-500/25 transition-colors">
+                      לחץ לאישור וחתימה על ההעברה כאפוטרופוס
+                    </button>
+                  ) : (
+                    <div className="space-y-2">
+                      <input
+                        value={signName}
+                        onChange={e => setSignName(e.target.value)}
+                        placeholder="הקלד את שמך המלא כאישור לחתימה דיגיטלית"
+                        className="w-full bg-[#1B263B] border border-white/15 rounded-sm px-3 py-2 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60"
+                      />
+                      <button
+                        onClick={() => signOffer.mutate(offer)}
+                        disabled={!signName.trim() || signOffer.isPending}
+                        className="w-full bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-green-500/25 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
+                      >
+                        {signOffer.isPending ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
+                        אני מאשר/ת את ההעברה בחתימה דיגיטלית
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}

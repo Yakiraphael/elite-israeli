@@ -1,0 +1,85 @@
+{
+  "name": "NegotiationRequest",
+  "type": "object",
+  "properties": {
+    "transfer_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05e6\u05e2\u05ea \u05d4\u05e2\u05d1\u05e8\u05d4/\u05d4\u05e9\u05d0\u05dc\u05d4 (TransferProposal.id)"
+    },
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e9\u05d7\u05e7\u05df"
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05e7\u05d5\u05dc\u05d8/\u05e9\u05d5\u05d0\u05dc"
+    },
+    "transfer_category": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05e4\u05e2\u05d5\u05dc\u05d4"
+    },
+    "sender_role": {
+      "type": "string",
+      "title": "\u05ea\u05e4\u05e7\u05d9\u05d3 \u05e9\u05d5\u05dc\u05d7 \u05d4\u05d1\u05e7\u05e9\u05d4",
+      "enum": [
+        "player",
+        "manager"
+      ],
+      "default": "manager",
+      "description": "\u05de\u05e0\u05d4\u05dc \u05d0\u05d9\u05e9\u05d9 \u05de\u05e6\u05d9\u05e2 \u05e9\u05d9\u05e0\u05d5\u05d9 \u05e1\u05e2\u05d9\u05e4\u05d9 \u05d7\u05d5\u05d6\u05d4; \u05e9\u05d7\u05e7\u05df \u05d1\u05d5\u05d2\u05e8 \u05dc\u05dc\u05d0 \u05de\u05e0\u05d4\u05dc \u05d9\u05db\u05d5\u05dc \u05dc\u05d4\u05d2\u05d9\u05e9 \u05d1\u05e2\u05e6\u05de\u05d5."
+    },
+    "sender_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05e9\u05d5\u05dc\u05d7"
+    },
+    "clause_key": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e1\u05e2\u05d9\u05e3",
+      "description": "\u05de\u05e4\u05ea\u05d7 \u05e1\u05e2\u05d9\u05e3 \u05dc\u05d9\u05d9\u05e9\u05d5\u05dd \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9 (\u05dc\u05de\u05e9\u05dc: contract_value, loan_start_date, loan_end_date). 'custom' = \u05e1\u05e2\u05d9\u05e3 \u05d7\u05d5\u05e4\u05e9\u05d9."
+    },
+    "clause_label": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05e1\u05e2\u05d9\u05e3"
+    },
+    "current_value": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05da \u05d4\u05e0\u05d5\u05db\u05d7\u05d9 \u05d1\u05d7\u05d5\u05d6\u05d4"
+    },
+    "proposed_value": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05da \u05d4\u05de\u05d5\u05e6\u05e2"
+    },
+    "reasoning": {
+      "type": "string",
+      "title": "\u05e0\u05d9\u05de\u05d5\u05e7 / \u05d8\u05e7\u05e1\u05d8 \u05d7\u05d5\u05e4\u05e9\u05d9"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05d4\u05e6\u05e2\u05d4",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "director_notes": {
+      "type": "string",
+      "title": "\u05ea\u05d2\u05d5\u05d1\u05ea \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d4\u05de\u05e0\u05d4\u05dc \u05d4\u05de\u05e7\u05e6\u05d5\u05e2\u05d9"
+    },
+    "responded_at": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05ea\u05d2\u05d5\u05d1\u05ea \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df (Timestamp)"
+    }
+  },
+  "required": [
+    "transfer_id",
+    "player_id",
+    "sender_role",
+    "clause_label"
+  ]
+}
