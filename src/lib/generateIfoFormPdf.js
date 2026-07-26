@@ -219,17 +219,78 @@ async function renderHtmlToPdf(html, filename) {
   }
 }
 
+/**
+ * generateFormPdf — מוריד את ה-PDF המקורי של ההתאחדות ומשבץ עליו את פרטי השחקן/מועדון.
+ * **לא** מייצר PDF חדש מ-HTML. משתמש ב-fillOriginalPdf מ-signOriginalIfoPdf.
+ */
 export async function generateFormPdf({ form_key, player, club, transfer, editableValues }) {
+  // בניית רשימת שדות ממולאים לתצוגה
+  const { fillOriginalPdf } = await import('./signOriginalIfoPdf');
   const form = IFA_FORM_CATALOG[form_key];
   if (!form) throw new Error(`טופס לא מוכר: ${form_key}`);
-  const html = buildFormHtml(form, { player, club: club || {}, transfer: transfer || null, editableValues: editableValues || {} });
+
+  // איסוף כל הנתונים הרלוונטיים
+  const ctx = { player: player || {}, club: club || {}, transfer: transfer || {} };
+  const filledFields = [];
+
+  // פרטי שחקן
+  if (player?.full_name) filledFields.push({ label: 'שם השחקן', value: player.full_name });
+  if (player?.id_number) filledFields.push({ label: 'תעודת זהות', value: player.id_number });
+  if (player?.birth_date) filledFields.push({ label: 'תאריך לידה', value: new Date(player.birth_date).toLocaleDateString('he-IL') });
+  if (player?.position) filledFields.push({ label: 'עמדה ראשית', value: player.position });
+  if (player?.street_address || player?.city) filledFields.push({ label: 'כתובת', value: [player?.street_address, player?.city].filter(Boolean).join(', ') });
+  if (player?.phone) filledFields.push({ label: 'טלפון', value: player.phone });
+  if (player?.team_name || club?.club_name) filledFields.push({ label: 'מועדון נוכחי', value: club?.club_name || player?.team_name });
+  if (player?.ifa_id) filledFields.push({ label: 'מספר כרטיס שחקן (IFA ID)', value: player.ifa_id });
+  if (!player?.is_adult && player?.guardian_name) filledFields.push({ label: 'שם האפוטרופוס', value: player.guardian_name });
+  if (!player?.is_adult && player?.guardian_id) filledFields.push({ label: 'תעודת זהות אפוטרופוס', value: player.guardian_id });
+
+  // פרטי העברה / השאלה
+  if (transfer?.club_from || transfer?.player_name) {
+    if (transfer.club_from) filledFields.push({ label: 'מועדון מעביר', value: transfer.club_from });
+    if (transfer.club_to || transfer.club_name) filledFields.push({ label: 'מועדון קולט', value: transfer.club_to || transfer.club_name });
+    if (transfer.transfer_category) filledFields.push({ label: 'סוג העברה', value: transfer.transfer_category });
+    if (transfer.contract_value) filledFields.push({ label: 'שווי חוזה (₪)', value: Number(transfer.contract_value).toLocaleString('he-IL') });
+    if (transfer.loan_start_date) filledFields.push({ label: 'תחילת השאלה', value: new Date(transfer.loan_start_date).toLocaleDateString('he-IL') });
+    if (transfer.loan_end_date) filledFields.push({ label: 'סיום השאלה', value: new Date(transfer.loan_end_date).toLocaleDateString('he-IL') });
+  }
+
+  // ערכים שנערכו ידנית על ידי המנהל המקצועי
+  if (editableValues) {
+    Object.entries(editableValues).forEach(([k, v]) => {
+      if (v !== undefined && v !== '' && v !== null) {
+        // נסה למצוא תווית מהסכמה
+        const schema = getFormFieldSchema(form_key) || [];
+        const fieldDef = schema.find(f => f.key === k);
+        filledFields.push({ label: fieldDef?.label || k, value: String(v) });
+      }
+    });
+  }
+
+  // הורדה
   const safeName = (player?.full_name || 'player').replace(/[^\w\u0590-\u05FF\s-]/g, '').trim();
-  await renderHtmlToPdf(html, `${form.label} - ${safeName}.pdf`);
+  const pdfUrl = form.pdf_url || form.reference_url;
+  if (!pdfUrl) {
+    // אין PDF מקורי — נחזור לשיטה הישנה רק כפלבק
+    const html = buildFormHtml(form, { player, club: club || {}, transfer: transfer || null, editableValues: editableValues || {} });
+    return renderHtmlToPdf(html, `${form.label} - ${safeName}.pdf`);
+  }
+
+  const blob = await fillOriginalPdf({ pdfUrl, filledFields, contractLabel: form.label });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${form.label} - ${safeName}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-// חבילת PDF מאוחדת — מסמך אחד המכיל את כל טפסי ההתאחדות הנדרשים לפעולה, מוכן להגשה להתאחדות.
-// (concatenates all forms into a single PDF; supporting docs remain in vault as uploads.)
+// חבילת PDF — פותח כל טופס מקורי של ההתאחדות בטאב נפרד עם הנתונים המשובצים.
+// (כל טופס מוריד בנפרד — לא ניתן לאחד PDF-ים מ-CORS שונים בצד הלקוח)
 export async function generateBundlePdf({ action, player, club, transfer, editableValues, transfer_category }) {
+  const { fillOriginalPdf } = await import('./signOriginalIfoPdf');
   const cat = transfer_category || transfer?.transfer_category || '';
   const isLoan = cat.startsWith('השאל');
   const sub_type = cat.includes('בינלאומי') ? 'international' : 'domestic';
@@ -242,29 +303,50 @@ export async function generateBundlePdf({ action, player, club, transfer, editab
     transfer_category: cat,
   });
   const all = [...bundle.mainForms, ...bundle.supporting].filter((f, i, arr) => arr.findIndex(x => x.key === f.key) === i);
-  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  let addedAny = false;
 
+  // בנה שדות מולאים משותפים
+  const filledFields = [];
+  if (player?.full_name) filledFields.push({ label: 'שם השחקן', value: player.full_name });
+  if (player?.id_number) filledFields.push({ label: 'תעודת זהות', value: player.id_number });
+  if (player?.birth_date) filledFields.push({ label: 'תאריך לידה', value: new Date(player.birth_date).toLocaleDateString('he-IL') });
+  if (player?.position) filledFields.push({ label: 'עמדה', value: player.position });
+  if (club?.club_name || player?.team_name) filledFields.push({ label: 'מועדון', value: club?.club_name || player?.team_name });
+  if (player?.ifa_id) filledFields.push({ label: 'IFA ID', value: player.ifa_id });
+  if (transfer?.club_from) filledFields.push({ label: 'מועדון מעביר', value: transfer.club_from });
+  if (transfer?.club_to || transfer?.club_name) filledFields.push({ label: 'מועדון קולט', value: transfer.club_to || transfer.club_name });
+  if (transfer?.contract_value) filledFields.push({ label: 'שווי חוזה', value: Number(transfer.contract_value).toLocaleString('he-IL') + ' ₪' });
+  if (editableValues) {
+    Object.entries(editableValues).forEach(([k, v]) => {
+      if (v) filledFields.push({ label: k, value: String(v) });
+    });
+  }
+
+  const safeName = (player?.full_name || 'player').replace(/[^\w\u0590-\u05FF\s-]/g, '').trim();
+  let downloaded = 0;
   for (const form of all) {
-    if (form.category === 'supporting_doc') continue; // מסמכי תמיכה נשמרים בכספת
+    if (form.category === 'supporting_doc') continue;
+    const pdfUrl = form.pdf_url || form.reference_url;
+    if (!pdfUrl) continue;
     try {
-      const html = buildFormHtml(form, { player, club: club || {}, transfer: transfer || null, editableValues: editableValues || {} });
-      const canvas = await renderHtmlToCanvas(html);
-      if (addedAny) pdf.addPage();
-      await addCanvasToPdf(pdf, canvas);
-      addedAny = true;
+      const blob = await fillOriginalPdf({ pdfUrl, filledFields, contractLabel: form.label });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${form.label} - ${safeName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      downloaded++;
+      // עיכוב קטן בין הורדות כדי שהדפדפן יעכל
+      await new Promise(r => setTimeout(r, 400));
     } catch (err) {
       console.error('bundle form gen failed', form.key, err);
     }
   }
-
-  if (!addedAny) {
-    pdf.text('No forms were generated.', 20, 20);
+  if (downloaded === 0) {
+    alert('לא נמצאו טפסי PDF מקוריים להורדה עבור סוג ההעברה הזה.');
   }
-
-  const safeName = (player?.full_name || 'player').replace(/[^\w\u0590-\u05FF\s-]/g, '').trim();
-  const actionLabel = isLoan ? 'השאלה' : 'העברה';
-  pdf.save(`חבילת_הגשה_${actionLabel}_${safeName}_להתאחדות.pdf`);
 }
 
 // Alias — תואם לשם הישן (תחזוק הפניות ישנות)
