@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings } from 'lucide-react';
+import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings, FileSignature } from 'lucide-react';
 import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
+import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 
 const MEDICAL_LIGHT = {
   green: { label: 'כשיר לחלוטין', color: '#10B981' },
@@ -15,6 +16,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
   const [signName, setSignName] = useState('');
   const [confirm, setConfirm] = useState({});
   const [showNotifSettings, setShowNotifSettings] = useState(false);
+  const [generatingForm, setGeneratingForm] = useState({});
 
   const isExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
   const isSoon = !isExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
@@ -40,6 +42,28 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['guardian-children'] }),
   });
+
+  const handleGenerateForm = async (offer, formKey) => {
+    setGeneratingForm(g => ({ ...g, [offer.id]: true }));
+    try {
+      await generateFormPdf({
+        form_key: formKey,
+        player,
+        club: { club_name: offer.club_name, contact_name: offer.contact_name },
+        transfer: {
+          club_to: offer.club_name,
+          club_from: player.team_name,
+          transfer_category: offer.transfer_category,
+          contract_value: offer.contract_value,
+          iefa_commission_fee: offer.iefa_commission_fee,
+        },
+      });
+    } catch (err) {
+      console.error('form gen failed', err);
+    } finally {
+      setGeneratingForm(g => ({ ...g, [offer.id]: false }));
+    }
+  };
 
   return (
     <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
@@ -106,6 +130,26 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
                   <FileText size={12} /> צפה במסמך ההצעה
                 </a>
               )}
+
+              <div className="flex gap-2 mb-3 flex-wrap">
+                <button
+                  onClick={() => handleGenerateForm(offer, player.is_adult ? 'player_transfer_adult_domestic' : 'player_transfer_minor')}
+                  disabled={generatingForm[offer.id]}
+                  className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/20 transition-colors disabled:opacity-40"
+                >
+                  {generatingForm[offer.id] ? <Loader2 size={11} className="animate-spin" /> : <FileSignature size={11} />}
+                  הורד טופס העברה רשמי (PDF)
+                </button>
+                {!player.is_adult && (
+                  <button
+                    onClick={() => handleGenerateForm(offer, 'guardian_consent_form')}
+                    disabled={generatingForm[offer.id]}
+                    className="flex items-center gap-1.5 text-[10px] font-bold bg-white/5 text-white/60 border border-white/15 px-2.5 py-1.5 rounded-sm hover:bg-white/10 transition-colors disabled:opacity-40"
+                  >
+                    <FileSignature size={11} /> טופס הסכמת אפוטרופוס
+                  </button>
+                )}
+              </div>
 
               {!confirm[offer.id] ? (
                 <button onClick={() => setConfirm(c => ({ ...c, [offer.id]: true }))}

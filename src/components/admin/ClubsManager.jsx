@@ -32,6 +32,7 @@ const emptyClub = () => ({
   city: '', league_name: '', business_id: '', is_verified: false,
   verification_status: 'ממתין לאימות',
   incorporation_certificate_url: '',
+  ifa_membership_certificate_url: '',
 });
 
 export default function ClubsManager() {
@@ -40,6 +41,7 @@ export default function ClubsManager() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyClub());
   const [uploadingCert, setUploadingCert] = useState(false);
+  const [uploadingIfa, setUploadingIfa] = useState(false);
 
   const { data: clubs = [], isLoading } = useQuery({
     queryKey: ['admin-clubs'],
@@ -79,6 +81,20 @@ export default function ClubsManager() {
       console.error('cert upload failed', err);
     } finally {
       setUploadingCert(false);
+    }
+  };
+
+  const handleIfaCertUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingIfa(true);
+    try {
+      const res = await base44.integrations.Core.UploadFile({ file });
+      setForm(p => ({ ...p, ifa_membership_certificate_url: res.file_url }));
+    } catch (err) {
+      console.error('ifa cert upload failed', err);
+    } finally {
+      setUploadingIfa(false);
     }
   };
 
@@ -151,6 +167,36 @@ export default function ClubsManager() {
               )}
             </div>
 
+            {/* תעודת חברות בהתאחדות לכדורגל */}
+            <div className="mt-3 bg-[#0D1B2A] border border-white/10 rounded-lg p-4">
+              <div className="flex items-center gap-1.5 text-[#D4AF37] text-xs font-bold mb-2">
+                <ShieldCheck size={12} /> תעודת חברות בהתאחדות לכדורגל בישראל
+              </div>
+              <div className="text-white/40 text-[10px] mb-3">
+                אישור חברות עדכני — נדרש לאימות השתתפות המועדון בליגות רשמיות.
+              </div>
+              <label className="flex items-center justify-center gap-2 border border-dashed border-white/20 rounded-lg py-5 cursor-pointer hover:border-[#D4AF37]/50 transition-colors">
+                <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleIfaCertUpload} disabled={uploadingIfa} />
+                {uploadingIfa
+                  ? <Loader2 size={16} className="animate-spin text-[#D4AF37]" />
+                  : <>
+                    <Upload size={14} className="text-white/40" />
+                    <span className="text-white/50 text-xs font-bold">{form.ifa_membership_certificate_url ? 'החלף קובץ' : 'העלה תעודת חברות'}</span>
+                  </>}
+              </label>
+              {form.ifa_membership_certificate_url && (
+                <div className="mt-2 flex items-center gap-2 text-[10px]">
+                  <CheckCircle2 size={11} className="text-green-400" />
+                  <a href={form.ifa_membership_certificate_url} target="_blank" rel="noopener noreferrer"
+                    className="text-green-400 hover:text-green-300 flex items-center gap-1 truncate">
+                    תעודת חברות מצורפת <ExternalLink size={9} />
+                  </a>
+                  <button onClick={() => setForm(p => ({ ...p, ifa_membership_certificate_url: '' }))}
+                    className="text-red-400 hover:text-red-300 mr-auto">הסר</button>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center gap-3 mt-5">
               <button onClick={() => save.mutate(form)} disabled={!form.club_name || save.isPending}
                 className="bg-[#D4AF37] text-[#0D1B2A] font-black text-sm px-6 py-2.5 rounded-sm hover:bg-amber-400 transition-colors disabled:opacity-50 flex items-center gap-2">
@@ -201,6 +247,14 @@ export default function ClubsManager() {
                       </a>
                     ) : (
                       <span className="text-red-400/70 flex items-center gap-0.5"><FileText size={9} /> חסרה תעודת רישום</span>
+                    )}
+                    {club.ifa_membership_certificate_url ? (
+                      <a href={club.ifa_membership_certificate_url} target="_blank" rel="noopener noreferrer"
+                        className="text-[#D4AF37] hover:text-amber-300 flex items-center gap-0.5">
+                        <ShieldCheck size={9} /> חברות בהתאחדות
+                      </a>
+                    ) : (
+                      <span className="text-amber-400/60 flex items-center gap-0.5"><ShieldCheck size={9} /> חסרה תעודת חברות</span>
                     )}
                   </div>
                 </div>
