@@ -337,3 +337,86 @@ async function renderReadyPng(contractLabel) {
   });
   return arr;
 }
+
+/**
+ * ממיר טקסט אחד ל-PNG שקוף (תמיכה בעברית) — לשיבוץ כתמונה על גבי ה-PDF.
+ * @param {string} text
+ * @param {number} fontSizePt — בנקודות (PDF units)
+ * @returns {Promise<{bytes:Uint8Array, widthPt:number, heightPt:number}>}
+ */
+async function renderAnnotationPng(text, fontSizePt = 13) {
+  const padX = 4;
+  const padY = 2;
+  // מדידה ראשונית
+  const measureCanvas = document.createElement('canvas');
+  const mctx = measureCanvas.getContext('2d');
+  mctx.font = `bold ${fontSizePt}px Arial, sans-serif`;
+  mctx.textAlign = 'center';
+  mctx.textBaseline = 'middle';
+  const metrics = mctx.measureText(text);
+  const textW = Math.ceil(metrics.width) + padX * 2;
+  const textH = Math.ceil(fontSizePt * 1.25) + padY * 2;
+
+  const dpr = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = textW * dpr;
+  canvas.height = textH * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, textW, textH);
+  ctx.fillStyle = '#0D1B2A';
+  ctx.font = `bold ${fontSizePt}px Arial, sans-serif`;
+  ctx.direction = 'rtl';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, textW / 2, textH / 2);
+
+  const bytes = await new Promise((resolve, reject) => {
+    canvas.toBlob((b) => {
+      if (!b) return reject(new Error('canvas blob failed'));
+      b.arrayBuffer().then((ab) => resolve(new Uint8Array(ab)));
+    }, 'image/png');
+  });
+  return { bytes, widthPt: textW, heightPt: textH };
+}
+
+/**
+ * משבץ אנוטציות (טקסט) ידניות על גבי ה-PDF המקורי בעמודים ובמיקומים שסומנו.
+ * @param {object} opts
+ * @param {string} opts.pdfUrl
+ * @param {Array<{pageNumber:number, xRatio:number, yRatio:number, text:string, fontSize?:number}>} opts.annotations
+ * @param {Array<{label:string, value:string}>} [opts.filledFields] — משומש אחר כך גם (לא בשימוש כאן)
+ * @returns {Promise<Blob>} — PDF מולא
+ */
+export async function pdfWithAnnotations({ pdfUrl, annotations }) {
+  if (!pdfUrl) throw new Error('חסר כתובת PDF מקורי');
+  const res = await fetch(pdfUrl);
+  if (!res.ok) throw new Error(`טעינת PDF נכשלה (${res.status})`);
+  const bytes = await res.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+  const pages = pdfDoc.getPages();
+
+  for (const ann of (annotations || [])) {
+    const page = pages[ann.pageNumber - 1];
+    if (!page) continue;
+    const { width: pw, height: ph } = page.getSize();
+    const fontSize = ann.fontSize || 13;
+    const { bytes: imgBytes, widthPt, heightPt } = await renderAnnotationPng(ann.text, fontSize);
+    const img = await pdfDoc.embedPng(imgBytes);
+
+    // המרה: xRatio,yRatio הן יחסים מ-שמאל-למעלה בתצוגה. pdf-lib הוא מ-למטה-שמאל.
+    // רוצים למרכז את הטקסט בנקודת הקליק:
+    const xPDF = ann.xRatio * pw - img.width / 2 / 2; // /2 כי dpr=2 בעת הרינדור
+    const yPDF = ph - (ann.yRatio * ph) - heightPt / 2;
+
+    page.drawImage(img, {
+      x: xPDF,
+      y: yPDF,
+      width: img.width / 2,   // נרמל לגודל האמיתי ב-PT
+      height: img.height / 2,
+    });
+  }
+
+  const out = await pdfDoc.save();
+  return new Blob([out], { type: 'application/pdf' });
+}

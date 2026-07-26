@@ -5,10 +5,11 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { X, ExternalLink, CheckCircle2, Loader2, AlertTriangle, FileText, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, Wand2, Download } from 'lucide-react';
+import { X, ExternalLink, CheckCircle2, Loader2, AlertTriangle, FileText, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, Wand2, Download, PenTool } from 'lucide-react';
 import { getOfficialForm } from '@/lib/ifaOfficialForms';
 import { mapFormData, getMappingSummary } from '@/lib/ifaFormMapper';
-import { fillOriginalPdf } from '@/lib/signOriginalIfoPdf';
+import { pdfWithAnnotations } from '@/lib/signOriginalIfoPdf';
+import PdfFieldEditor from './PdfFieldEditor';
 
 const FIELD_LABELS = {
   number: 'מספר',
@@ -26,6 +27,17 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
   const [showNegotiable, setShowNegotiable] = useState(true);
   const [showDirector, setShowDirector] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [savedAnnotations, setSavedAnnotations] = useState([]);
+
+  // טעינת אנוטציות שמורות מהחוזה (מ-__annotations שבתוך filled_fields)
+  useEffect(() => {
+    if (!contract.filled_fields) return;
+    try {
+      const saved = JSON.parse(contract.filled_fields);
+      if (Array.isArray(saved.__annotations)) setSavedAnnotations(saved.__annotations);
+    } catch {}
+  }, [contract.filled_fields]);
 
   // טעינת נתוני השחקן + מועדון למיפוי אוטומטי
   const { data: player } = useQuery({
@@ -96,8 +108,12 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
 
   const save = useMutation({
     mutationFn: async () => {
+      // שמור את האנוטציות השמורות שהוצבו ידנית על ה-PDF
+      const savedAnnotationsArray = savedAnnotations.length > 0
+        ? { __annotations: savedAnnotations.map(a => ({ pageNumber: a.pageNumber, xRatio: a.xRatio, yRatio: a.yRatio, text: a.text, fontSize: a.fontSize })) }
+        : {};
       await base44.entities.Contract.update(contract.id, {
-        filled_fields: JSON.stringify(values),
+        filled_fields: JSON.stringify({ ...values, ...savedAnnotationsArray }),
         // עדכן גם שדות ראשיים אם יש
         salary_monthly: values.monthly_salary ? Number(values.monthly_salary) : contract.salary_monthly,
         start_date: values.season_start || contract.start_date,
@@ -112,30 +128,30 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
     },
   });
 
-  // הורדת טופס מולא (PDF המקורי + פרטי שחקן/מועדון שמולאו אוטומטית) — מוכן לחתימה
-  const handleDownloadFilled = async () => {
-    if (!form?.pdf_url) return;
+  // שמירת אנוטציות שהמנהל הציב ידנית על גבי ה-PDF המקורי → שמירה כ-document_url של החוזה
+  const handleEditorSaved = async (annotations) => {
+    if (!form?.pdf_url) { setEditorOpen(false); return; }
     setDownloading(true);
     try {
-      const filledFieldsArr = allFields
-        .filter(f => values[f.key])
-        .map(f => ({ label: f.label, value: String(values[f.key]) }));
-      const blob = await fillOriginalPdf({
+      // ייצוא PDF עם האנוטציות
+      const blob = await pdfWithAnnotations({
         pdfUrl: form.pdf_url,
-        filledFields: filledFieldsArr,
-        contractLabel: form.label,
+        annotations,
       });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `טופס-${contract.player_name || 'שחקן'}-${form.label || 'חוזה'}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      setSavedAnnotations(annotations);
+      // שמירה ב-vault
+      const file = new File([blob], `contract-${contract.id}-filled.pdf`, { type: 'application/pdf' });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      // עדכון החוזה
+      await base44.entities.Contract.update(contract.id, {
+        document_url: file_url,
+        filled_fields: JSON.stringify({ ...(values || {}), __annotations: annotations.map(a => ({ pageNumber: a.pageNumber, xRatio: a.xRatio, yRatio: a.yRatio, text: a.text, fontSize: a.fontSize })) }),
+      });
+      queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      setEditorOpen(false);
     } catch (e) {
-      console.error('fillOriginalPdf failed', e);
-      alert('הורדת הטופס נכשלה — נא לנסות שנית או להשתמש בכפתור "PDF מקורי"');
+      console.error('pdfWithAnnotations failed', e);
+      alert('שמירת המילוי נכשלה — נא לנסות שנית.');
     } finally {
       setDownloading(false);
     }
@@ -163,11 +179,11 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
             )}
             {form?.pdf_url && (
               <button
-                onClick={handleDownloadFilled}
+                onClick={() => setEditorOpen(true)}
                 disabled={downloading}
                 className="flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/10 transition-colors disabled:opacity-40">
-                {downloading ? <Loader2 size={11} className="animate-spin" /> : <Download size={11} />}
-                הורד PDF מולא לחתימה
+                {downloading ? <Loader2 size={11} className="animate-spin" /> : <PenTool size={11} />}
+                עריכת מילוי על ה-PDF המקורי
               </button>
             )}
             <button onClick={onClose}><X size={16} className="text-white/30 hover:text-white" /></button>
@@ -249,9 +265,11 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
               </button>
               {showNegotiable && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {form.negotiable_fields.map(field => (
-                    <FieldInput key={field.key} field={field} value={values[field.key] || ''} onChange={v => set(field.key, v)} />
-                  ))}
+                  {form.negotiable_fields
+                    .filter(f => !f.depends_on || values[f.depends_on.field] === f.depends_on.value)
+                    .map(field => (
+                      <FieldInput key={field.key} field={field} value={values[field.key] || field.default || ''} onChange={v => set(field.key, v)} />
+                    ))}
                 </div>
               )}
             </div>
@@ -269,9 +287,11 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
               </button>
               {showDirector && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {form.director_fillable_fields.map(field => (
-                    <FieldInput key={field.key} field={field} value={values[field.key] || ''} onChange={v => set(field.key, v)} />
-                  ))}
+                  {form.director_fillable_fields
+                    .filter(f => !f.depends_on || values[f.depends_on.field] === f.depends_on.value)
+                    .map(field => (
+                      <FieldInput key={field.key} field={field} value={values[field.key] || field.default || ''} onChange={v => set(field.key, v)} />
+                    ))}
                 </div>
               )}
             </div>
@@ -332,6 +352,16 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
           </button>
         </div>
       </div>
+
+      {/* עורך מילוי אינטראקטיבי על גבי ה-PDF המקורי */}
+      {editorOpen && form?.pdf_url && (
+        <PdfFieldEditor
+          pdfUrl={form.pdf_url}
+          initialAnnotations={savedAnnotations}
+          onSaved={handleEditorSaved}
+          onClose={() => setEditorOpen(false)}
+        />
+      )}
     </div>
   );
 }
