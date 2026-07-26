@@ -12,6 +12,7 @@ import RoleToolbar from '../components/RoleToolbar';
 import { ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
 import ContractsPanel from '../components/director/ContractsPanel';
+import TemplatesPanel from '../components/director/TemplatesPanel';
 import FinanceTab from '../components/director/FinanceTab';
 import AnalyticsTab from '../components/director/AnalyticsTab';
 import TransfersManager from '../components/admin/TransfersManager';
@@ -89,16 +90,18 @@ function DashboardContent({ onLogout }) {
   const ifaReady = players.filter(p => p.ifa_ready).length;
   const complianceScore = players.length > 0 ? Math.round((ifaReady / players.length) * 100) : 0;
 
+  // סדר פרקטי: סקירה → תור דחוף → סגל → חוזים → העברות → Compliance → תבניות → כספים → ניתוח → גיוס
   const tabs = [
     { id: 'overview', label: 'סקירה כללית', icon: BarChart3 },
-    { id: 'squad', label: 'ניהול סגל', icon: Users },
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
-    { id: 'compliance', label: 'Compliance', icon: Shield },
+    { id: 'squad', label: 'ניהול סגל', icon: Users },
     { id: 'contracts', label: 'חוזים', icon: FileText },
     { id: 'transfers', label: 'העברות', icon: Send },
-    { id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus },
+    { id: 'compliance', label: 'Compliance', icon: Shield },
+    { id: 'templates', label: 'בנק תבניות', icon: Crown },
     { id: 'finance', label: 'כספים', icon: Wallet },
     { id: 'analytics', label: 'ניתוח נתונים', icon: BarChart3 },
+    { id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus },
   ];
 
   return (
@@ -166,6 +169,10 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'contracts' && (
           <ContractsPanel />
+        )}
+
+        {tab === 'templates' && (
+          <TemplatesPanel onCreate={() => setTab('contracts')} />
         )}
 
         {tab === 'transfers' && (

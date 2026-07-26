@@ -97,11 +97,12 @@ export default function CoachWorkspace() {
   });
   const isApprovedCoach = clubUserRecords.length > 0;
 
+  // סדר פרקטי: בריאות סגל → זימון (יום משחק) → אישורי העברה (שעון קוצב) → בקשות (תיבת דואר) → תקינות → גיוס
   const tabs = [
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
-    { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
     { id: 'callup', label: 'זימון וניהול סגל', icon: ListChecks },
     { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
+    { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
     { id: 'compliance', label: 'תקינות (Compliance)', icon: AlertTriangle },
     ...(isApprovedCoach ? [{ id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus }] : []),
   ];
