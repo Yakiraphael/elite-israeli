@@ -7,7 +7,9 @@
       "title": "\u05e7\u05d4\u05dc \u05d9\u05e2\u05d3",
       "enum": [
         "coach",
-        "director"
+        "director",
+        "player",
+        "parent"
       ]
     },
     "type": {
@@ -19,7 +21,14 @@
         "document_expiring",
         "contract_pending",
         "contract_signed",
-        "contract_expiring"
+        "contract_expiring",
+        "transfer_new",
+        "transfer_status",
+        "transfer_doc_signed",
+        "transfer_doc_pending_director",
+        "transfer_approved",
+        "transfer_rejected",
+        "transfer_loan_signed"
       ]
     },
     "title": {
@@ -42,9 +51,22 @@
       "type": "string",
       "title": "\u05d1\u05e7\u05e9\u05d4 \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9\u05ea"
     },
+    "transfer_id": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05d1\u05e8\u05d4/\u05d4\u05e9\u05d0\u05dc\u05d4 \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9\u05ea"
+    },
+    "transfer_category": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05d4\u05e2\u05d1\u05e8\u05d4/\u05d4\u05e9\u05d0\u05dc\u05d4"
+    },
     "link_tab": {
       "type": "string",
       "title": "\u05dc\u05e9\u05d5\u05e0\u05d9\u05ea \u05d9\u05e2\u05d3 (Deep Link)"
+    },
+    "target_user_email": {
+      "type": "string",
+      "title": "\u05de\u05d9\u05d9\u05dc \u05d9\u05e2\u05d3 \u05d9\u05e9\u05d9\u05e8 (\u05dc\u05e9\u05dc\u05d9\u05d7\u05ea \u05de\u05d9\u05d9\u05dc)",
+      "description": "\u05de\u05d9\u05d9\u05dc \u05d4\u05de\u05e9\u05ea\u05de\u05e9 \u05d4\u05e8\u05e9\u05d5\u05dd \u05e9\u05d0\u05dc\u05d9\u05d5 \u05de\u05d9\u05d5\u05e2\u05d3\u05ea \u05d4\u05d4\u05ea\u05e8\u05d0\u05d4 (\u05e9\u05d7\u05e7\u05df/\u05d4\u05d5\u05e8\u05d4). \u05e8\u05d9\u05e7 \u05e2\u05d1\u05d5\u05e8 \u05e7\u05d4\u05dc \u05e6\u05d5\u05d5\u05ea."
     },
     "is_read": {
       "type": "boolean",

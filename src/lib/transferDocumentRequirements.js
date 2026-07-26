@@ -1,11 +1,18 @@
-// Document + workflow configuration per transfer category, per the club regulatory-transfer spec.
-export const TRANSFER_CATEGORIES = ['העברת נוער', 'בוגרים - תוך ארצי', 'בוגרים - בינלאומי'];
+// Document + workflow configuration per transfer / loan category, per the IFA regulatory spec.
+export const TRANSFER_CATEGORIES = [
+  'העברת נוער',
+  'בוגרים - תוך ארצי',
+  'בוגרים - בינלאומי',
+  'השאלת נוער',
+  'השאלה - בוגרים - תוך ארצי',
+  'השאלה - בוגרים - בינלאומי',
+];
 
 export const REQUIRED_DOCS = {
   'העברת נוער': [
     { doc_type: 'player_transfer_form', label: 'טופס העברת שחקן (חתימות מועדון קולט, מועדון מעביר ואפוטרופוס)' },
     { doc_type: 'minor_departure_notice', label: 'טופס הודעת קטין על רצון לעבור (במקרה של הסגר)', optional: true },
-    { doc_type: 'guardian_id_copy', label: 'צילום ת״ז אפוטרופוס + ספח עם פרטי השחקן' },
+    { doc_type: 'guardian_id_copy', label: 'צילום ת.ז אפוטרופוס + ספח עם פרטי השחקן' },
     { doc_type: 'guardianship_order', label: 'צו מינוי אפוטרופוס (אם רלוונטי)', optional: true },
     { doc_type: 'insurance_certificate', label: 'אישור ביטוח בהתאם לחוק הספורט (מועדון קולט)' },
     { doc_type: 'player_contract', label: 'הסכם שחקן חתום לעונה' },
@@ -25,6 +32,23 @@ export const REQUIRED_DOCS = {
     { doc_type: 'work_visa', label: 'אישור עבודה / ויזה ממשרד הפנים' },
     { doc_type: 'player_passport', label: 'מסמך היסטוריית שחקן (Player Passport)' },
   ],
+  'השאלת נוער': [
+    { doc_type: 'player_loan_form', label: 'טופס השאלת שחקן קטין (חתימות מועדון בעלים, מועדון שואל ואפוטרופוס)' },
+    { doc_type: 'guardian_consent_form', label: 'טופס הסכמת אפוטרופוס להשאלה' },
+    { doc_type: 'loan_period_attachment', label: 'נספח תקופת השאלה (תאריכי תחילה וסיום)' },
+    { doc_type: 'insurance_certificate', label: 'אישור ביטוח בהתאם לחוק הספורט (מועדון שואל)' },
+  ],
+  'השאלה - בוגרים - תוך ארצי': [
+    { doc_type: 'player_loan_form', label: 'טופס השאלת שחקן בוגר (חתימות מועדון בעלים, מועדון שואל ושחקן)' },
+    { doc_type: 'loan_period_attachment', label: 'נספח תקופת השאלה (תאריכי תחילה וסיום)' },
+    { doc_type: 'insurance_certificate', label: 'אישור ביטוח בהתאם לחוק הספורט (מועדון שואל)' },
+  ],
+  'השאלה - בוגרים - בינלאומי': [
+    { doc_type: 'player_loan_form', label: 'טופס השאלת שחקן בוגר (בינלאומי)' },
+    { doc_type: 'itc', label: 'ITC — תעודת שחרור בינלאומית (TMS פיפ״א)' },
+    { doc_type: 'loan_period_attachment', label: 'נספח תקופת השאלה (תאריכי תחילה וסיום)' },
+    { doc_type: 'work_visa', label: 'אישור עבודה / ויזה (אם רלוונטי)', optional: true },
+  ],
 };
 
 // Approval workflow order per category
@@ -32,6 +56,9 @@ export const WORKFLOW_STAGES = {
   'העברת נוער': ['מועדון קולט', 'מועדון מעביר', 'אפוטרופוס', 'הושלם'],
   'בוגרים - תוך ארצי': ['מועדון מעביר', 'מועדון קולט', 'הושלם'],
   'בוגרים - בינלאומי': ['מועדון מעביר', 'מועדון קולט', 'ITC/התאחדות', 'הושלם'],
+  'השאלת נוער': ['מועדון בעלים', 'מועדון שואל', 'אפוטרופוס', 'הושלם'],
+  'השאלה - בוגרים - תוך ארצי': ['מועדון בעלים', 'מועדון שואל', 'הושלם'],
+  'השאלה - בוגרים - בינלאומי': ['מועדון בעלים', 'מועדון שואל', 'ITC/התאחדות', 'הושלם'],
 };
 
 export function getNextStage(category, currentStage) {
@@ -41,21 +68,33 @@ export function getNextStage(category, currentStage) {
   return stages[idx + 1];
 }
 
+// True when category is a loan (השאלה).
+export function isLoanCategory(category = '') {
+  return String(category).startsWith('השאל');
+}
+
 // Smart validation gate for TransferProposal final approval — checks every regulatory
-// rule the professional manager needs before signing off on a transfer to the federation.
+// rule the professional manager needs before signing off to the federation.
 export function computeTransferReadiness(proposal, docs = []) {
   const category = proposal.transfer_category || (proposal.is_adult ? 'בוגרים - תוך ארצי' : 'העברת נוער');
   const requiredDocs = (REQUIRED_DOCS[category] || []).filter(d => !d.optional);
   const missingDocs = requiredDocs.filter(d => !docs.some(sd => sd.doc_type === d.doc_type));
 
+  const loan = isLoanCategory(category);
+
   const checks = [
-    { label: 'אישור מאמן להעברה', passed: proposal.coach_approval_status === 'אושר על ידי מאמן' },
+    { label: 'אישור מאמן ל' + (loan ? 'השאלה' : 'העברה'), passed: proposal.coach_approval_status === 'אושר על ידי מאמן' },
     proposal.is_adult
       ? { label: 'הסכמת השחקן (ניהול עצמי)', passed: !!proposal.player_consent }
-      : { label: 'חתימת אפוטרופוס (OTP)', passed: !!proposal.guardian_otp_verified },
+      : { label: 'חתימת אפוטרופוס (דיגיטלית)', passed: !!proposal.guardian_otp_verified },
     { label: `מסמכים נדרשים (${requiredDocs.length - missingDocs.length}/${requiredDocs.length})`, passed: missingDocs.length === 0, missingDocs },
   ];
-  if (proposal.is_adult && proposal.contract_value > 0) {
+
+  if (loan) {
+    checks.push({ label: 'תאריכי תקופת השאלה (תחילה + סיום)', passed: !!(proposal.loan_start_date && proposal.loan_end_date) });
+  }
+
+  if (proposal.is_adult && proposal.contract_value > 0 && !loan) {
     checks.push({ label: 'תשלום עמלת IEFA אושר', passed: proposal.payment_status === 'PAID' });
   }
 

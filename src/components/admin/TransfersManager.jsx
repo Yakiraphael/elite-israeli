@@ -4,7 +4,6 @@ import { base44 } from '@/api/base44Client';
 import { Loader2, Send, FileText, ShieldAlert, CreditCard, Gavel, CheckCircle2, XCircle, UserCheck } from 'lucide-react';
 import TransferPipelineStepper from './TransferPipelineStepper';
 import TransferApprovalGate from './TransferApprovalGate';
-import TransferFormsChecklist from './TransferFormsChecklist';
 import { TRANSFER_CATEGORIES } from '@/lib/transferDocumentRequirements';
 
 const STATUSES = [
@@ -130,12 +129,24 @@ export default function TransfersManager() {
                   <div className="mt-3">
                     <TransferPipelineStepper status={p.status} isAdult={p.is_adult} />
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-2 flex items-center gap-2 flex-wrap">
                     <select value={p.transfer_category || 'העברת נוער'}
                       onChange={e => updateProposal.mutate({ id: p.id, data: { transfer_category: e.target.value } })}
                       className="text-[10px] font-bold px-2 py-1 rounded-sm border border-white/15 bg-transparent text-white/50 focus:outline-none cursor-pointer">
                       {TRANSFER_CATEGORIES.map(c => <option key={c} value={c} className="bg-[#1B263B] text-white">{c}</option>)}
                     </select>
+                    {(p.transfer_category || '').startsWith('השאל') && (
+                      <div className="flex items-center gap-1.5 bg-[#0D1B2A]/60 border border-amber-500/20 rounded px-2 py-1">
+                        <span className="text-amber-400 text-[10px] font-bold">תקופת השאלה:</span>
+                        <input type="date" value={p.loan_start_date || ''}
+                          onChange={e => updateProposal.mutate({ id: p.id, data: { loan_start_date: e.target.value } })}
+                          className="text-[10px] bg-transparent text-white focus:outline-none" />
+                        <span className="text-white/30 text-[10px]">עד</span>
+                        <input type="date" value={p.loan_end_date || ''}
+                          onChange={e => updateProposal.mutate({ id: p.id, data: { loan_end_date: e.target.value } })}
+                          className="text-[10px] bg-transparent text-white focus:outline-none" />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -222,7 +233,6 @@ export default function TransfersManager() {
                     )}
                   </div>
 
-                  <TransferFormsChecklist proposal={p} />
                   <TransferApprovalGate proposal={p} onReadyChange={r => setReadyMap(m => ({ ...m, [p.id]: r }))} />
 
                   <div className="flex items-center gap-2 pt-1 flex-wrap">

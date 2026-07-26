@@ -4,6 +4,23 @@ import { base44 } from '@/api/base44Client';
 import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings, FileSignature } from 'lucide-react';
 import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
+import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
+
+// מכאן מתבצעת החתימה הדיגיטלית האינטראקטיבית על טופס ההתאחדות — אפוטרופוס/שחקן ממלא השלמות וחותם.
+function primaryFormKeyForOffer(offer, player, role) {
+  const cat = offer.transfer_category || '';
+  const isLoan = cat.startsWith('השאל');
+  const isIntl = cat.includes('בינלאומי');
+  if (isLoan) {
+    return player.is_adult ? 'player_loan_adult' : 'player_loan_minor';
+  }
+  if (player.is_adult) return isIntl ? 'player_transfer_adult_international' : 'player_transfer_adult_domestic';
+  return 'player_transfer_minor';
+}
+
+function isLoanOffer(offer) {
+  return (offer.transfer_category || '').startsWith('השאל');
+}
 
 const MEDICAL_LIGHT = {
   green: { label: 'כשיר לחלוטין', color: '#10B981' },
@@ -17,6 +34,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
   const [confirm, setConfirm] = useState({});
   const [showNotifSettings, setShowNotifSettings] = useState(false);
   const [generatingForm, setGeneratingForm] = useState({});
+  const [signModal, setSignModal] = useState(null); // {offer, formKey}
 
   const isExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
   const isSoon = !isExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
@@ -47,7 +65,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
     setGeneratingForm(g => ({ ...g, [offer.id]: true }));
     try {
       await generateFormPdf({
-        form_key: formKey,
+        form_key: formKey || primaryFormKeyForOffer(offer, player),
         player,
         club: { club_name: offer.club_name, contact_name: offer.contact_name },
         transfer: {
@@ -56,6 +74,8 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
           transfer_category: offer.transfer_category,
           contract_value: offer.contract_value,
           iefa_commission_fee: offer.iefa_commission_fee,
+          loan_start_date: offer.loan_start_date,
+          loan_end_date: offer.loan_end_date,
         },
       });
     } catch (err) {
@@ -119,7 +139,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
       {pendingOffers.length > 0 && (
         <div className="space-y-3 pt-4 border-t border-white/10">
           <div className="text-amber-400 text-xs font-bold flex items-center gap-1.5">
-            <PenLine size={13} /> {player.is_adult ? 'ממתין לאישורך כמנהל אישי' : 'ממתין לחתימתך'} — {pendingOffers.length} הצעת העברה
+            <PenLine size={13} /> {player.is_adult ? 'ממתין לאישורך כמנהל אישי' : 'ממתין לחתימתך'} — {pendingOffers.length} {pendingOffers.length === 1 ? (pendingOffers[0] && isLoanOffer(pendingOffers[0]) ? 'השאלה' : 'העברה') : 'פעולות'}
           </div>
           {pendingOffers.map(offer => (
             <div key={offer.id} className="bg-[#0D1B2A] border border-amber-500/20 rounded-lg p-4">
@@ -131,20 +151,30 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
                 </a>
               )}
 
+              {isLoanOffer(offer) && offer.loan_start_date && (
+                <div className="text-amber-400/80 text-[11px] mb-2 flex items-center gap-1 font-bold">
+                  <PenLine size={11} /> תקופת השאלה: {offer.loan_start_date} → {offer.loan_end_date || '—'}
+                </div>
+              )}
               <div className="flex gap-2 mb-3 flex-wrap">
                 <button
-                  onClick={() => handleGenerateForm(offer, player.is_adult ? 'player_transfer_adult_domestic' : 'player_transfer_minor')}
+                  onClick={() => setSignModal({ offer, formKey: primaryFormKeyForOffer(offer, player) })}
+                  className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37] text-[#0D1B2A] border border-[#D4AF37] px-2.5 py-1.5 rounded-sm hover:bg-amber-400 transition-colors"
+                >
+                  <FileSignature size={11} /> מלא וחתום על טופס {isLoanOffer(offer) ? 'ההשאלה' : 'ההעברה'}
+                </button>
+                <button
+                  onClick={() => handleGenerateForm(offer)}
                   disabled={generatingForm[offer.id]}
                   className="flex items-center gap-1.5 text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/20 transition-colors disabled:opacity-40"
                 >
                   {generatingForm[offer.id] ? <Loader2 size={11} className="animate-spin" /> : <FileSignature size={11} />}
-                  הורד טופס העברה רשמי (PDF)
+                  הורד טיוטת PDF
                 </button>
                 {!player.is_adult && (
                   <button
-                    onClick={() => handleGenerateForm(offer, 'guardian_consent_form')}
-                    disabled={generatingForm[offer.id]}
-                    className="flex items-center gap-1.5 text-[10px] font-bold bg-white/5 text-white/60 border border-white/15 px-2.5 py-1.5 rounded-sm hover:bg-white/10 transition-colors disabled:opacity-40"
+                    onClick={() => setSignModal({ offer, formKey: 'guardian_consent_form' })}
+                    className="flex items-center gap-1.5 text-[10px] font-bold bg-white/5 text-white/70 border border-white/15 px-2.5 py-1.5 rounded-sm hover:bg-white/10 transition-colors"
                   >
                     <FileSignature size={11} /> טופס הסכמת אפוטרופוס
                   </button>
@@ -177,6 +207,27 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
             </div>
           ))}
         </div>
+      )}
+
+      {signModal && (
+        <IFAFormSignModal
+          formKey={signModal.formKey}
+          proposal={signModal.offer}
+          player={player}
+          club={{ club_name: signModal.offer.club_name, contact_name: signModal.offer.contact_name }}
+          transfer={{
+            club_to: signModal.offer.club_name,
+            club_from: player.team_name,
+            transfer_category: signModal.offer.transfer_category,
+            contract_value: signModal.offer.contract_value,
+            iefa_commission_fee: signModal.offer.iefa_commission_fee,
+            loan_start_date: signModal.offer.loan_start_date,
+            loan_end_date: signModal.offer.loan_end_date,
+          }}
+          signerRole={player.is_adult ? 'player' : 'guardian'}
+          currentUser={guardianUser}
+          onClose={() => setSignModal(null)}
+        />
       )}
     </div>
   );

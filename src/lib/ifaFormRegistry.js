@@ -177,8 +177,99 @@ export function formsForAction({ action, age_group, transfer_sub_type }) {
   return results;
 }
 
-// שליפת כל המסמכים הנדרשים ל-ZIP המוגש להתאחדות, לפי סוג פעולה
-export function buildSubmissionBundle({ action, age_group, transfer_sub_type, is_international }) {
+// נגזרת סוג הפעולה ותת-הסוג מתוך קטגוריית ההעברה/השאלה.
+export function deriveActionFromCategory(category = '') {
+  return String(category).startsWith('השאל') ? 'loan' : 'transfer';
+}
+export function deriveTransferSubType(category = '') {
+  return String(category).includes('בינלאומי') ? 'international' : 'domestic';
+}
+export function loanCategoryToAgeGroup(category = '') {
+  return String(category).includes('נוער') ? 'minor' : 'adult';
+}
+
+// סכמת שדות לכל טופס IFA. מתארת איזה שדה ממולא אוטומטית (auto),
+// איזה שדה המשתמש יכול למלא ידנית (editable_user), ואיזה שדה מנהל מקצועי נדרש למלא (editable_director).
+// המערכת משתמשת בזה כדי להחליט מה ניתן "לשמר" (auto) ומה דורש התערבות אנושית.
+export const FORM_FIELD_SCHEMAS = {
+  player_transfer_minor: [
+    { key: 'player_full_name', label: 'שם השחקן', kind: 'auto', source: 'player.full_name' },
+    { key: 'id_number', label: 'ת.ז.', kind: 'auto', source: 'player.id_number' },
+    { key: 'birth_date', label: 'תאריך לידה', kind: 'auto', source: 'player.birth_date' },
+    { key: 'ifa_id', label: 'מס׳ כרטיס', kind: 'auto', source: 'player.ifa_id' },
+    { key: 'club_from', label: 'מועדון מעביר', kind: 'auto', source: 'transfer.club_from' },
+    { key: 'club_to', label: 'מועדון קולט', kind: 'auto', source: 'transfer.club_to' },
+    { key: 'guardian_name', label: 'שם האפוטרופוס', kind: 'auto', source: 'player.guardian_name' },
+    { key: 'guardian_id', label: 'ת.ז. אפוטרופוס', kind: 'auto', source: 'player.guardian_id' },
+    { key: 'transfer_date', label: 'תאריך העברה מבוקש', kind: 'editable_director', required: true },
+    { key: 'notes', label: 'הערות נוספות', kind: 'editable_user' },
+  ],
+  player_transfer_adult_domestic: [
+    { key: 'player_full_name', label: 'שם השחקן', kind: 'auto', source: 'player.full_name' },
+    { key: 'id_number', label: 'ת.ז.', kind: 'auto', source: 'player.id_number' },
+    { key: 'ifa_id', label: 'מס׳ כרטיס', kind: 'auto', source: 'player.ifa_id' },
+    { key: 'club_from', label: 'מועדון מעביר', kind: 'auto', source: 'transfer.club_from' },
+    { key: 'club_to', label: 'מועדון קולט', kind: 'auto', source: 'transfer.club_to' },
+    { key: 'contract_value', label: 'שווי חוזה שנתי (₪)', kind: 'editable_director', required: true },
+    { key: 'transfer_date', label: 'תאריך העברה מבוקש', kind: 'editable_director', required: true },
+  ],
+  player_transfer_adult_international: [
+    { key: 'player_full_name', label: 'שם השחקן', kind: 'auto', source: 'player.full_name' },
+    { key: 'ifa_id', label: 'מס׳ כרטיס', kind: 'auto', source: 'player.ifa_id' },
+    { key: 'passport_number', label: 'מספר דרכון', kind: 'editable_director', required: true },
+    { key: 'club_from', label: 'מועדון מעביר', kind: 'auto', source: 'transfer.club_from' },
+    { key: 'club_to', label: 'מועדון קולט', kind: 'auto', source: 'transfer.club_to' },
+    { key: 'contract_value', label: 'שווי חוזה שנתי (₪)', kind: 'editable_director', required: true },
+    { key: 'transfer_date', label: 'תאריך העברה מבוקש', kind: 'editable_director', required: true },
+  ],
+  player_loan_minor: [
+    { key: 'player_full_name', label: 'שם השחקן', kind: 'auto', source: 'player.full_name' },
+    { key: 'id_number', label: 'ת.ז.', kind: 'auto', source: 'player.id_number' },
+    { key: 'guardian_name', label: 'שם האפוטרופוס', kind: 'auto', source: 'player.guardian_name' },
+    { key: 'club_owner', label: 'מועדון בעלים', kind: 'editable_director', required: true },
+    { key: 'club_loan', label: 'מועדון שואל', kind: 'editable_director', required: true },
+    { key: 'loan_start_date', label: 'תחילת השאלה', kind: 'auto', source: 'transfer.loan_start_date' },
+    { key: 'loan_end_date', label: 'סיום השאלה', kind: 'auto', source: 'transfer.loan_end_date' },
+    { key: 'notes', label: 'הערות נוספות', kind: 'editable_user' },
+  ],
+  player_loan_adult: [
+    { key: 'player_full_name', label: 'שם השחקן', kind: 'auto', source: 'player.full_name' },
+    { key: 'club_owner', label: 'מועדון בעלים', kind: 'editable_director', required: true },
+    { key: 'club_loan', label: 'מועדון שואל', kind: 'editable_director', required: true },
+    { key: 'loan_start_date', label: 'תחילת השאלה', kind: 'auto', source: 'transfer.loan_start_date' },
+    { key: 'loan_end_date', label: 'סיום השאלה', kind: 'auto', source: 'transfer.loan_end_date' },
+    { key: 'contract_value', label: 'שווי השאלה (₪)', kind: 'editable_director', required: false },
+  ],
+  guardian_consent_form: [
+    { key: 'player_full_name', label: 'שם השחקן הקטין', kind: 'auto', source: 'player.full_name' },
+    { key: 'player_birth_date', label: 'תאריך לידה', kind: 'auto', source: 'player.birth_date' },
+    { key: 'guardian_name', label: 'שם האפוטרופוס', kind: 'auto', source: 'player.guardian_name' },
+    { key: 'guardian_id', label: 'ת.ז. אפוטרופוס', kind: 'auto', source: 'player.guardian_id' },
+    { key: 'consent_scope', label: 'היקף ההסכמה', kind: 'editable_user', default: 'הסכמה להעברת/השאלת השחקן למועדון אחר בהתאם לתקנון ההתאחדות' },
+  ],
+};
+
+// פתרון ערך שדה מתוך הקונטקסט. מחזיר את הערך שמקורו ב-path מנוקד.
+export function resolveFieldValue(field, ctx) {
+  if (field.kind !== 'auto' || !field.source) return field.default || '';
+  const parts = field.source.split('.');
+  let val = ctx[parts[0]] ?? {};
+  for (let i = 1; i < parts.length; i++) val = val?.[parts[i]];
+  if (val === undefined || val === null || val === '') return field.default || '';
+  return val;
+}
+
+// מחזיר את סכמת השדות לפי form_key, או מערך ריק אם אין.
+export function getFormFieldSchema(form_key) {
+  return FORM_FIELD_SCHEMAS[form_key] || [];
+}
+
+// שליפת כל המסמכים הנדרשים ל-ZIP המוגש להתאחדות, לפי סוג פעולה.
+// תומך בהעברה ובהשאלה — מבוסס על קטגוריית המקור.
+export function buildSubmissionBundle({ action, age_group, transfer_sub_type, is_international, transfer_category }) {
+  if (!action && transfer_category) action = deriveActionFromCategory(transfer_category);
+  if (age_group === undefined && transfer_category) age_group = loanCategoryToAgeGroup(transfer_category);
+
   const mainForms = formsForAction({ action, age_group, transfer_sub_type });
   const supporting = [
     IFA_FORM_CATALOG.medical_certificate,

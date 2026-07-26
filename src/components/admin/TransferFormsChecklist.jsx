@@ -1,13 +1,26 @@
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Loader2, FileText, Download, PenLine, ShieldCheck, CheckCircle2, Circle } from 'lucide-react';
-import { useState } from 'react';
+import { Loader2, FileText, Download, PenLine, ShieldCheck, CheckCircle2, Circle, FileSignature } from 'lucide-react';
 import { generateFormPdf, generateBundleZip } from '@/lib/generateIfoFormPdf';
-import { buildSubmissionBundle, IFA_FORM_CATALOG } from '@/lib/ifaFormRegistry';
+import {
+  buildSubmissionBundle, IFA_FORM_CATALOG,
+  deriveActionFromCategory, deriveTransferSubType, loanCategoryToAgeGroup,
+} from '@/lib/ifaFormRegistry';
+import IFAFormSignModal from './IFAFormSignModal';
 
-// רכיב: רשימת טפסי ההתאחדות הנדרשים לכל שלב במעבר, עם סטטוס חתימות והפקת PDF.
-export default function TransferFormsChecklist({ proposal }) {
+// רשימת טפסי ההתאחדות הנדרשים לכל שלב במעבר/השאלה, עם מילוי+חתימה אינטראקטיביים.
+// signerRole נקבע אוטומטית מההקשר של הקורא (admin/director) או מועבר explicit.
+export default function TransferFormsChecklist({ proposal, signerRole = 'director' }) {
   const [busy, setBusy] = useState({});
+  const [signModal, setSignModal] = useState(null); // form_key when open
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try { setCurrentUser(await base44.auth.me()); } catch { setCurrentUser(null); }
+    })();
+  }, []);
 
   const { data: docs = [], isLoading } = useQuery({
     queryKey: ['transfer-docs', proposal.id],
@@ -22,13 +35,15 @@ export default function TransferFormsChecklist({ proposal }) {
   });
 
   const isAdult = proposal.is_adult;
-  const transfer_sub_type = (proposal.transfer_category || '').includes('בינלאומי') ? 'international' : 'domestic';
-  const action = 'transfer';
+  const action = deriveActionFromCategory(proposal.transfer_category);
+  const transfer_sub_type = deriveTransferSubType(proposal.transfer_category);
+  const age_group = isAdult ? 'adult' : 'minor';
   const bundle = buildSubmissionBundle({
     action,
-    age_group: isAdult ? 'adult' : 'minor',
+    age_group,
     transfer_sub_type,
     is_international: transfer_sub_type === 'international',
+    transfer_category: proposal.transfer_category,
   });
   const allForms = [...bundle.mainForms, ...bundle.supporting];
 
@@ -39,7 +54,6 @@ export default function TransferFormsChecklist({ proposal }) {
       if (matching?.file_url) return 'uploaded';
       return 'missing';
     }
-    // מסמכי תמיכה — נבדקים מול פרופיל השחקן
     if (!player) return 'missing';
     if (form.key === 'medical_certificate') return player.medical_certificate_url ? 'uploaded' : 'missing';
     if (form.key === 'id_document') return player.id_document_url ? 'uploaded' : 'missing';
@@ -60,6 +74,8 @@ export default function TransferFormsChecklist({ proposal }) {
           transfer_category: proposal.transfer_category,
           contract_value: proposal.contract_value,
           iefa_commission_fee: proposal.iefa_commission_fee,
+          loan_start_date: proposal.loan_start_date,
+          loan_end_date: proposal.loan_end_date,
         },
       });
     } finally {
@@ -74,7 +90,16 @@ export default function TransferFormsChecklist({ proposal }) {
         action,
         player,
         club: { club_name: proposal.club_name, contact_name: proposal.contact_name },
-        transfer: { club_to: proposal.club_name, club_from: player?.team_name, transfer_category: proposal.transfer_category, contract_value: proposal.contract_value, iefa_commission_fee: proposal.iefa_commission_fee },
+        transfer: {
+          club_to: proposal.club_name,
+          club_from: player?.team_name,
+          transfer_category: proposal.transfer_category,
+          contract_value: proposal.contract_value,
+          iefa_commission_fee: proposal.iefa_commission_fee,
+          loan_start_date: proposal.loan_start_date,
+          loan_end_date: proposal.loan_end_date,
+        },
+        transfer_category: proposal.transfer_category,
       });
     } finally {
       setBusy(b => ({ ...b, __bundle: false }));
@@ -94,15 +119,20 @@ export default function TransferFormsChecklist({ proposal }) {
     const done = [];
     if (sigs.includes('guardian')) done.push({ label: 'אפוטרופוס', ok: !!proposal.guardian_otp_verified });
     if (sigs.includes('player')) done.push({ label: 'שחקן', ok: !!proposal.player_consent });
-    if (sigs.includes('club_sending') || sigs.includes('club_receiving') || sigs.includes('club')) done.push({ label: 'מועדון', ok: true });
+    if (sigs.includes('club_sending') || sigs.includes('club_receiving') || sigs.includes('club') || sigs.includes('club_owner') || sigs.includes('club_loan')) {
+      done.push({ label: 'מועדון', ok: docs.some(d => d.doc_type === form.key && d.status === 'נחתם דיגיטלית') });
+    }
     return done;
   };
+
+  const isLoan = action === 'loan';
 
   return (
     <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-1.5 text-white/70 text-xs font-bold">
-          <FileText size={13} className="text-[#D4AF37]" /> טפסי ההתאחדות הנדרשים לשלב זה
+          <FileText size={13} className="text-[#D4AF37]" />
+          טפסי ההתאחדות ל{isLoan ? 'השאלה' : 'העברה'} — שלב נוכחי
         </div>
         <button
           onClick={handleBundle}
@@ -118,11 +148,18 @@ export default function TransferFormsChecklist({ proposal }) {
         <div className="text-amber-400/70 text-[10px] mb-3">⚠ שחקן לא מקושר — הפקת PDF תהיה לא מלאה. ודא Elite ID תואם.</div>
       )}
 
+      {isLoan && (!proposal.loan_start_date || !proposal.loan_end_date) && (
+        <div className="text-amber-400/70 text-[10px] mb-3 flex items-center gap-1">
+          <ShieldCheck size={11} /> תקופת ההשאלה חסרה — עדכן תאריכי תחילה וסיום בכרטיס ההצעה.
+        </div>
+      )}
+
       <div className="space-y-2">
         {allForms.map((form, idx) => {
           const status = sigStatus(form);
           const ui = STATUS_UI[status];
           const isSupporting = form.category === 'supporting_doc';
+          const canSign = !isSupporting && (form.category === 'transfer' || form.category === 'loan' || form.category === 'guardian_consent');
           const sigs = requirementSignatures(form);
           return (
             <div key={form.key + idx} className="flex items-center gap-3 p-2.5 bg-[#1B263B]/50 border border-white/5 rounded-sm">
@@ -142,21 +179,31 @@ export default function TransferFormsChecklist({ proposal }) {
               </div>
               <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${ui.color} ${ui.bg} ${ui.border} flex-shrink-0`}>{ui.label}</span>
               {!isSupporting && (
-                <button
-                  onClick={() => handleGenerate(form)}
-                  disabled={busy[form.key]}
-                  title="הפק PDF ממולא"
-                  className="w-7 h-7 rounded bg-white/5 hover:bg-[#D4AF37]/20 flex items-center justify-center transition-colors flex-shrink-0 disabled:opacity-40"
-                >
-                  {busy[form.key] ? <Loader2 size={11} className="animate-spin text-white/50" /> : <PenLine size={11} className="text-[#D4AF37]" />}
-                </button>
+                <>
+                  <button
+                    onClick={() => setSignModal(form.key)}
+                    disabled={busy[form.key]}
+                    title="מילוי + חתימה דיגיטלית"
+                    className="flex items-center gap-1 text-[10px] font-bold px-2 py-1.5 rounded-sm bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 hover:bg-[#D4AF37]/20 transition-colors flex-shrink-0 disabled:opacity-40"
+                  >
+                    <FileSignature size={11} /> מלא וחתום
+                  </button>
+                  <button
+                    onClick={() => handleGenerate(form)}
+                    disabled={busy[form.key]}
+                    title="הפק PDF ללא חתימה"
+                    className="w-7 h-7 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors flex-shrink-0 disabled:opacity-40"
+                  >
+                    {busy[form.key] ? <Loader2 size={11} className="animate-spin text-white/50" /> : <PenLine size={11} className="text-white/50" />}
+                  </button>
+                </>
               )}
             </div>
           );
         })}
       </div>
 
-      <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2 text-[10px]">
+      <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2 text-[10px] flex-wrap">
         {proposal.guardian_otp_verified ? (
           <span className="text-green-400 flex items-center gap-1"><ShieldCheck size={11} /> חתימת אפוטרופוס אומתה</span>
         ) : !isAdult && (
@@ -166,6 +213,27 @@ export default function TransferFormsChecklist({ proposal }) {
           <span className="text-green-400 flex items-center gap-1"><ShieldCheck size={11} /> הסכמת שחקן נרשמה</span>
         )}
       </div>
+
+      {signModal && (
+        <IFAFormSignModal
+          formKey={signModal}
+          proposal={proposal}
+          player={player}
+          club={{ club_name: proposal.club_name, contact_name: proposal.contact_name }}
+          transfer={{
+            club_to: proposal.club_name,
+            club_from: player?.team_name,
+            transfer_category: proposal.transfer_category,
+            contract_value: proposal.contract_value,
+            iefa_commission_fee: proposal.iefa_commission_fee,
+            loan_start_date: proposal.loan_start_date,
+            loan_end_date: proposal.loan_end_date,
+          }}
+          signerRole={signerRole}
+          currentUser={currentUser}
+          onClose={() => setSignModal(null)}
+        />
+      )}
     </div>
   );
 }
