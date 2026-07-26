@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, X, Loader2, FileText, ShieldAlert, Send, ExternalLink, PenLine } from 'lucide-react';
-import { IFA_TEMPLATES, getTemplate, buildContractDocument, signatureStatus } from '@/lib/contractTemplates';
-import ContractSignModal from '../contracts/ContractSignModal';
+import { Plus, X, Loader2, FileText, ShieldAlert, Send, ExternalLink, PenLine, Baby, User } from 'lucide-react';
+import { getContractForms, getOfficialForm } from '@/lib/ifaOfficialForms';
+import { signatureStatus } from '@/lib/contractTemplates';
+import OfficialContractSignModal from '../contracts/OfficialContractSignModal';
 
 function daysLeft(d) {
   if (!d) return null;
@@ -22,8 +23,13 @@ function statusBadge(contract) {
 
 export default function ContractsPanel() {
   const [showCreate, setShowCreate] = useState(false);
-  const [signing, setSigning] = useState(null);
+  const [signing, setSigning] = useState(null); // { contract, formKey }
   const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me(),
+  });
 
   const { data: contracts = [], isLoading } = useQuery({
     queryKey: ['contracts'],
@@ -45,22 +51,32 @@ export default function ContractsPanel() {
 
   const shareLink = (c) => `${window.location.origin}/sign-contract?contract_id=${c.id}`;
 
+  // קבלת formKey מהחוזה — בדיקה גם במפתח ipa_template_key (legacy) וגם ifa_template_key
+  const getFormKey = (contract) => {
+    // ניסיון לזהות לפי שפה וסוג
+    if (contract.contract_type?.includes('מאמן')) return 'coach_agreement_he';
+    if (contract.contract_type === 'חוזה מקצועי') return 'player_agreement_en';
+    if (contract.contract_type === 'חוזה חובבני') return 'player_agreement_amateur';
+    return 'player_agreement_he';
+  };
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h3 className="text-white font-black text-base">ניהול חוזים — מנגנון משפטי חכם</h3>
+        <h3 className="text-white font-black text-base">ניהול חוזים — טפסי ההתאחדות הרשמיים</h3>
         <button onClick={() => setShowCreate(true)}
           className="min-h-[44px] flex items-center gap-2 bg-[#D4AF37] text-[#0D1B2A] font-black text-xs px-4 rounded-sm hover:bg-amber-400 transition-colors">
-          <Plus size={14} /> חוזה חדש מתבנית
+          <Plus size={14} /> חוזה חדש
         </button>
       </div>
 
+      {/* Compliance toggle */}
       <div className="bg-[#1B263B] border border-amber-500/20 rounded-lg p-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <ShieldAlert size={16} className="text-amber-400 flex-shrink-0" />
           <div>
             <div className="text-white font-bold text-xs">מצב חסימה — Compliance Enforcement</div>
-            <p className="text-white/40 text-[10px]">שחקן ללא אישור רפואי בתוקף לא יופיע בסגל הפעיל של המאמן</p>
+            <p className="text-white/40 text-[10px]">שחקן ללא אישור רפואי בתוקף לא יופיע בסגל הפעיל</p>
           </div>
         </div>
         <button onClick={() => toggleBlocking.mutate()}
@@ -73,12 +89,14 @@ export default function ContractsPanel() {
 
       <div className="space-y-2">
         {!isLoading && contracts.length === 0 && (
-          <div className="text-center py-12 text-white/30 text-sm">אין חוזים עדיין — לחץ על "חוזה חדש מתבנית" כדי להתחיל</div>
+          <div className="text-center py-12 text-white/30 text-sm">אין חוזים עדיין — לחץ "חוזה חדש" כדי להתחיל</div>
         )}
         {contracts.map(c => {
           const badge = statusBadge(c);
           const sig = signatureStatus(c);
           const fullySigned = c.status === 'חתום';
+          const formKey = getFormKey(c);
+          const form = getOfficialForm(formKey);
           return (
             <div key={c.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-4">
               <div className="flex items-center gap-4">
@@ -86,8 +104,8 @@ export default function ContractsPanel() {
                 <div className="flex-1 min-w-0">
                   <div className="text-white font-bold text-sm">{c.player_name}</div>
                   <div className="text-white/40 text-xs">{c.contract_type} · {c.start_date || '—'} עד {c.end_date}</div>
-                  {c.ifa_form_reference && (
-                    <div className="text-white/30 text-[10px] mt-0.5">מסמך ייחוס: {c.ifa_form_reference}</div>
+                  {form && (
+                    <div className="text-white/25 text-[10px] mt-0.5">{form.label}</div>
                   )}
                   {fullySigned && c.signed_at && (
                     <div className="text-white/25 text-[10px] mt-1">נחתם סופית · {new Date(c.signed_at).toLocaleString('he-IL')}</div>
@@ -95,7 +113,8 @@ export default function ContractsPanel() {
                 </div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border flex-shrink-0 ${badge.cls}`}>{badge.label}</span>
               </div>
-              {/* Signature progress + actions */}
+
+              {/* חתימות + פעולות */}
               <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center gap-2">
                 {sig.player && (
                   <span className={`text-[10px] font-bold ${sig.player.cls}`}>{sig.player.label}</span>
@@ -106,17 +125,21 @@ export default function ContractsPanel() {
                 <div className="flex-1" />
                 {!fullySigned && (
                   <>
-                    <button onClick={() => setSigning(c)} className="flex items-center gap-1 text-[10px] font-bold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1 rounded-full hover:bg-[#D4AF37]/25 transition-colors">
-                      <PenLine size={11} /> חתום במערכת
+                    <button
+                      onClick={() => setSigning({ contract: c, formKey })}
+                      className="flex items-center gap-1 text-[10px] font-bold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1 rounded-full hover:bg-[#D4AF37]/25 transition-colors">
+                      <PenLine size={11} /> פתח לחתימה
                     </button>
-                    <a href={shareLink(c)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-bold bg-white/5 text-white/60 border border-white/15 px-2.5 py-1 rounded-full hover:bg-white/10 transition-colors" title="קישור חתימה לשיתוף עם שחקן/אפוטרופוס">
-                      <Send size={11} /> קישור לחתימה
+                    <a href={shareLink(c)} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-[10px] font-bold bg-white/5 text-white/60 border border-white/15 px-2.5 py-1 rounded-full hover:bg-white/10 transition-colors">
+                      <Send size={11} /> קישור לשחקן
                     </a>
                   </>
                 )}
-                {c.ifa_template_key && (
-                  <a href={getTemplate(c.ifa_template_key).reference_url} target="_blank" rel="noopener noreferrer" className="text-white/30 text-[10px] hover:text-[#D4AF37] flex items-center gap-1">
-                    <ExternalLink size={10} /> טופס מקור
+                {form?.pdf_url && (
+                  <a href={form.pdf_url} target="_blank" rel="noopener noreferrer"
+                    className="text-white/30 text-[10px] hover:text-[#D4AF37] flex items-center gap-1">
+                    <ExternalLink size={10} /> PDF מקורי
                   </a>
                 )}
               </div>
@@ -126,20 +149,35 @@ export default function ContractsPanel() {
       </div>
 
       {showCreate && <CreateContractModal onClose={() => setShowCreate(false)} />}
-      {signing && <ContractSignModal contract={signing} onClose={() => setSigning(null)} />}
+
+      {signing && (
+        <OfficialContractSignModal
+          contractKey={signing.formKey}
+          contract={signing.contract}
+          player={null}
+          signerRole="director"
+          currentUser={user}
+          onClose={() => setSigning(null)}
+          onSigned={() => { setSigning(null); queryClient.invalidateQueries({ queryKey: ['contracts'] }); }}
+        />
+      )}
     </div>
   );
 }
 
+// ===== מודל יצירת חוזה חדש =====
 function CreateContractModal({ onClose }) {
   const queryClient = useQueryClient();
-  const [tplKey, setTplKey] = useState(IFA_TEMPLATES[0].key);
-  const [form, setForm] = useState({ player_name: '', player_id: '', club_name: '', start_date: '', end_date: '', salary_monthly: '' });
+  const forms = getContractForms();
+  const [selectedFormKey, setSelectedFormKey] = useState(forms[0]?.key || '');
   const [search, setSearch] = useState('');
   const [playerData, setPlayerData] = useState(null);
-  const [issuedBy, setIssuedBy] = useState('');
+  const [clubName, setClubName] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [salary, setSalary] = useState('');
 
-  const tpl = getTemplate(tplKey);
+  const selectedForm = getOfficialForm(selectedFormKey);
 
   const { data: players = [] } = useQuery({
     queryKey: ['contract-player-search', search],
@@ -149,47 +187,26 @@ function CreateContractModal({ onClose }) {
   const matches = players.filter(p => p.full_name?.includes(search)).slice(0, 6);
 
   const pickPlayer = (p) => {
-    setForm(f => ({ ...f, player_id: p.id, player_name: p.full_name, club_name: p.team_name || f.club_name, salary_monthly: f.salary_monthly }));
     setPlayerData(p);
+    setClubName(p.team_name || clubName);
     setSearch(p.full_name);
   };
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
   const create = useMutation({
     mutationFn: async () => {
-      const doc = buildContractDocument(tpl, {
-        player_name: form.player_name,
-        id_number: playerData?.id_number,
-        team_name: playerData?.team_name,
-        club_name: form.club_name,
-        start_date: form.start_date,
-        end_date: form.end_date,
-        salary_monthly: form.salary_monthly,
-        season_label: `${new Date().getFullYear()}/${(new Date().getFullYear() + 1) % 100}`,
-        guardian_name: playerData?.guardian_name,
-        is_adult: playerData?.is_adult,
-        player_phone: playerData?.phone,
-        ifa_id: playerData?.ifa_id,
-        contract_type: tpl.contract_type,
-        issued_by_name: issuedBy.trim() || 'נציג מועדון',
-        issued_by_role: 'מנהל מקצועי',
-        issued_at: new Date().toISOString(),
-        created_date: new Date().toISOString(),
-        created_by_club: form.club_name,
-      });
+      const isGuardianRequired = selectedForm?.requires_guardian && playerData && !playerData.is_adult;
       return base44.entities.Contract.create({
-        player_id: form.player_id,
-        player_name: form.player_name,
-        contract_type: tpl.contract_type,
-        ifa_template_key: tpl.key,
-        ifa_form_reference: tpl.ifa_form_reference,
-        club_name: form.club_name,
-        start_date: form.start_date,
-        end_date: form.end_date,
-        salary_monthly: Number(form.salary_monthly) || null,
-        requires_guardian: tpl.requires_guardian && playerData ? !playerData.is_adult : tpl.requires_guardian,
-        document_content: doc,
+        player_id: playerData?.id || '',
+        player_name: playerData?.full_name || search,
+        contract_type: selectedForm?.category === 'coach_contract' ? 'חוזה מאמן' : salary ? 'חוזה מקצועי' : 'חוזה חובבני',
+        ifa_template_key: selectedFormKey,
+        ifa_form_reference: selectedForm?.label,
+        club_name: clubName,
+        start_date: startDate,
+        end_date: endDate,
+        salary_monthly: Number(salary) || null,
+        requires_guardian: isGuardianRequired,
+        document_content: `טופס רשמי: ${selectedForm?.label} — ${selectedForm?.pdf_url}`,
         status: 'ממתין לחתימה',
       });
     },
@@ -198,24 +215,32 @@ function CreateContractModal({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
-      <div className="bg-[#1B263B] border border-white/10 rounded-lg max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()} dir="rtl">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-white font-black text-base">יצירת חוזה חכם מתבנית ההתאחדות</h3>
+      <div className="bg-[#1B263B] border border-white/10 rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()} dir="rtl">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-white font-black text-base">חוזה חדש — טפסי ההתאחדות 2026/27</h3>
           <button onClick={onClose}><X size={16} className="text-white/30 hover:text-white" /></button>
         </div>
 
+        {/* בחירת טופס */}
         <div className="mb-4">
-          <label className="text-white/40 text-xs">בחר תבנית רשמית (מבוסס טפסי football.org.il)</label>
-          <div className="space-y-2 mt-1.5">
-            {IFA_TEMPLATES.map(t => (
-              <button key={t.key} onClick={() => setTplKey(t.key)}
-                className={`w-full text-right p-3 rounded-sm border transition-colors ${tplKey === t.key ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40' : 'border-white/10 hover:border-white/20'}`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-white font-bold text-xs">{t.label}</span>
-                  <a href={t.reference_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-white/30 hover:text-[#D4AF37]"><ExternalLink size={11} /></a>
+          <label className="text-white/40 text-xs mb-2 block">בחר טופס רשמי</label>
+          <div className="space-y-2">
+            {forms.map(f => (
+              <button key={f.key} onClick={() => setSelectedFormKey(f.key)}
+                className={`w-full text-right p-3 rounded-lg border transition-colors ${selectedFormKey === f.key ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40' : 'border-white/10 hover:border-white/20'}`}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-white font-bold text-xs">{f.label}</span>
+                  <a href={f.pdf_url} target="_blank" rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="text-white/30 hover:text-[#D4AF37] flex-shrink-0">
+                    <ExternalLink size={11} />
+                  </a>
                 </div>
-                <div className="text-white/40 text-[10px] mt-1">{t.description}</div>
-                <div className="text-white/30 text-[10px] mt-0.5">{t.requires_guardian ? '✓ נדרשת חתימת אפוטרופוס' : '✓ לשחקן בוגר בלבד'}</div>
+                <div className="flex gap-2 mt-1.5 flex-wrap">
+                  <span className="text-[10px] bg-white/5 text-white/40 px-1.5 py-0.5 rounded">{f.league_type === 'professional' ? 'ליגות מקצועניות' : f.league_type === 'amateur' ? 'חובבניות/נוער' : 'כל הליגות'}</span>
+                  {f.requires_guardian && <span className="text-[10px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded flex items-center gap-1"><Baby size={9} />נדרש הורה</span>}
+                  {f.negotiable_fields.length > 0 && <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">{f.negotiable_fields.length} סעיפים למו"מ</span>}
+                </div>
               </button>
             ))}
           </div>
@@ -223,58 +248,63 @@ function CreateContractModal({ onClose }) {
 
         <div className="space-y-3">
           <div>
-            <label className="text-white/40 text-xs">חפש שחקן</label>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="שם שחקן..."
+            <label className="text-white/40 text-xs">חפש שחקן/מאמן</label>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="שם..."
               className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none focus:border-[#D4AF37]/60" />
             {matches.length > 0 && (
               <div className="mt-1 bg-[#0D1B2A] border border-white/10 rounded-lg overflow-hidden">
                 {matches.map(p => (
-                  <button key={p.id} onClick={() => pickPlayer(p)} className="w-full text-right px-3 py-2 text-white/70 text-xs hover:bg-white/5">
-                    {p.full_name} {p.team_name ? `· ${p.team_name}` : ''} {p.is_adult ? '(בוגר)' : '(קטין)'}
+                  <button key={p.id} onClick={() => pickPlayer(p)}
+                    className="w-full text-right px-3 py-2 text-white/70 text-xs hover:bg-white/5 flex items-center gap-2">
+                    {p.is_adult ? <User size={11} className="text-white/30" /> : <Baby size={11} className="text-amber-400" />}
+                    {p.full_name} {p.team_name ? `· ${p.team_name}` : ''} {p.is_adult ? '' : '(קטין)'}
                   </button>
                 ))}
               </div>
             )}
           </div>
-          {playerData && playerData.is_adult === false && (
+
+          {playerData && !playerData.is_adult && (
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-sm p-2 text-amber-400 text-[10px] font-bold flex items-center gap-1.5">
-              <ShieldAlert size={11} /> שחקן קטין — ידרשו חתימות שחקן + אפוטרופוס ({playerData.guardian_name || 'חסר שם אפוטרופוס'})
+              <ShieldAlert size={11} /> שחקן קטין — ידרשו חתימות שחקן + אפוטרופוס ({playerData.guardian_name || 'לא מוגדר'})
             </div>
           )}
+
           <div>
-            <label className="text-white/40 text-xs">שם המועדון החתום</label>
-            <input value={form.club_name} onChange={e => set('club_name', e.target.value)} placeholder="שם מועדון"
+            <label className="text-white/40 text-xs">שם המועדון</label>
+            <input value={clubName} onChange={e => setClubName(e.target.value)} placeholder="שם מועדון"
               className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none focus:border-[#D4AF37]/60" />
           </div>
-          {tpl.contract_type === 'חוזה מקצועי' && (
-            <div>
-              <label className="text-white/40 text-xs">שכר חודשי (₪)</label>
-              <input type="number" value={form.salary_monthly} onChange={e => set('salary_monthly', e.target.value)} placeholder="למשל 5000"
-                className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none focus:border-[#D4AF37]/60" />
-            </div>
-          )}
+
+          <div>
+            <label className="text-white/40 text-xs">שכר חודשי (₪) — אם רלוונטי</label>
+            <input type="number" value={salary} onChange={e => setSalary(e.target.value)} placeholder="0 = חובבני ללא שכר"
+              className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none focus:border-[#D4AF37]/60" />
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-white/40 text-xs">תאריך תחילה</label>
-              <input type="date" value={form.start_date} onChange={e => set('start_date', e.target.value)}
+              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
                 className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none" />
             </div>
             <div>
               <label className="text-white/40 text-xs">תאריך סיום</label>
-              <input type="date" value={form.end_date} onChange={e => set('end_date', e.target.value)}
+              <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
                 className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none" />
             </div>
           </div>
-          <div>
-            <label className="text-white/40 text-xs">שם נציג המועדון (חותם על היצירה)</label>
-            <input value={issuedBy} onChange={e => setIssuedBy(e.target.value)} placeholder="שם מלא ותפקיד"
-              className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none focus:border-[#D4AF37]/60" />
-          </div>
-          <button disabled={!form.player_id || !form.end_date || create.isPending} onClick={() => create.mutate()}
+
+          <button
+            disabled={(!playerData && !search) || !endDate || create.isPending}
+            onClick={() => create.mutate()}
             className="w-full min-h-[44px] bg-[#D4AF37] text-[#0D1B2A] font-black text-sm rounded-sm hover:bg-amber-400 disabled:opacity-40 transition-colors flex items-center justify-center gap-2">
-            {create.isPending ? <Loader2 size={16} className="animate-spin" /> : <>צור חוזה חכם ושלח לחתימה</>}
+            {create.isPending ? <Loader2 size={16} className="animate-spin" /> : 'צור חוזה ושלח לחתימה'}
           </button>
-          <p className="text-white/30 text-[10px] text-center">החוזה ייווצר מתוכן תבנית ההתאחדות ויופיע אצל השחקן/אפוטרופוס לחתימה דיגיטלית. לאחר השלמת כל החתימות, סטטוס השחקן יעודכן אוטומטית.</p>
+          <p className="text-white/25 text-[10px] text-center">
+            החוזה יישמר במערכת ויופיע לחתימה על הטופס הרשמי של ההתאחדות.
+            המנהל האישי יוכל להציע שינויים לסעיפים לפני החתימה הסופית.
+          </p>
         </div>
       </div>
     </div>

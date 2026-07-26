@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle2, Loader2, FileText, User, Baby, ShieldCheck } from 'lucide-react';
-import ContractSignModal from '../components/contracts/ContractSignModal';
+import { CheckCircle2, Loader2, FileText, User, Baby, ShieldCheck, ExternalLink } from 'lucide-react';
+import OfficialContractSignModal from '../components/contracts/OfficialContractSignModal';
 import { signatureStatus } from '../lib/contractTemplates';
+import { getOfficialForm } from '../lib/ifaOfficialForms';
 
 // Public signing page used via shared link (?contract_id=...). Both player and guardian
 // (for youth contracts) can sign here; status auto-updates the player profile on full signing.
@@ -38,6 +39,8 @@ export default function SignContract() {
 
   const sig = signatureStatus(contract);
   const fullySigned = contract.status === 'חתום';
+  const formKey = contract.ifa_template_key || 'player_agreement_he';
+  const officialForm = getOfficialForm(formKey);
 
   return (
     <div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center p-4" dir="rtl">
@@ -58,7 +61,7 @@ export default function SignContract() {
               <div className="flex justify-between"><span className="text-white/40">שחקן</span><span className="text-white font-semibold">{contract.player_name}</span></div>
               <div className="flex justify-between"><span className="text-white/40">סוג חוזה</span><span className="text-white font-semibold">{contract.contract_type}</span></div>
               <div className="flex justify-between"><span className="text-white/40">תוקף</span><span className="text-white font-semibold">{contract.start_date || '—'} עד {contract.end_date}</span></div>
-              {contract.ifa_form_reference && <div className="text-white/30 text-[10px] mt-1">מסמך ייחוס: {contract.ifa_form_reference}</div>}
+              {officialForm && <div className="text-white/30 text-[10px] mt-1">{officialForm.label}</div>}
             </div>
 
             <div className="space-y-2 mb-4">
@@ -74,11 +77,11 @@ export default function SignContract() {
               )}
             </div>
 
-            {contract.document_content && (
-              <details className="mb-4">
-                <summary className="text-[#D4AF37] text-xs font-bold cursor-pointer">צפייה בתוכן החוזה</summary>
-                <pre className="mt-2 bg-[#0D1B2A] border border-white/10 rounded-sm p-3 text-white/70 text-[11px] whitespace-pre-wrap leading-relaxed font-mono max-h-60 overflow-y-auto">{contract.document_content}</pre>
-              </details>
+            {officialForm?.pdf_url && (
+              <a href={officialForm.pdf_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[#D4AF37] text-xs hover:text-amber-300 mb-4">
+                <ExternalLink size={12} /> צפה בטופס הרשמי של ההתאחדות (PDF)
+              </a>
             )}
 
             <button onClick={() => setOpenModal(true)}
@@ -90,10 +93,14 @@ export default function SignContract() {
       </div>
 
       {openModal && (
-        <ContractSignModal
+        <OfficialContractSignModal
+          contractKey={formKey}
           contract={contract}
+          player={null}
+          signerRole={contract.requires_guardian && !contract.player_signed_at ? 'player' : contract.requires_guardian && contract.player_signed_at ? 'guardian' : 'player'}
+          currentUser={null}
           onClose={() => setOpenModal(false)}
-          onSaved={() => setRefreshKey(k => k + 1)}
+          onSigned={() => { setOpenModal(false); setRefreshKey(k => k + 1); }}
         />
       )}
     </div>
