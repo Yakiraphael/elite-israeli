@@ -208,6 +208,34 @@ export default function OfficialContractSignModal({
                   )}
                 </div>
 
+                {/* תצוגת שדות ממולאים ע"י המנהל המקצועי */}
+                {contract?.filled_fields && (() => {
+                  try {
+                    const filled = JSON.parse(contract.filled_fields);
+                    const keys = Object.keys(filled).filter(k => filled[k]);
+                    if (keys.length === 0) return null;
+                    const allFields = [...(form?.negotiable_fields || []), ...(form?.director_fillable_fields || [])];
+                    return (
+                      <div className="bg-[#1B263B] border border-green-500/20 rounded-lg p-4">
+                        <div className="text-green-400 text-xs font-bold mb-3 flex items-center gap-1.5">
+                          <CheckCircle2 size={13} /> פרטי החוזה שמולאו על ידי המנהל המקצועי
+                        </div>
+                        <div className="space-y-1.5">
+                          {keys.map(k => {
+                            const fieldDef = allFields.find(f => f.key === k);
+                            return (
+                              <div key={k} className="flex items-start justify-between gap-3 text-xs">
+                                <span className="text-white/40 flex-shrink-0">{fieldDef?.label || k}:</span>
+                                <span className="text-white font-bold text-right break-words">{filled[k]}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  } catch { return null; }
+                })()}
+
                 {/* משא ומתן — רק למנהל אישי וגם לשחקן/מנהל מקצועי */}
                 {form.negotiable_fields.length > 0 && (
                   <div>

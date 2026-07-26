@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, X, Loader2, FileText, ShieldAlert, Send, ExternalLink, PenLine, Baby, User } from 'lucide-react';
+import { Plus, X, Loader2, FileText, ShieldAlert, Send, ExternalLink, PenLine, Baby, User, Edit3 } from 'lucide-react';
+import ContractFillModal from '../contracts/ContractFillModal';
 import { getContractForms, getOfficialForm } from '@/lib/ifaOfficialForms';
 import { signatureStatus } from '@/lib/contractTemplates';
 import OfficialContractSignModal from '../contracts/OfficialContractSignModal';
@@ -24,6 +25,7 @@ function statusBadge(contract) {
 export default function ContractsPanel() {
   const [showCreate, setShowCreate] = useState(false);
   const [signing, setSigning] = useState(null); // { contract, formKey }
+  const [filling, setFilling] = useState(null); // contract to fill
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
@@ -126,6 +128,11 @@ export default function ContractsPanel() {
                 {!fullySigned && (
                   <>
                     <button
+                      onClick={() => setFilling(c)}
+                      className="flex items-center gap-1 text-[10px] font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-full hover:bg-blue-500/25 transition-colors">
+                      <Edit3 size={11} /> מלא חוזה
+                    </button>
+                    <button
                       onClick={() => setSigning({ contract: c, formKey })}
                       className="flex items-center gap-1 text-[10px] font-bold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1 rounded-full hover:bg-[#D4AF37]/25 transition-colors">
                       <PenLine size={11} /> פתח לחתימה
@@ -148,6 +155,7 @@ export default function ContractsPanel() {
         })}
       </div>
 
+      {filling && <ContractFillModal contract={filling} onClose={() => setFilling(null)} onSaved={() => setFilling(null)} />}
       {showCreate && <CreateContractModal onClose={() => setShowCreate(false)} />}
 
       {signing && (

@@ -1,45 +1,49 @@
 /**
  * ספריית טפסים רשמיים של ההתאחדות לכדורגל בישראל — עונת 26/27.
  * כל ערך מפנה לקובץ ה-PDF המקורי שהועלה, ומגדיר מי מורשה לחתום.
- * מחליף את ifaFormRegistry.js לגבי טפסי חוזים — המערכת מציגה את ה-PDF
- * המקורי ומאפשרת מילוי + חתימה דיגיטלית מעליו.
  */
 
 export const IFA_OFFICIAL_FORMS = {
-  // ========= חוזי שחקנים ========= //
+
+  // ==========================================
+  // קטגוריה: חוזי שחקנים (מקצועניות / חובבניות)
+  // ==========================================
+
   player_agreement_en: {
     key: 'player_agreement_en',
-    label: 'Player Agreement Form 2026/2027 (English)',
+    label: 'הסכם שחקן 2026/2027 (אנגלית — מקצועניות)',
     category: 'player_contract',
-    league_type: 'professional', // ליגות מקצועניות
+    league_type: 'professional',
+    age_group: 'adult',
     language: 'en',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/b85c2f56b_PLAYERAGREEMENTFORM26-7.pdf',
     requires_guardian: false,
     signers: ['player', 'club'],
     negotiable_fields: [
-      { key: 'monthly_salary', label: 'Monthly Salary (ILS)', type: 'number', clause: '6.1' },
-      { key: 'base_salary', label: 'Base Salary (ILS)', type: 'number', clause: '6.1.1' },
-      { key: 'signing_fee', label: 'Signing Fee (ILS)', type: 'number', clause: '6.2' },
-      { key: 'championship_bonus', label: 'Championship Bonus (ILS)', type: 'number', clause: '6.2' },
-      { key: 'season_start', label: 'Contract Start Date', type: 'date', clause: '5' },
-      { key: 'season_end', label: 'Contract End Date', type: 'date', clause: '5' },
-      { key: 'agent_name', label: 'Football Agent Name', type: 'text', clause: '12' },
-      { key: 'agent_license', label: 'FIFA Agent License No.', type: 'text', clause: '12' },
-      { key: 'supplementary_provisions', label: 'Supplementary Provisions (§9)', type: 'textarea', clause: '9' },
+      { key: 'monthly_salary', label: 'שכר חודשי (₪)', type: 'number', clause: '6.1' },
+      { key: 'base_salary', label: 'שכר בסיס (₪)', type: 'number', clause: '6.1.1' },
+      { key: 'signing_fee', label: 'דמי חתימה (₪)', type: 'number', clause: '6.2' },
+      { key: 'championship_bonus', label: 'מענק אליפות (₪)', type: 'number', clause: '6.2' },
+      { key: 'season_start', label: 'תחילת חוזה', type: 'date', clause: '5' },
+      { key: 'season_end', label: 'סיום חוזה', type: 'date', clause: '5' },
+      { key: 'agent_name', label: 'שם הסוכן', type: 'text', clause: '12' },
+      { key: 'agent_license', label: 'מספר רישיון סוכן פיפ"א', type: 'text', clause: '12' },
+      { key: 'supplementary_provisions', label: 'הוראות משלימות (סעיף 9)', type: 'textarea', clause: '9' },
     ],
   },
 
   player_agreement_he: {
     key: 'player_agreement_he',
-    label: 'טופס הסכם שחקן 2026/2027 (עברית)',
+    label: 'הסכם שחקן 2026/2027 (עברית — חובבניות)',
     category: 'player_contract',
-    league_type: 'amateur', // ליגות חובבניות ונוער
+    league_type: 'amateur',
+    age_group: 'adult',
     language: 'he',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/efea5a7f1_26-27.pdf',
     requires_guardian: false,
     signers: ['player', 'club'],
     negotiable_fields: [
-      { key: 'monthly_salary', label: 'משכורת חודשית (₪)', type: 'number', clause: '6.1' },
+      { key: 'monthly_salary', label: 'שכר חודשי (₪)', type: 'number', clause: '6.1' },
       { key: 'base_salary', label: 'שכר בסיס (₪)', type: 'number', clause: '6.1.1' },
       { key: 'signing_fee', label: 'דמי חתימה (₪)', type: 'number', clause: '6.2' },
       { key: 'championship_bonus', label: 'מענק אליפות (₪)', type: 'number', clause: '6.2' },
@@ -56,53 +60,59 @@ export const IFA_OFFICIAL_FORMS = {
 
   player_agreement_amateur: {
     key: 'player_agreement_amateur',
-    label: 'טופס הסכם שחקן חובבני (Form Amateur)',
+    label: 'הסכם שחקן חובבני (Form Amateur)',
     category: 'player_contract',
     league_type: 'amateur',
+    age_group: 'adult',
     language: 'he',
-    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/201805564_Form_Amateur_11.pdf',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/e28363a92_Form_Amateur_11.pdf',
     requires_guardian: false,
     signers: ['player', 'club'],
     negotiable_fields: [
-      { key: 'monthly_salary', label: 'משכורת חודשית (₪)', type: 'number', clause: '6.1' },
+      { key: 'monthly_salary', label: 'שכר חודשי (₪)', type: 'number', clause: '6.1' },
       { key: 'season_start', label: 'תחילת עונת המשחקים', type: 'date', clause: '5' },
       { key: 'season_end', label: 'סיום עונת המשחקים', type: 'date', clause: '5' },
       { key: 'supplementary_provisions', label: 'הוראות משלימות', type: 'textarea', clause: '9' },
     ],
   },
 
-  // ========= חוזי מאמנים ========= //
+  // ==========================================
+  // קטגוריה: חוזי מאמנים
+  // ==========================================
+
   coach_agreement_en: {
     key: 'coach_agreement_en',
-    label: 'Coach Agreement Form 2026/2027 (English)',
+    label: 'הסכם מאמן 2026/2027 (אנגלית — מקצועניות)',
     category: 'coach_contract',
     league_type: 'professional',
+    age_group: 'adult',
     language: 'en',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/026746fcc_COACHAGREEMENTFORM26-7.pdf',
     requires_guardian: false,
     signers: ['coach', 'club'],
     negotiable_fields: [
-      { key: 'monthly_salary', label: 'Monthly Salary (ILS)', type: 'number', clause: '6.1' },
-      { key: 'base_salary', label: 'Base Salary (ILS)', type: 'number', clause: '6.1.1' },
-      { key: 'signing_fee', label: 'Signature Fee (ILS)', type: 'number', clause: '6.2' },
-      { key: 'championship_bonus', label: 'Championship Bonus (ILS)', type: 'number', clause: '6.2' },
-      { key: 'season_start', label: 'Contract Start Date', type: 'date', clause: '5.1' },
-      { key: 'season_end', label: 'Contract End Date', type: 'date', clause: '5.1' },
-      { key: 'supplementary_provisions', label: 'Supplementary Provisions (§8)', type: 'textarea', clause: '8' },
+      { key: 'monthly_salary', label: 'שכר חודשי (₪)', type: 'number', clause: '6.1' },
+      { key: 'base_salary', label: 'שכר בסיס (₪)', type: 'number', clause: '6.1.1' },
+      { key: 'signing_fee', label: 'דמי חתימה (₪)', type: 'number', clause: '6.2' },
+      { key: 'championship_bonus', label: 'מענק אליפות (₪)', type: 'number', clause: '6.2' },
+      { key: 'season_start', label: 'תחילת חוזה', type: 'date', clause: '5.1' },
+      { key: 'season_end', label: 'סיום חוזה', type: 'date', clause: '5.1' },
+      { key: 'supplementary_provisions', label: 'הוראות משלימות (סעיף 8)', type: 'textarea', clause: '8' },
     ],
   },
 
   coach_agreement_he: {
     key: 'coach_agreement_he',
-    label: 'טופס הסכם מאמן 2026/2027 (עברית)',
+    label: 'הסכם מאמן 2026/2027 (עברית — חובבניות)',
     category: 'coach_contract',
     league_type: 'amateur',
+    age_group: 'adult',
     language: 'he',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/687588293_26-27.pdf',
     requires_guardian: false,
     signers: ['coach', 'club'],
     negotiable_fields: [
-      { key: 'monthly_salary', label: 'משכורת חודשית (₪)', type: 'number', clause: '6.1' },
+      { key: 'monthly_salary', label: 'שכר חודשי (₪)', type: 'number', clause: '6.1' },
       { key: 'base_salary', label: 'שכר בסיס (₪)', type: 'number', clause: '6.1.1' },
       { key: 'signing_fee', label: 'דמי חתימה (₪)', type: 'number', clause: '6.2' },
       { key: 'championship_bonus', label: 'מענק אליפות (₪)', type: 'number', clause: '6.2' },
@@ -112,14 +122,18 @@ export const IFA_OFFICIAL_FORMS = {
     ],
   },
 
-  // ========= טפסי העברה / מעבר ========= //
+  // ==========================================
+  // קטגוריה: טפסי העברה / מעבר
+  // ==========================================
+
   player_transfer_notice_minor: {
     key: 'player_transfer_notice_minor',
-    label: 'הודעת שחקן קטין על רצונו לעבור',
+    label: 'הודעת שחקן קטין על רצונו לעבור לקבוצה אחרת',
     category: 'transfer',
     league_type: 'all',
+    age_group: 'minor',
     language: 'he',
-    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/ae8103d34_202.pdf',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/b5bb6196d_202.pdf',
     requires_guardian: true,
     signers: ['player', 'guardian'],
     negotiable_fields: [],
@@ -130,8 +144,9 @@ export const IFA_OFFICIAL_FORMS = {
     label: 'הודעת כניסה להסגר — שחקן מעל גיל 17',
     category: 'transfer',
     league_type: 'all',
+    age_group: 'adult',
     language: 'he',
-    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/5c7b17fee_17.pdf',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/79aba1ee9_-20.pdf',
     requires_guardian: false,
     signers: ['player'],
     negotiable_fields: [],
@@ -139,9 +154,10 @@ export const IFA_OFFICIAL_FORMS = {
 
   player_cancellation_en: {
     key: 'player_cancellation_en',
-    label: 'Cancellation of Player Registration',
+    label: 'ביטול רישום שחקן (Cancellation of Player Registration)',
     category: 'transfer',
     league_type: 'all',
+    age_group: 'adult',
     language: 'en',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/deba03917_Cancelation_of_player_registration.pdf',
     requires_guardian: false,
@@ -154,6 +170,7 @@ export const IFA_OFFICIAL_FORMS = {
     label: 'טופס גריעת שחקן',
     category: 'transfer',
     league_type: 'all',
+    age_group: 'all',
     language: 'he',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/42f0d4e74_.pdf',
     requires_guardian: false,
@@ -161,25 +178,355 @@ export const IFA_OFFICIAL_FORMS = {
     negotiable_fields: [],
   },
 
-  // ========= טפסי ביטוח ========= //
+  // ==========================================
+  // קטגוריה: ביטוח
+  // ==========================================
+
   insurance_declaration_26_27: {
     key: 'insurance_declaration_26_27',
-    label: 'הצהרה, התחייבות ואישור בדבר קיום ביטוח לעונת 2026/27 (נספח ה\'1)',
+    label: 'הצהרה, התחייבות ואישור בדבר קיום ביטוח לעונת 2026/27 (נספח א׳)',
     category: 'insurance',
     league_type: 'all',
+    age_group: 'all',
     language: 'he',
-    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/02d962951_2026-27.pdf',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/2045e005d_26-27.pdf',
     requires_guardian: false,
     signers: ['club'],
     negotiable_fields: [],
   },
 
-  // ========= טפסים נוספים ========= //
+  insurance_approval_form: {
+    key: 'insurance_approval_form',
+    label: 'אישור קיום ביטוח — נספח א׳ עד גיל 20',
+    category: 'insurance',
+    league_type: 'all',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/79aba1ee9_-20.pdf',
+    requires_guardian: false,
+    signers: ['club'],
+    negotiable_fields: [],
+  },
+
+  // ==========================================
+  // קטגוריה: פרוטוקולים — נוער (חברה ועמותה)
+  // ==========================================
+
+  protocol_youth_company: {
+    key: 'protocol_youth_company',
+    label: 'פרוטוקול נוער וילדים 2025/26 — חברה',
+    category: 'protocol',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/8b88b9d9f_-25-26.pdf',
+    requires_guardian: false,
+    signers: ['club', 'lawyer'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'company_name', label: 'שם החברה', type: 'text', required: true },
+      { key: 'company_id', label: 'מס׳ ח.פ.', type: 'text', required: true },
+      { key: 'meeting_date', label: 'תאריך הישיבה', type: 'date', required: true },
+      { key: 'chairman_name', label: 'שם יו"ר', type: 'text', required: true },
+      { key: 'signer_1_name', label: 'מורשה חתימה 1 — שם', type: 'text', required: true },
+      { key: 'signer_1_id', label: 'מורשה חתימה 1 — ת.ז.', type: 'text', required: true },
+      { key: 'signer_2_name', label: 'מורשה חתימה 2 — שם', type: 'text', required: true },
+      { key: 'signer_2_id', label: 'מורשה חתימה 2 — ת.ז.', type: 'text', required: true },
+      { key: 'board_member_1', label: 'חבר הנהלה 1 — שם', type: 'text', required: true },
+      { key: 'board_member_2', label: 'חבר הנהלה 2 — שם', type: 'text', required: true },
+      { key: 'board_member_3', label: 'חבר הנהלה 3 — שם', type: 'text', required: true },
+      { key: 'medical_staff_name', label: 'איש צוות רפואי — שם', type: 'text', required: true },
+      { key: 'medical_staff_role', label: 'איש צוות רפואי — תפקיד', type: 'select', options: ['רופא', 'חובש', 'אח', 'פיזיותרפיסט'], required: true },
+      { key: 'lawyer_name', label: 'שם עו"ד המאשר', type: 'text', required: true },
+      { key: 'lawyer_license', label: 'מ.ר. עו"ד', type: 'text', required: true },
+    ],
+  },
+
+  protocol_youth_association: {
+    key: 'protocol_youth_association',
+    label: 'פרוטוקול נוער וילדים 2025/26 — עמותה',
+    category: 'protocol',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/2563a4f67_-25-26.pdf',
+    requires_guardian: false,
+    signers: ['club', 'lawyer'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'association_name', label: 'שם העמותה', type: 'text', required: true },
+      { key: 'association_id', label: 'מס׳ עמותה', type: 'text', required: true },
+      { key: 'meeting_date', label: 'תאריך הישיבה', type: 'date', required: true },
+      { key: 'chairman_name', label: 'שם יו"ר', type: 'text', required: true },
+      { key: 'signer_1_name', label: 'מורשה חתימה 1 — שם', type: 'text', required: true },
+      { key: 'signer_1_id', label: 'מורשה חתימה 1 — ת.ז.', type: 'text', required: true },
+      { key: 'signer_2_name', label: 'מורשה חתימה 2 — שם', type: 'text', required: true },
+      { key: 'signer_2_id', label: 'מורשה חתימה 2 — ת.ז.', type: 'text', required: true },
+      { key: 'board_member_1', label: 'חבר הנהלה 1 — שם', type: 'text', required: true },
+      { key: 'board_member_2', label: 'חבר הנהלה 2 — שם', type: 'text', required: true },
+      { key: 'board_member_3', label: 'חבר הנהלה 3 — שם', type: 'text', required: true },
+      { key: 'medical_staff_name', label: 'איש צוות רפואי — שם', type: 'text', required: true },
+      { key: 'medical_staff_role', label: 'איש צוות רפואי — תפקיד', type: 'select', options: ['רופא', 'חובש', 'אח', 'פיזיותרפיסט'], required: true },
+      { key: 'lawyer_name', label: 'שם עו"ד המאשר', type: 'text', required: true },
+      { key: 'lawyer_license', label: 'מ.ר. עו"ד', type: 'text', required: true },
+    ],
+  },
+
+  // ==========================================
+  // קטגוריה: פרוטוקולים — בוגרים (חברה ועמותה)
+  // ==========================================
+
+  protocol_adults_company: {
+    key: 'protocol_adults_company',
+    label: 'פרוטוקול בוגרים 2025/26 — חברה',
+    category: 'protocol',
+    league_type: 'amateur',
+    age_group: 'adult',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/fcf6ba481_-25-26.pdf',
+    requires_guardian: false,
+    signers: ['club', 'lawyer'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'company_name', label: 'שם החברה', type: 'text', required: true },
+      { key: 'company_id', label: 'מס׳ ח.פ.', type: 'text', required: true },
+      { key: 'meeting_date', label: 'תאריך הישיבה', type: 'date', required: true },
+      { key: 'chairman_name', label: 'שם יו"ר', type: 'text', required: true },
+      { key: 'signer_1_name', label: 'מורשה חתימה 1 — שם', type: 'text', required: true },
+      { key: 'signer_1_id', label: 'מורשה חתימה 1 — ת.ז.', type: 'text', required: true },
+      { key: 'signer_2_name', label: 'מורשה חתימה 2 — שם', type: 'text', required: true },
+      { key: 'signer_2_id', label: 'מורשה חתימה 2 — ת.ז.', type: 'text', required: true },
+      { key: 'lawyer_name', label: 'שם עו"ד המאשר', type: 'text', required: true },
+      { key: 'lawyer_license', label: 'מ.ר. עו"ד', type: 'text', required: true },
+    ],
+  },
+
+  protocol_adults_association: {
+    key: 'protocol_adults_association',
+    label: 'פרוטוקול בוגרים 2025/26 — עמותה',
+    category: 'protocol',
+    league_type: 'amateur',
+    age_group: 'adult',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/c8d2bca63_-25-26.pdf',
+    requires_guardian: false,
+    signers: ['club', 'lawyer'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'association_name', label: 'שם העמותה', type: 'text', required: true },
+      { key: 'association_id', label: 'מס׳ עמותה', type: 'text', required: true },
+      { key: 'meeting_date', label: 'תאריך הישיבה', type: 'date', required: true },
+      { key: 'chairman_name', label: 'שם יו"ר', type: 'text', required: true },
+      { key: 'signer_1_name', label: 'מורשה חתימה 1 — שם', type: 'text', required: true },
+      { key: 'signer_1_id', label: 'מורשה חתימה 1 — ת.ז.', type: 'text', required: true },
+      { key: 'signer_2_name', label: 'מורשה חתימה 2 — שם', type: 'text', required: true },
+      { key: 'signer_2_id', label: 'מורשה חתימה 2 — ת.ז.', type: 'text', required: true },
+      { key: 'lawyer_name', label: 'שם עו"ד המאשר', type: 'text', required: true },
+      { key: 'lawyer_license', label: 'מ.ר. עו"ד', type: 'text', required: true },
+    ],
+  },
+
+  // ==========================================
+  // קטגוריה: טפסים מיוחדים — נוער
+  // ==========================================
+
+  age_exception_youth_not_affiliated: {
+    key: 'age_exception_youth_not_affiliated',
+    label: 'שיתוף חריג גיל — קבוצת נוער שאינה מסונפת לבוגרים',
+    category: 'special',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/01fa7cce3_.pdf',
+    requires_guardian: false,
+    signers: ['club'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'club_name', label: 'שם מועדון הכדורגל', type: 'text', required: true },
+      { key: 'player_1_first', label: 'שחקן 1 — שם פרטי', type: 'text', required: true },
+      { key: 'player_1_last', label: 'שחקן 1 — שם משפחה', type: 'text', required: true },
+      { key: 'player_1_birth', label: 'שחקן 1 — תאריך לידה', type: 'date', required: true },
+      { key: 'player_1_id', label: 'שחקן 1 — ת.ז.', type: 'text', required: true },
+    ],
+  },
+
+  age_exception_adults_to_youth: {
+    key: 'age_exception_adults_to_youth',
+    label: 'שיתוף שחקני בוגרים המורשים לשחק בנוער',
+    category: 'special',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/dcb112ddf_.pdf',
+    requires_guardian: false,
+    signers: ['club'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'club_name', label: 'שם מועדון הכדורגל', type: 'text', required: true },
+      { key: 'player_1_first', label: 'שחקן 1 — שם פרטי', type: 'text', required: true },
+      { key: 'player_1_last', label: 'שחקן 1 — שם משפחה', type: 'text', required: true },
+      { key: 'player_1_birth', label: 'שחקן 1 — תאריך לידה', type: 'date', required: true },
+      { key: 'player_1_id', label: 'שחקן 1 — ת.ז.', type: 'text', required: true },
+    ],
+  },
+
+  shabbat_team_registration: {
+    key: 'shabbat_team_registration',
+    label: 'בקשה לרישום קבוצת "צו פיוס" (שומרי שבת) — נוער',
+    category: 'special',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/ac3ed2eb1_.pdf',
+    requires_guardian: true,
+    signers: ['club', 'parents'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'team_name', label: 'שם הקבוצה', type: 'text', required: true },
+      { key: 'age_group', label: 'שנתון', type: 'text', required: true },
+      { key: 'season', label: 'עונה', type: 'text', required: true },
+    ],
+  },
+
+  player_substitution_form: {
+    key: 'player_substitution_form',
+    label: 'טופס החלפת שחקן במשחק',
+    category: 'match',
+    league_type: 'all',
+    age_group: 'all',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/062e0aa57_.pdf',
+    requires_guardian: false,
+    signers: ['club', 'medical_staff'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'match_date', label: 'תאריך המשחק', type: 'date', required: true },
+      { key: 'league', label: 'ליגה', type: 'text', required: true },
+      { key: 'home_team', label: 'קבוצה ביתית', type: 'text', required: true },
+      { key: 'away_team', label: 'קבוצת חוץ', type: 'text', required: true },
+    ],
+  },
+
+  referee_invitation_form: {
+    key: 'referee_invitation_form',
+    label: 'הזמנת שופטים לליגה — איגוד השופטים',
+    category: 'match',
+    league_type: 'youth',
+    age_group: 'all',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/3dcca44ad_.pdf',
+    requires_guardian: false,
+    signers: ['club'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'home_team', label: 'שם הקבוצה הביתית', type: 'text', required: true },
+      { key: 'invitation_date', label: 'תאריך הזמנת השופטים', type: 'date', required: true },
+    ],
+  },
+
+  // ==========================================
+  // קטגוריה: טפסים מיוחדים — חובבניות (בוגרים)
+  // ==========================================
+
+  amateur_home_field_declaration: {
+    key: 'amateur_home_field_declaration',
+    label: 'הצהרת קבוצת בוגרים (חובבניות) על מגרש ביתי 2025/26',
+    category: 'registration',
+    league_type: 'amateur',
+    age_group: 'adult',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/4896dec58_2025-26.pdf',
+    requires_guardian: false,
+    signers: ['club', 'field_owner'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'team_name', label: 'שם הקבוצה', type: 'text', required: true },
+      { key: 'league_name', label: 'שם הליגה', type: 'text', required: true },
+      { key: 'representative_name', label: 'שם ב"כ הקבוצה', type: 'text', required: true },
+      { key: 'field_name', label: 'שם המגרש', type: 'text', required: true },
+      { key: 'season', label: 'עונה', type: 'text', required: true, default: '2025/26' },
+    ],
+  },
+
+  player_substitution_form_adults: {
+    key: 'player_substitution_form_adults',
+    label: 'טופס החלפת שחקן במשחק — בוגרים',
+    category: 'match',
+    league_type: 'amateur',
+    age_group: 'adult',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/28add27e5_.pdf',
+    requires_guardian: false,
+    signers: ['club', 'medical_staff'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'match_date', label: 'תאריך המשחק', type: 'date', required: true },
+      { key: 'league', label: 'ליגה', type: 'text', required: true },
+      { key: 'home_team', label: 'קבוצה ביתית', type: 'text', required: true },
+      { key: 'away_team', label: 'קבוצת חוץ', type: 'text', required: true },
+    ],
+  },
+
+  // ==========================================
+  // קטגוריה: טפסים אדמיניסטרטיביים
+  // ==========================================
+
+  signatory_change_form: {
+    key: 'signatory_change_form',
+    label: 'טופס הודעה על שינוי בעלי זכות חתימה / חבר הנהלה / כ"א רפואי',
+    category: 'admin',
+    league_type: 'all',
+    age_group: 'all',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/eac6eba73_.pdf',
+    requires_guardian: false,
+    signers: ['club', 'lawyer'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'team_name', label: 'שם הקבוצה', type: 'text', required: true },
+      { key: 'team_type', label: 'סוג קבוצה', type: 'select', options: ['בוגרים', 'נוער', 'נשים'], required: true },
+      { key: 'old_signatory_name', label: 'שם בעל זכות החתימה המוחלף', type: 'text', required: true },
+      { key: 'old_signatory_id', label: 'ת.ז. המוחלף', type: 'text', required: true },
+      { key: 'old_signatory_role', label: 'תפקיד המוחלף', type: 'text', required: true },
+      { key: 'new_signatory_name', label: 'שם בעל זכות החתימה החדש', type: 'text', required: true },
+      { key: 'new_signatory_id', label: 'ת.ז. החדש', type: 'text', required: true },
+      { key: 'new_signatory_role', label: 'תפקיד החדש', type: 'text', required: true },
+      { key: 'lawyer_name', label: 'שם עו"ד המאשר', type: 'text', required: true },
+    ],
+  },
+
+  medical_staff_declaration: {
+    key: 'medical_staff_declaration',
+    label: 'הצהרת כוח אדם רפואי (לכל משחק)',
+    category: 'medical',
+    league_type: 'all',
+    age_group: 'all',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/9c67f84f3_-.pdf',
+    requires_guardian: false,
+    signers: ['medical_staff'],
+    negotiable_fields: [],
+    director_fillable_fields: [
+      { key: 'match_date', label: 'תאריך המשחק', type: 'date', required: true },
+      { key: 'home_team', label: 'קבוצה ביתית', type: 'text', required: true },
+      { key: 'away_team', label: 'קבוצה אורחת', type: 'text', required: true },
+      { key: 'framework', label: 'מסגרת משחקים (ליגה/גביע)', type: 'text', required: true },
+      { key: 'age_group_label', label: 'שנתון', type: 'text', required: true },
+      { key: 'medical_name', label: 'שם מלא (איש הצוות הרפואי)', type: 'text', required: true },
+      { key: 'medical_role', label: 'תפקיד', type: 'select', options: ['רופא', 'חובש', 'אח'], required: true },
+    ],
+  },
+
+  // ==========================================
+  // קטגוריה: ישן — לתאימות לאחור
+  // ==========================================
+
   friday_games_request: {
     key: 'friday_games_request',
     label: 'בקשה לקיים משחקים בימי שישי',
     category: 'other',
     league_type: 'all',
+    age_group: 'all',
     language: 'he',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/a55795b04_.pdf',
     requires_guardian: false,
@@ -192,55 +539,81 @@ export const IFA_OFFICIAL_FORMS = {
     label: 'תצהיר שחקן — שומר שבת (לבקשת משחקי שישי)',
     category: 'other',
     league_type: 'all',
+    age_group: 'all',
     language: 'he',
     pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/f1fbaa86c_.pdf',
     requires_guardian: false,
     signers: ['player'],
     negotiable_fields: [],
   },
-
-  medical_staff_declaration: {
-    key: 'medical_staff_declaration',
-    label: 'הצהרת כוח אדם רפואי',
-    category: 'medical',
-    league_type: 'all',
-    language: 'he',
-    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/8961ae21b_-.pdf',
-    requires_guardian: false,
-    signers: ['medical_staff'],
-    negotiable_fields: [],
-  },
 };
 
-/**
- * קבלת טפסי חוזה לפי קטגוריה (חוזי שחקנים / מאמנים)
- */
-export function getContractForms() {
-  return Object.values(IFA_OFFICIAL_FORMS).filter(f =>
-    f.category === 'player_contract' || f.category === 'coach_contract'
-  );
+// ==========================================
+// פונקציות עזר
+// ==========================================
+
+/** כל הטפסים כמערך */
+export function getAllForms() {
+  return Object.values(IFA_OFFICIAL_FORMS);
 }
 
-/**
- * קבלת טופס לפי מפתח
- */
+/** טפסי חוזה בלבד (שחקנים ומאמנים) */
+export function getContractForms() {
+  return getAllForms().filter(f => f.category === 'player_contract' || f.category === 'coach_contract');
+}
+
+/** טפסים לפי קטגוריה */
+export function getFormsByCategory(category) {
+  return getAllForms().filter(f => f.category === category);
+}
+
+/** טפסים לפי קבוצת גיל ('minor' | 'adult' | 'all') */
+export function getFormsByAgeGroup(age_group) {
+  return getAllForms().filter(f => f.age_group === age_group || f.age_group === 'all');
+}
+
+/** שליפת טופס לפי מפתח */
 export function getOfficialForm(key) {
   return IFA_OFFICIAL_FORMS[key] || null;
 }
 
-/**
- * האם הטופס דורש חתימת שחקן (לא רק קבוצה/מאמן)
- */
+/** האם הטופס דורש חתימת שחקן */
 export function requiresPlayerSignature(formKey) {
   const form = getOfficialForm(formKey);
   if (!form) return false;
   return form.signers.includes('player') || form.signers.includes('coach');
 }
 
-/**
- * האם הטופס דורש חתימת הורה/אפוטרופוס
- */
+/** האם הטופס דורש חתימת הורה/אפוטרופוס */
 export function requiresGuardianSignature(formKey) {
   const form = getOfficialForm(formKey);
   return form?.requires_guardian || false;
+}
+
+/** האם לטופס יש שדות למילוי על ידי מנהל מקצועי */
+export function hasDirectorFields(formKey) {
+  const form = getOfficialForm(formKey);
+  return !!(form?.director_fillable_fields?.length || form?.negotiable_fields?.length);
+}
+
+/**
+ * החזר טופס חוזה מתאים לפי:
+ * - is_adult: בוגר / קטין
+ * - league_type: 'professional' | 'amateur'
+ * - language: 'he' | 'en'
+ * - role: 'player' | 'coach'
+ */
+export function recommendContractForm({ is_adult, league_type = 'amateur', language = 'he', role = 'player' }) {
+  const category = role === 'coach' ? 'coach_contract' : 'player_contract';
+  const forms = getContractForms().filter(f => f.category === category);
+
+  if (!is_adult) return IFA_OFFICIAL_FORMS['player_agreement_amateur'] || forms[0];
+
+  const byLeagueAndLang = forms.find(f =>
+    f.league_type === league_type && f.language === language
+  );
+  if (byLeagueAndLang) return byLeagueAndLang;
+
+  const byLeague = forms.find(f => f.league_type === league_type);
+  return byLeague || forms[0];
 }
