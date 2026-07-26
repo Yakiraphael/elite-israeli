@@ -77,6 +77,85 @@ export const IFA_OFFICIAL_FORMS = {
   },
 
   // ==========================================
+  // קטגוריה: חוזי נוער (קטינים) — מערך ייעודי
+  // ==========================================
+
+  player_agreement_youth: {
+    key: 'player_agreement_youth',
+    label: 'הסכם שחקן נוער 2025/26 + תקנון משמעת אחיד (קטין)',
+    category: 'player_contract',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://www.football.org.il/files/%D7%A0%D7%A7%D7%99%20%D7%94%D7%A1%D7%9B%D7%9D%20%D7%A9%D7%97%D7%A7%D7%A0%D7%99%D7%9D%20+%20%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9E%D7%A9%D7%9E%D7%A2%D7%AA%20%D7%90%D7%97%D7%99%D7%93%20%D7%9C%D7%A2%D7%95%D7%A0%D7%AA%202025-26%2024.8.2025.pdf',
+    requires_guardian: true,
+    signers: ['player', 'guardian', 'club'],
+    negotiable_fields: [
+      { key: 'season_start', label: 'תחילת עונת המשחקים', type: 'date', clause: '5' },
+      { key: 'season_end', label: 'סיום עונת המשחקים', type: 'date', clause: '5' },
+      { key: 'training_schedule', label: 'מערך אימונים (ימים/שעות)', type: 'text', clause: '7' },
+      { key: 'travel_expenses', label: 'השתתפות בהוצאות נסיעה (₪)', type: 'number', clause: '6.2' },
+      { key: 'scholarship_grant', label: 'מלגה / תמיכה לימודית (₪)', type: 'number', clause: '6.2' },
+      { key: 'rest_day', label: 'יום מנוחה שבועי', type: 'select', options: ['שישי', 'שבת', 'ראשון'], clause: '6.1' },
+      { key: 'supplementary_provisions', label: 'הוראות משלימות', type: 'textarea', clause: '9' },
+    ],
+    director_fillable_fields: [
+      { key: 'club_name', label: 'שם המועדון', type: 'text', required: true },
+      { key: 'team_name', label: 'שם הקבוצה / שנתון', type: 'text', required: true },
+      { key: 'season', label: 'עונה', type: 'text', required: true, default: '2025/26' },
+      { key: 'coach_name', label: 'שם המאמן הראשי', type: 'text', required: true },
+      { key: 'training_location', label: 'מיקום אימונים', type: 'text', required: false },
+    ],
+  },
+
+  player_training_agreement_youth: {
+    key: 'player_training_agreement_youth',
+    label: 'הסכם הכשרה — שחקן קטין (תקנון מעמד והעברות קטינים)',
+    category: 'player_contract',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://www.football.org.il/files/takanon/4.25/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9E%D7%A2%D7%9E%D7%93%20%D7%95%D7%94%D7%A2%D7%91%D7%A8%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%A9%D7%97%D7%A7%D7%A0%D7%99%D7%9D%20%D7%A7%D7%98%D7%99%D7%A0%D7%99%D7%9D%207.4.2025%20(%D7%A1%D7%95%D7%A4%D7%99).pdf',
+    requires_guardian: true,
+    signers: ['player', 'guardian', 'club'],
+    negotiable_fields: [
+      { key: 'training_start', label: 'תחילת תקופת ההכשרה', type: 'date', clause: 'פרק 4' },
+      { key: 'training_end', label: 'סיום תקופת ההכשרה', type: 'date', clause: 'פרק 4' },
+      { key: 'training_compensation', label: 'פיצוי קידום ואימון (₪)', type: 'number', clause: 'פרק 4' },
+      { key: 'supplementary_provisions', label: 'הוראות משלימות', type: 'textarea', clause: 'פרק 4' },
+    ],
+    director_fillable_fields: [
+      { key: 'club_name', label: 'שם המועדון (קבוצה מעבירה)', type: 'text', required: true },
+      { key: 'team_name', label: 'שם הקבוצה / שנתון', type: 'text', required: true },
+      { key: 'season', label: 'עונה', type: 'text', required: true, default: '2025/26' },
+    ],
+  },
+
+  coach_agreement_youth: {
+    key: 'coach_agreement_youth',
+    label: 'הסכם מאמן נוער 2025/26 (קטין)',
+    category: 'coach_contract',
+    league_type: 'youth',
+    age_group: 'minor',
+    language: 'he',
+    pdf_url: 'https://media.base44.com/files/public/69fafcd4c8e6ad563cb577b8/687588293_26-27.pdf',
+    requires_guardian: false,
+    signers: ['coach', 'club'],
+    negotiable_fields: [
+      { key: 'monthly_salary', label: 'שכר חודשי (₪)', type: 'number', clause: '6.1' },
+      { key: 'season_start', label: 'תחילת עונת המשחקים', type: 'date', clause: '5.1' },
+      { key: 'season_end', label: 'סיום עונת המשחקים', type: 'date', clause: '5.1' },
+      { key: 'team_age_group', label: 'שנתון קבוצת הנוער', type: 'text', clause: '2' },
+      { key: 'supplementary_provisions', label: 'הוראות משלימות (סעיף 8)', type: 'textarea', clause: '8' },
+    ],
+    director_fillable_fields: [
+      { key: 'club_name', label: 'שם המועדון', type: 'text', required: true },
+      { key: 'team_name', label: 'שם הקבוצה / שנתון', type: 'text', required: true },
+      { key: 'season', label: 'עונה', type: 'text', required: true, default: '2025/26' },
+    ],
+  },
+
+  // ==========================================
   // קטגוריה: חוזי מאמנים
   // ==========================================
 
@@ -562,6 +641,19 @@ export function getContractForms() {
   return getAllForms().filter(f => f.category === 'player_contract' || f.category === 'coach_contract');
 }
 
+/** טפסי חוזה נוער בלבד (קטינים) */
+export function getYouthContractForms() {
+  return getContractForms().filter(f => f.age_group === 'minor');
+}
+
+/** טפסים לפי קטגוריה וגיל (שילוב) */
+export function getFormsByLeagueAndAge(league_type, age_group) {
+  return getAllForms().filter(f =>
+    (f.league_type === league_type || f.league_type === 'all' || (league_type === 'youth' && f.league_type === 'amateur')) &&
+    (f.age_group === age_group || f.age_group === 'all')
+  );
+}
+
 /** טפסים לפי קטגוריה */
 export function getFormsByCategory(category) {
   return getAllForms().filter(f => f.category === category);
@@ -607,13 +699,18 @@ export function recommendContractForm({ is_adult, league_type = 'amateur', langu
   const category = role === 'coach' ? 'coach_contract' : 'player_contract';
   const forms = getContractForms().filter(f => f.category === category);
 
-  if (!is_adult) return IFA_OFFICIAL_FORMS['player_agreement_amateur'] || forms[0];
+  if (!is_adult) {
+    // קטין — הסכם נוער ייעודי (מאמן או שחקן)
+    if (role === 'coach') return IFA_OFFICIAL_FORMS['coach_agreement_youth'] || forms[0];
+    if (league_type === 'youth' && IFA_OFFICIAL_FORMS['player_agreement_youth']) return IFA_OFFICIAL_FORMS['player_agreement_youth'];
+    return IFA_OFFICIAL_FORMS['player_agreement_youth'] || IFA_OFFICIAL_FORMS['player_agreement_amateur'] || forms[0];
+  }
 
   const byLeagueAndLang = forms.find(f =>
-    f.league_type === league_type && f.language === language
+    f.league_type === league_type && f.language === language && f.age_group === 'adult'
   );
   if (byLeagueAndLang) return byLeagueAndLang;
 
-  const byLeague = forms.find(f => f.league_type === league_type);
+  const byLeague = forms.find(f => f.league_type === league_type && f.age_group === 'adult');
   return byLeague || forms[0];
 }

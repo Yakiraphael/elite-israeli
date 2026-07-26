@@ -53,15 +53,18 @@ export default function OfficialContractSignModal({
       .catch(() => setSignerIp('unknown'));
   }, []);
 
-  // טעינת ערכי משא ומתן קיימים לחוזה זה
+  // טעינת כל בקשות המשא ומתן לחוזה זה (ממתינות + שאושרו)
   const { data: existingNegotiations = [] } = useQuery({
     queryKey: ['contract-negotiations', contract?.id],
     queryFn: () => base44.entities.NegotiationRequest.filter({
       transfer_id: contract?.id,
-      status: 'accepted',
     }, '-created_date', 50),
     enabled: !!contract?.id,
   });
+
+  // סינון: ממתינות (ממתינות לאישור) ושאושרו
+  const pendingNegotiations = existingNegotiations.filter(n => n.status === 'pending');
+  const acceptedNegotiations = existingNegotiations.filter(n => n.status === 'accepted');
 
   // מילוי אוטומטי של ערכים מהחוזה + מהמשא ומתן שאושר
   useEffect(() => {
@@ -70,11 +73,11 @@ export default function OfficialContractSignModal({
     form.negotiable_fields.forEach(f => {
       if (contract?.[f.key]) vals[f.key] = contract[f.key];
     });
-    existingNegotiations.forEach(n => {
+    acceptedNegotiations.forEach(n => {
       if (n.clause_key && n.proposed_value) vals[n.clause_key] = n.proposed_value;
     });
     setNegotiationValues(vals);
-  }, [form, contract, existingNegotiations]);
+  }, [form, contract, acceptedNegotiations]);
 
   const proposeNegotiation = useMutation({
     mutationFn: async ({ fieldKey, fieldLabel, proposedValue, reasoning }) => {
@@ -207,6 +210,54 @@ export default function OfficialContractSignModal({
                     </div>
                   )}
                 </div>
+
+                {/* התראת משא ומתן ממתין — שחקן/אפוטרופוס רואה מה ממתין לאישור */}
+                {pendingNegotiations.length > 0 && (
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                    <div className="flex items-center gap-1.5 text-amber-400 text-xs font-black mb-3">
+                      <AlertCircle size={13} /> סעיפים שממתינים לאישור סופי ({pendingNegotiations.length})
+                    </div>
+                    <div className="text-amber-300/70 text-[11px] mb-2 leading-relaxed">
+                      המנהל האישי הציע שינויים בסעיפים הבאים. הם ממתינים לאישור המועדון לפני שיהפכו לחלק מהחוזה.
+                    </div>
+                    <div className="space-y-2">
+                      {pendingNegotiations.map(n => (
+                        <div key={n.id} className="bg-[#0D1B2A]/60 border border-amber-500/15 rounded-sm p-2.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-white/70 text-[11px] font-bold">{n.clause_label}</span>
+                            {n.sender_role === 'manager' && <span className="text-[9px] text-amber-400/60">מהמנהל האישי</span>}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1 text-[10px]">
+                            {n.current_value && <span className="text-white/40 line-through">{n.current_value}</span>}
+                            <span className="text-white/30">→</span>
+                            <span className="text-amber-400 font-bold">{n.proposed_value}</span>
+                          </div>
+                          {n.reasoning && <div className="text-white/40 text-[10px] mt-1 italic">"{n.reasoning}"</div>}
+                          <div className="text-amber-400/60 text-[9px] mt-1.5 font-bold">⏳ ממתין לאישור המועדון</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* סעיפים שאושרו במשא ומתן */}
+                {acceptedNegotiations.length > 0 && (() => {
+                  return (
+                    <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-3">
+                      <div className="text-green-400 text-[11px] font-bold mb-2 flex items-center gap-1.5">
+                        <CheckCircle2 size={12} /> סעיפים שאושרו במשא ומתן ({acceptedNegotiations.length})
+                      </div>
+                      <div className="space-y-1.5">
+                        {acceptedNegotiations.map(n => (
+                          <div key={n.id} className="flex items-center justify-between text-[10px]">
+                            <span className="text-white/40">{n.clause_label}</span>
+                            <span className="text-green-400 font-bold">{n.proposed_value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* תצוגת שדות ממולאים ע"י המנהל המקצועי */}
                 {contract?.filled_fields && (() => {
