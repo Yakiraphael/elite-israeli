@@ -22,6 +22,7 @@ import PersonalInfoPanel from './PersonalInfoPanel';
 import CVComparisonPanel from './CVComparisonPanel';
 import ContractsQuickAccess from './ContractsQuickAccess';
 import PersonalManagerPanel from './PersonalManagerPanel';
+import PlayerProgressChart from '../coach/PlayerProgressChart';
 import BackButton from '../BackButton';
 import PlayerNotificationSettingsModal from './PlayerNotificationSettingsModal';
 import { Lock, Settings } from 'lucide-react';
@@ -206,6 +207,9 @@ export default function PlayerProfileView({ player, events }) {
                     isEliteOrg={!!player.elite_id}
                   />
                 </div>
+
+                {/* Visual progress report — NLP, physiotherapist & resilience over time */}
+                <PlayerProgressChart player={player} />
 
                 {player.achievements && (
                   <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
