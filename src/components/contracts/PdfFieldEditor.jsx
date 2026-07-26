@@ -9,7 +9,9 @@ import { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { Loader2, X, Plus, Trash2, Save, Eraser, Type, Move } from 'lucide-react';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+// ה-worker חייב להיות מאותה גרסה בדיוק כמו ה-API המותקן, אחרת עלולים להיווצר
+// פגמי רינדור (תווים מרוחקים, גליפים שגויים, עברית מרווחת). לכן נורה על גרסה דינמית.
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 /**
  * @param {string} pdfUrl
@@ -35,8 +37,9 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
       try {
         const loadingTask = pdfjsLib.getDocument({
           url: pdfUrl,
-          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/cmaps/',
+          cMapUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/cmaps/`,
           cMapPacked: true,
+          useSystemFonts: true,
         });
         const pdf = await loadingTask.promise;
         pagesRef.current = [];
@@ -47,14 +50,16 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
         container.innerHTML = '';
 
         for (const page of pages) {
-          const scale = 1.5;
-          const viewport = page.getViewport({ scale });
+          const baseScale = 2;
+          const viewport = page.getViewport({ scale: baseScale });
+          // רינדור ברזולוציית HiDPI כדי שהעברית תיראה חדה גם במסכי Retina
+          const dpr = Math.min(window.devicePixelRatio || 1, 3);
           const pageWrap = document.createElement('div');
           pageWrap.style.cssText = 'position:relative;margin:0 auto 16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);';
 
           const canvas = document.createElement('canvas');
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
+          canvas.width = Math.floor(viewport.width * dpr);
+          canvas.height = Math.floor(viewport.height * dpr);
           canvas.style.cssText = 'display:block;width:100%;height:auto;';
           pageWrap.appendChild(canvas);
 
@@ -65,7 +70,8 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
           container.appendChild(pageWrap);
 
           const ctx = canvas.getContext('2d');
-          await page.render({ canvasContext: ctx, viewport }).promise;
+          ctx.scale(dpr, dpr);
+          await page.render({ canvasContext: ctx, viewport, intent: 'display' }).promise;
           if (cancelled) return;
 
           const pageNumber = page.pageNumber;
