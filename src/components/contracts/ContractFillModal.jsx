@@ -3,10 +3,11 @@
  * המנהל המקצועי ממלא את כל השדות, רואה תצוגה מקדימה של ה-PDF, ומאשר.
  */
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { X, ExternalLink, CheckCircle2, Loader2, AlertTriangle, FileText, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import { X, ExternalLink, CheckCircle2, Loader2, AlertTriangle, FileText, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, Wand2 } from 'lucide-react';
 import { getOfficialForm } from '@/lib/ifaOfficialForms';
+import { mapFormData, getMappingSummary } from '@/lib/ifaFormMapper';
 
 const FIELD_LABELS = {
   number: 'מספר',
@@ -24,12 +25,62 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
   const [showNegotiable, setShowNegotiable] = useState(true);
   const [showDirector, setShowDirector] = useState(true);
 
-  // טעינת ערכים שמורים מהחוזה
+  // טעינת נתוני השחקן + מועדון למיפוי אוטומטי
+  const { data: player } = useQuery({
+    queryKey: ['contract-player-for-mapper', contract.player_id],
+    queryFn: () => base44.entities.PlayerRegistration.get(contract.player_id),
+    enabled: !!contract.player_id,
+  });
+
+  const { data: club } = useQuery({
+    queryKey: ['contract-club-for-mapper', player?.team_name],
+    queryFn: () => base44.entities.Club.filter({}, '-created_date', 20).then(cs => cs.find(c => c.club_name === player.team_name) || null),
+    enabled: !!player?.team_name,
+  });
+
+  // טעינת ערכים שמורים מהחוזה + מיפוי אוטומטי בפתיחה ראשונה
   useEffect(() => {
+    let saved = {};
     if (contract.filled_fields) {
-      try { setValues(JSON.parse(contract.filled_fields)); } catch {}
+      try { saved = JSON.parse(contract.filled_fields); } catch {}
     }
-  }, [contract.id]);
+    if (Object.keys(saved).length > 0) {
+      // כבר מולא — טען שמור
+      setValues(saved);
+      return;
+    }
+    // פתיחה ראשונה — הרץ מיפוי אוטומטי
+    if (player && form) {
+      const { values: mapped } = mapFormData({
+        formKey: contract.ifa_template_key || 'player_agreement_he',
+        player,
+        club: club || undefined,
+        contract,
+      });
+      setValues(mapped);
+    }
+  }, [contract.id, contract.filled_fields, player, club, form]);
+
+  // ריצת מיפוי מחדש ידנית
+  const runAutoMapping = () => {
+    if (!player || !form) return;
+    const { values: mapped } = mapFormData({
+      formKey: contract.ifa_template_key || 'player_agreement_he',
+      player,
+      club: club || undefined,
+      contract,
+    });
+    setValues(prev => ({ ...mapped, ...prev })); // שמור עריכות ידניות
+  };
+
+  // סיכום מיפוי לתצוגה
+  const mappingSummary = player ? getMappingSummary({
+    formKey: contract.ifa_template_key || 'player_agreement_he',
+    player,
+    club: club || undefined,
+    contract,
+    savedFilled: values,
+  }) : null;
 
   const allFields = [
     ...(form?.negotiable_fields || []).map(f => ({ ...f, section: 'negotiable' })),
@@ -85,6 +136,45 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
 
         {/* Body */}
         <div className="overflow-y-auto flex-1 p-5 space-y-4">
+
+          {/* סיכום מנגנון מיפוי חכם */}
+          {mappingSummary && (
+            <div className={`rounded-lg p-3 border ${mappingSummary.criticalCount > 0 ? 'bg-red-500/5 border-red-500/20' : mappingSummary.missingCount > 0 ? 'bg-amber-500/5 border-amber-500/20' : 'bg-green-500/5 border-green-500/20'}`}>
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <div className="flex items-center gap-1.5 text-white/70 text-xs font-bold">
+                  <Sparkles size={12} className="text-[#D4AF37]" />
+                  מנגנון מיפוי חכם
+                </div>
+                <button onClick={runAutoMapping}
+                  className="flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] hover:text-amber-300 transition-colors">
+                  <Wand2 size={11} /> מיפוי מחדש
+                </button>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap text-[10px] font-bold">
+                <span className="text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+                  {mappingSummary.autoMappedCount} מולאו אוטומטית
+                </span>
+                <span className="text-white/40 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+                  {mappingSummary.filledCount}/{mappingSummary.totalFields} שדות
+                </span>
+                {mappingSummary.missingCount > 0 && (
+                  <span className="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                    {mappingSummary.missingCount} חסרים
+                  </span>
+                )}
+                {mappingSummary.criticalCount > 0 && (
+                  <span className="text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <AlertTriangle size={10} /> {mappingSummary.criticalCount} קריטי
+                  </span>
+                )}
+                {mappingSummary.isReady && (
+                  <span className="text-green-400 flex items-center gap-1">
+                    <CheckCircle2 size={11} /> מוכן לחתימה
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* תצוגת PDF מוטמע */}
           {form?.pdf_url && (

@@ -12,6 +12,7 @@ import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
 import SquadCallupPanel from '../components/coach/SquadCallupPanel';
 import InjuryLogModal from '../components/coach/InjuryLogModal';
+import CoachRosterContractsView from '../components/coach/CoachRosterContractsView';
 import { computeEligibility } from '@/lib/playerEligibility';
 import { whatsappLink } from '@/lib/contactLinks';
 import {
@@ -100,6 +101,7 @@ export default function CoachWorkspace() {
   // סדר פרקטי: בריאות סגל → זימון (יום משחק) → אישורי העברה (שעון קוצב) → בקשות (תיבת דואר) → תקינות → גיוס
   const tabs = [
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
+    { id: 'roster', label: 'סגל — חוזים', icon: FileText },
     { id: 'callup', label: 'זימון וניהול סגל', icon: ListChecks },
     { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
@@ -169,6 +171,7 @@ export default function CoachWorkspace() {
           </>
         )}
         {tab === 'requests' && <RequestsView />}
+        {tab === 'roster' && <CoachRosterContractsView players={filtered} onSelect={setSelectedPlayer} />}
         {tab === 'callup' && <SquadCallupPanel players={filtered} />}
         {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
