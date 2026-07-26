@@ -5,9 +5,10 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { X, ExternalLink, CheckCircle2, Loader2, AlertTriangle, FileText, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, Wand2 } from 'lucide-react';
+import { X, ExternalLink, CheckCircle2, Loader2, AlertTriangle, FileText, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, Wand2, Download } from 'lucide-react';
 import { getOfficialForm } from '@/lib/ifaOfficialForms';
 import { mapFormData, getMappingSummary } from '@/lib/ifaFormMapper';
+import { fillOriginalPdf } from '@/lib/signOriginalIfoPdf';
 
 const FIELD_LABELS = {
   number: 'מספר',
@@ -24,6 +25,7 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
   const [showPdf, setShowPdf] = useState(false);
   const [showNegotiable, setShowNegotiable] = useState(true);
   const [showDirector, setShowDirector] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   // טעינת נתוני השחקן + מועדון למיפוי אוטומטי
   const { data: player } = useQuery({
@@ -110,6 +112,35 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
     },
   });
 
+  // הורדת טופס מולא (PDF המקורי + פרטי שחקן/מועדון שמולאו אוטומטית) — מוכן לחתימה
+  const handleDownloadFilled = async () => {
+    if (!form?.pdf_url) return;
+    setDownloading(true);
+    try {
+      const filledFieldsArr = allFields
+        .filter(f => values[f.key])
+        .map(f => ({ label: f.label, value: String(values[f.key]) }));
+      const blob = await fillOriginalPdf({
+        pdfUrl: form.pdf_url,
+        filledFields: filledFieldsArr,
+        contractLabel: form.label,
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `טופס-${contract.player_name || 'שחקן'}-${form.label || 'חוזה'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    } catch (e) {
+      console.error('fillOriginalPdf failed', e);
+      alert('הורדת הטופס נכשלה — נא לנסות שנית או להשתמש בכפתור "PDF מקורי"');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={onClose}>
       <div
@@ -126,9 +157,18 @@ export default function ContractFillModal({ contract, onClose, onSaved }) {
           <div className="flex items-center gap-2">
             {form?.pdf_url && (
               <a href={form.pdf_url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/10 transition-colors">
-                <ExternalLink size={11} /> PDF מקורי
+                className="flex items-center gap-1 text-[10px] font-bold text-white/40 border border-white/15 px-2.5 py-1.5 rounded-sm hover:bg-white/5 hover:text-white transition-colors">
+                <ExternalLink size={11} /> PDF מקורי (ריק)
               </a>
+            )}
+            {form?.pdf_url && (
+              <button
+                onClick={handleDownloadFilled}
+                disabled={downloading}
+                className="flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/10 transition-colors disabled:opacity-40">
+                {downloading ? <Loader2 size={11} className="animate-spin" /> : <Download size={11} />}
+                הורד PDF מולא לחתימה
+              </button>
             )}
             <button onClick={onClose}><X size={16} className="text-white/30 hover:text-white" /></button>
           </div>

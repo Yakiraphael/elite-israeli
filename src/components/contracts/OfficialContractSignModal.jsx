@@ -121,6 +121,11 @@ export default function OfficialContractSignModal({
 
       // ===== 1. חתימה על גבי ה-PDF המקורי של ההתאחדות =====
       let documentUrl = contract?.document_url;
+      // בניית רשימת סעיפים שמולאו לשיבוץ על ה-PDF
+      const savedFields = (() => { try { return contract.filled_fields ? JSON.parse(contract.filled_fields) : {}; } catch { return {}; } })();
+      const filledFieldsArr = [...(form?.negotiable_fields || []), ...(form?.director_fillable_fields || [])]
+        .filter(f => savedFields[f.key])
+        .map(f => ({ label: f.label, value: String(savedFields[f.key]) }));
       try {
         const blob = await signOriginalPdf({
           pdfUrl: form?.pdf_url,
@@ -129,6 +134,7 @@ export default function OfficialContractSignModal({
           signerRoleLabel: SIGNER_LABELS[signerRole] || signerRole,
           signerIp,
           contractLabel: form?.label,
+          filledFields: filledFieldsArr,
         });
         const file = new File([blob], `contract-${contract.id}.pdf`, { type: 'application/pdf' });
         const { file_url } = await base44.integrations.Core.UploadFile({ file });

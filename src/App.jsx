@@ -16,6 +16,7 @@ import ClubRegistration from './pages/ClubRegistration';
 import ScoutingArena from './pages/ScoutingArena';
 import OnboardingFlow from './pages/OnboardingFlow';
 import CoachWorkspace from './pages/CoachWorkspace';
+import CoachRoster from './pages/CoachRoster';
 import DirectorDashboard from './pages/DirectorDashboard';
 import SignContract from './pages/SignContract';
 import GuardianPortal from './pages/GuardianPortal';
@@ -56,6 +57,7 @@ const AuthenticatedApp = () => {
       <Route path="/scouting" element={<ScoutingArena />} />
       <Route path="/onboarding" element={<OnboardingFlow />} />
       <Route path="/coach" element={<CoachWorkspace />} />
+      <Route path="/coach-roster" element={<CoachRoster />} />
       <Route path="/director" element={<DirectorDashboard />} />
       <Route path="/sign-contract" element={<SignContract />} />
       <Route path="/guardian-portal" element={<GuardianPortal />} />
