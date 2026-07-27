@@ -14,6 +14,8 @@ import TransferTrackerPanel from './TransferTrackerPanel';
 import RequestHub from './RequestHub';
 import TransfermarktCareerPanel from './TransfermarktCareerPanel';
 import UnifiedTimeline from './UnifiedTimeline';
+import PreSignatureAudit from './PreSignatureAudit';
+import ExternalSourcesPanel from './ExternalSourcesPanel';
 import PlayerOffersPanel from './PlayerOffersPanel';
 import CertificatesPanel from './CertificatesPanel';
 import VideoHighlightsGallery from './VideoHighlightsGallery';
@@ -294,9 +296,6 @@ export default function PlayerProfileView({ player, events }) {
 
                   {/* היסטוריית חוזים — נגישה ישירות מהתיק המשפטי */}
                   {isApproved && <ContractsQuickAccess playerId={player.id} />}
-
-                  {/* ציר קריירה אחיד */}
-                  <UnifiedTimeline player={player} />
                 </div>
               </div>
 
@@ -316,6 +315,11 @@ export default function PlayerProfileView({ player, events }) {
                   <p className="text-white/80 text-sm leading-relaxed">{player.achievements}</p>
                 </div>
             }
+
+              {/* ציר הזמן — הועבר אל מתחת להישגים + שער אישור חתימה (Pre-Signature Audit) */}
+              <PreSignatureAudit player={player} />
+              <UnifiedTimeline player={player} />
+              <ExternalSourcesPanel player={player} />
 
               {isApproved && player.transfermarkt_url && <TransfermarktCareerPanel player={player} />}
             </motion.div>
