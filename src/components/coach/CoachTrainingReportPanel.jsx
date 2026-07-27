@@ -4,12 +4,18 @@ import { base44 } from '@/api/base44Client';
 import {
   Calendar, Loader2, CheckCircle2, Save, Users, Plus, Activity,
 } from 'lucide-react';
+import FieldReportsStudio from '@/components/fieldreports/FieldReportsStudio';
+import SessionDrillModal from '@/components/fieldreports/SessionDrillModal';
 
 // פאנל דיווח אימון / סדנה — מאפשר למאמן:
 //   1) לפתוח אירוע TeamEvent עם סיכום עיבוד פסיכולוגי.
 //   2) לסמן נוכחות + ציון משמעת + הערות עבור כל שחקן באזור.
 //   3) לבצע bulk insert של רשומות BehaviorLog — מה שמפעיל אוטומציה שמחשבת מחדש attendance/dicipline.
-export default function CoachTrainingReportPanel({ region }) {
+//   בונוס: תת-לשונית "דוחות מפורטים" פותחת סטודיו עם 3 סוגי דוחות קבוצתיים והיסטוריית התעמקות.
+export default function CoachTrainingReportPanel({ region, team, teamPlayers = [] }) {
+  const [subtab, setSubtab] = useState('attendance');
+  const [drillSession, setDrillSession] = useState(null);
+
   const queryClient = useQueryClient();
 
   const today = new Date().toISOString().slice(0, 10);
@@ -106,8 +112,31 @@ export default function CoachTrainingReportPanel({ region }) {
 
   const rosterCount = Object.keys(roster).length;
 
+  if (subtab === 'reports') {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-1.5">
+          <button onClick={() => setSubtab('attendance')}
+            className="px-3.5 py-2 rounded-md text-xs font-bold bg-[#1B263B] text-white/60 hover:text-white border border-white/10">
+            ← חזרה לדיווח נוכחות
+          </button>
+        </div>
+        <FieldReportsStudio team={team} players={teamPlayers} authorRole="מאמן" />
+        {drillSession && <SessionDrillModal session={drillSession} onOpenReport={() => {}} onClose={() => setDrillSession(null)} />}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5">
+      {/* כפתור מעבר לדוחות מפורטים */}
+      <div className="flex items-center justify-end">
+        <button onClick={() => setSubtab('reports')}
+          className="px-3.5 py-2 rounded-md text-xs font-bold bg-[#D4AF37]/15 hover:bg-[#D4AF37]/25 text-[#D4AF37] border border-[#D4AF37]/30">
+          ✍️ דוחות מפורטים (מקצועי / מנטלי / אישי)
+        </button>
+      </div>
+
       {/* Session header */}
       <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5 space-y-4">
         <div className="flex items-center gap-2 text-white font-black text-sm">
@@ -265,14 +294,16 @@ export default function CoachTrainingReportPanel({ region }) {
             {region && region !== 'all' ? `דיווחים אחרונים · ${region}` : 'דיווחים אחרונים (כל האזורים)'}
           </div>
           <div className="space-y-1.5">
-            {recentEvents.slice(0, 5).map(ev => (
-              <div key={ev.id} className="flex items-center justify-between text-xs">
+            {recentEvents.slice(0, 8).map(ev => (
+              <button key={ev.id} onClick={() => setDrillSession(ev)}
+                className="w-full flex items-center justify-between text-xs hover:bg-white/[0.04] -mx-1 px-1 py-0.5 rounded transition-colors">
                 <span className="text-white/70 truncate">{ev.name}</span>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span className="text-[10px] text-white/40 bg-white/5 px-1.5 py-0.5 rounded">{ev.type}</span>
                   <span className="text-white/30 text-[10px]">{ev.date_start || '-'}</span>
+                  <span className="text-[#D4AF37] text-[10px] font-bold">התעמק ›</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -297,6 +328,8 @@ export default function CoachTrainingReportPanel({ region }) {
           <span className="text-red-400 text-xs">{submit.error?.message}</span>
         )}
       </div>
+
+      {drillSession && <SessionDrillModal session={drillSession} onOpenReport={() => setSubtab('reports')} onClose={() => setDrillSession(null)} />}
     </div>
   );
 }
