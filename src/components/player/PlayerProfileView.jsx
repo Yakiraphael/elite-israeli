@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   User, MapPin, Trophy, Calendar, ChevronRight, CheckCircle2, ArrowRight, Star,
   Target, TrendingUp, Shield, Zap, Activity, Baby, Globe, FileText, Download,
-  Video, Link as LinkIcon, AlertTriangle, Vault, Briefcase, RefreshCw, BarChart3
-} from 'lucide-react';
+  Video, Link as LinkIcon, AlertTriangle, Vault, Briefcase, RefreshCw, BarChart3 } from
+'lucide-react';
 import { Link } from 'react-router-dom';
 import EliteIdCard from '../EliteIdCard';
 import MentalJourneyChart from './MentalJourneyChart';
@@ -37,16 +37,16 @@ const POSITIONS_INFO = {
   'קשר': { role: 'Central Mid', skills: ['ראיית משחק', 'מסירות', 'תנועה', 'גמר'], color: 'from-green-500 to-teal-600' },
   'קשר התקפי': { role: 'Attacking Mid', skills: ['יצירתיות', 'שוט', 'פאסינג', 'מיקום'], color: 'from-orange-500 to-amber-600' },
   'חלוץ צד': { role: 'Winger', skills: ['מהירות', '1v1', 'כדורי מוח', 'גמר'], color: 'from-red-500 to-orange-500' },
-  'חלוץ': { role: 'Striker', skills: ['גמר', 'מיקום', 'ראש', 'לחץ'], color: 'from-red-600 to-red-800' },
+  'חלוץ': { role: 'Striker', skills: ['גמר', 'מיקום', 'ראש', 'לחץ'], color: 'from-red-600 to-red-800' }
 };
 
 const TABS = [
-  { id: 'showcase', label: '📋 פרופיל אישי' },
-  { id: 'vault', label: '🔐 כספת אישית' },
-  { id: 'cv', label: '💼 מחולל קורות חיים' },
-  { id: 'transfers', label: '🔄 מרכז העברות' },
-  { id: 'requests', label: '🎯 בקשות' },
-];
+{ id: 'showcase', label: '📋 פרופיל אישי' },
+{ id: 'vault', label: '🔐 כספת אישית' },
+{ id: 'cv', label: '💼 מחולל קורות חיים' },
+{ id: 'transfers', label: '🔄 מרכז העברות' },
+{ id: 'requests', label: '🎯 בקשות' }];
+
 
 const RESTRICTED_TABS = ['vault', 'transfers', 'requests'];
 
@@ -54,9 +54,9 @@ export default function PlayerProfileView({ player, events }) {
   const [tab, setTab] = useState('showcase');
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const posInfo = POSITIONS_INFO[player.position] || { role: '', skills: [], color: 'from-gray-600 to-gray-800' };
-  const playerEvent = events.find(e => e.id === player.event_id);
+  const playerEvent = events.find((e) => e.id === player.event_id);
   const isMedicalExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
-  const isMedicalSoon = !isMedicalExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
+  const isMedicalSoon = !isMedicalExpired && player.medical_expiry_date && new Date(player.medical_expiry_date) - new Date() < 30 * 24 * 60 * 60 * 1000;
   const isApproved = player.account_status === 'מאושר';
 
   // Traffic-light eligibility: green = fit, yellow = renewal due soon, red = non-eligible
@@ -64,7 +64,7 @@ export default function PlayerProfileView({ player, events }) {
   const MEDICAL_LIGHT_INFO = {
     green: { label: 'כשיר לחלוטין', color: '#10B981' },
     yellow: { label: 'נדרש חידוש בקרוב', color: '#F59E0B' },
-    red: { label: 'לא כשיר', color: '#EF4444' },
+    red: { label: 'לא כשיר', color: '#EF4444' }
   };
 
   return (
@@ -80,29 +80,29 @@ export default function PlayerProfileView({ player, events }) {
         </div>
       </div>
 
-      {showNotificationSettings && (
-        <PlayerNotificationSettingsModal player={player} onClose={() => setShowNotificationSettings(false)} />
-      )}
+      {showNotificationSettings &&
+      <PlayerNotificationSettingsModal player={player} onClose={() => setShowNotificationSettings(false)} />
+      }
 
       {/* Pending approval banner */}
-      {!isApproved && (
-        <div className="flex items-center gap-3 px-6 py-3 text-sm font-bold bg-amber-500/15 border-b border-amber-500/30 text-amber-400">
+      {!isApproved &&
+      <div className="flex items-center gap-3 px-6 py-3 text-sm font-bold bg-amber-500/15 border-b border-amber-500/30 text-amber-400">
           <Lock size={16} />
-          {player.account_status === 'מושעה'
-            ? '⛔ החשבון שלך מושעה — פנה לצוות המקצועי לבירור.'
-            : 'החשבון שלך בבדיקה. אנו מאמתים את פרטיך מול הפרופיל שסופק — האישור יתקבל תוך 24 שעות.'}
+          {player.account_status === 'מושעה' ?
+        '⛔ החשבון שלך מושעה — פנה לצוות המקצועי לבירור.' :
+        'החשבון שלך בבדיקה. אנו מאמתים את פרטיך מול הפרופיל שסופק — האישור יתקבל תוך 24 שעות.'}
         </div>
-      )}
+      }
 
       {/* Alert bar */}
-      {isApproved && (isMedicalExpired || isMedicalSoon) && (
-        <div className={`flex items-center gap-3 px-6 py-3 text-sm font-bold ${isMedicalExpired ? 'bg-red-500/20 border-b border-red-500/30 text-red-400' : 'bg-amber-500/20 border-b border-amber-500/30 text-amber-400'}`}>
+      {isApproved && (isMedicalExpired || isMedicalSoon) &&
+      <div className={`flex items-center gap-3 px-6 py-3 text-sm font-bold ${isMedicalExpired ? 'bg-red-500/20 border-b border-red-500/30 text-red-400' : 'bg-amber-500/20 border-b border-amber-500/30 text-amber-400'}`}>
           <AlertTriangle size={16} />
-          {isMedicalExpired
-            ? '⛔ תוקף הבדיקה הרפואית פג — הפרופיל חסום להצעות. העלה אישור חדש.'
-            : `⚠️ תוקף הבדיקה הרפואית יפוג בעוד פחות מ-30 יום. לחץ להעדכן.`}
+          {isMedicalExpired ?
+        '⛔ תוקף הבדיקה הרפואית פג — הפרופיל חסום להצעות. העלה אישור חדש.' :
+        `⚠️ תוקף הבדיקה הרפואית יפוג בעוד פחות מ-30 יום. לחץ להעדכן.`}
         </div>
-      )}
+      }
 
       {/* Hero — תעודת זהות מקצועית ויזואלית */}
       <div className={`bg-gradient-to-l ${posInfo.color} relative overflow-hidden`}>
@@ -112,9 +112,9 @@ export default function PlayerProfileView({ player, events }) {
         <div className="relative max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center gap-6">
           {/* אווטאר עשיר */}
           <div className="w-24 h-24 rounded-2xl bg-[#D4AF37]/15 border-4 border-[#D4AF37] flex items-center justify-center flex-shrink-0 overflow-hidden shadow-2xl">
-            {player.avatar_url
-              ? <img src={player.avatar_url} alt={player.full_name} className="w-full h-full object-cover" />
-              : <User size={42} className="text-[#D4AF37]" />}
+            {player.avatar_url ?
+            <img src={player.avatar_url} alt={player.full_name} className="w-full h-full object-cover" /> :
+            <User size={42} className="text-[#D4AF37]" />}
           </div>
           <div className="flex-1 text-center md:text-right">
             <div className="text-[#D4AF37] text-xs tracking-[0.3em] font-bold uppercase mb-1 flex items-center gap-2 justify-center md:justify-start flex-wrap">
@@ -127,44 +127,44 @@ export default function PlayerProfileView({ player, events }) {
               <span className="bg-[#D4AF37] text-[#0D1B2A] text-xs font-black px-3 py-1 rounded-full flex items-center gap-1">
                 <Star size={11} /> {player.position}
               </span>
-              {player.secondary_position && (
-                <span className="bg-white/15 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+              {player.secondary_position &&
+              <span className="bg-white/15 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
                   ↔ {player.secondary_position}
                 </span>
-              )}
+              }
               {posInfo.role && <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">{posInfo.role}</span>}
-              {player.region && (
-                <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={11} />{player.region}</span>
-              )}
-              {player.city && (
-                <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={10} />{player.city}</span>
-              )}
+              {player.region &&
+              <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 hidden"><MapPin size={11} />{player.region}</span>
+              }
+              {player.city &&
+              <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={10} />{player.city}</span>
+              }
             </div>
             {/* שיוך מקצועי — קבוצה / ליגה / ארגון */}
             <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
-              {player.team_name && (
-                <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+              {player.team_name &&
+              <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                   ⚽ {player.team_name}
                 </span>
-              )}
-              {player.league_name && (
-                <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+              }
+              {player.league_name &&
+              <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                   🏅 {player.league_name}
                 </span>
-              )}
-              {player.organization_name && (
-                <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+              }
+              {player.organization_name &&
+              <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                   🏥 {player.organization_name}
                 </span>
-              )}
+              }
               <span className={`text-xs font-black px-3 py-1 rounded-full border ${player.is_free_agent ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-white/10 text-white/70 border-white/15'}`}>
                 {player.is_free_agent ? '🟢 Free Agent' : '⚪ Under Contract'}
               </span>
-              {player.contract_end_date && (
-                <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1 border border-white/15">
+              {player.contract_end_date &&
+              <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1 border border-white/15">
                   📅 חוזה עד {player.contract_end_date}
                 </span>
-              )}
+              }
             </div>
           </div>
           {/* סטטוסים צדדיים */}
@@ -175,24 +175,24 @@ export default function PlayerProfileView({ player, events }) {
               </div>
               <div className="text-white/70 text-xs">{MEDICAL_LIGHT_INFO[medicalLight].label}</div>
             </div>
-            {player.overall_rating != null && (
-              <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 rounded-lg px-4 py-2 text-center">
+            {player.overall_rating != null &&
+            <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 rounded-lg px-4 py-2 text-center">
                 <div className="text-[#D4AF37] text-xs font-bold">ציון משוקלל</div>
                 <div className="text-white font-black text-lg">{player.overall_rating}</div>
               </div>
-            )}
-            {player.ifa_ready && (
-              <div className="bg-green-500/20 border border-green-500/40 rounded-lg px-4 py-2 text-center">
+            }
+            {player.ifa_ready &&
+            <div className="bg-green-500/20 border border-green-500/40 rounded-lg px-4 py-2 text-center">
                 <div className="text-green-400 text-xs font-bold">✓ IFA Ready</div>
                 <div className="text-white/50 text-xs">מוכן להעברה</div>
               </div>
-            )}
+            }
           </div>
         </div>
 
         {/* Quick actions — at-a-glance, no scroll needed */}
-        {isApproved && (
-          <div className="relative max-w-5xl mx-auto px-6 pb-6 flex flex-wrap gap-2">
+        {isApproved &&
+        <div className="relative max-w-5xl mx-auto px-6 pb-6 flex flex-wrap gap-2">
             <button onClick={() => setTab('vault')} className="flex-1 min-w-[140px] bg-white/10 hover:bg-white/15 text-white text-xs font-bold py-2.5 rounded-sm transition-colors">
               🩺 עדכון רפואי
             </button>
@@ -203,20 +203,20 @@ export default function PlayerProfileView({ player, events }) {
               📄 הצג חוזה
             </button>
           </div>
-        )}
+        }
       </div>
 
       {/* Tabs */}
       <div className="border-b border-white/10 sticky top-0 bg-[#0D1B2A] z-10 overflow-x-auto">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {TABS.map(t => {
+          {TABS.map((t) => {
             const locked = !isApproved && RESTRICTED_TABS.includes(t.id);
             return (
               <button key={t.id} onClick={() => !locked && setTab(t.id)} disabled={locked}
-                className={`px-4 py-4 text-xs font-bold whitespace-nowrap transition-colors border-b-2 flex items-center gap-1.5 ${locked ? 'text-white/25 border-transparent cursor-not-allowed' : tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 border-transparent hover:text-white/90'}`}>
+              className={`px-4 py-4 text-xs font-bold whitespace-nowrap transition-colors border-b-2 flex items-center gap-1.5 ${locked ? 'text-white/25 border-transparent cursor-not-allowed' : tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 border-transparent hover:text-white/90'}`}>
                 {t.label} {locked && <Lock size={10} />}
-              </button>
-            );
+              </button>);
+
           })}
         </div>
       </div>
@@ -225,8 +225,8 @@ export default function PlayerProfileView({ player, events }) {
         <AnimatePresence mode="wait">
 
           {/* 1. SHOWCASE — תיק פרופיל משפטי מסודר */}
-          {tab === 'showcase' && (
-            <motion.div key="showcase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
+          {tab === 'showcase' &&
+          <motion.div key="showcase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
               {/* תיק רגולטורי — באנר פרטיות */}
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-4 flex items-start gap-3">
                 <Shield size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
@@ -268,28 +268,28 @@ export default function PlayerProfileView({ player, events }) {
                         <div className="font-black text-sm mt-1 text-white">{player.overall_rating ?? '—'}</div>
                       </div>
                     </div>
-                    {(player.contract_end_date || player.experience_years != null || player.ifa_id) && (
-                      <div className="mt-4 pt-3 border-t border-white/10 grid grid-cols-3 gap-3 text-[11px]">
-                        {player.contract_end_date && (
-                          <div>
+                    {(player.contract_end_date || player.experience_years != null || player.ifa_id) &&
+                  <div className="mt-4 pt-3 border-t border-white/10 grid grid-cols-3 gap-3 text-[11px]">
+                        {player.contract_end_date &&
+                    <div>
                             <div className="text-white/40">תוקף חוזה עד</div>
                             <div className="text-white font-bold">{player.contract_end_date}</div>
                           </div>
-                        )}
-                        {player.experience_years != null && (
-                          <div>
+                    }
+                        {player.experience_years != null &&
+                    <div>
                             <div className="text-white/40">ניסיון</div>
                             <div className="text-white font-bold">{player.experience_years} שנים</div>
                           </div>
-                        )}
-                        {player.ifa_id && (
-                          <div className="min-w-0">
+                    }
+                        {player.ifa_id &&
+                    <div className="min-w-0">
                             <div className="text-white/40">כרטיס IFA</div>
                             <div className="text-white font-bold truncate" title={player.ifa_id}>{player.ifa_id}</div>
                           </div>
-                        )}
+                    }
                       </div>
-                    )}
+                  }
                   </div>
 
                   {/* היסטוריית חוזים — נגישה ישירות מהתיק המשפטי */}
@@ -310,20 +310,20 @@ export default function PlayerProfileView({ player, events }) {
 
               <PlayerProgressChart player={player} />
 
-              {player.achievements && (
-                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
+              {player.achievements &&
+            <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
                   <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2"><Trophy size={12} /> הישגים</h3>
                   <p className="text-white/80 text-sm leading-relaxed">{player.achievements}</p>
                 </div>
-              )}
+            }
 
               {isApproved && player.transfermarkt_url && <TransfermarktCareerPanel player={player} />}
             </motion.div>
-          )}
+          }
 
           {/* 2. VAULT */}
-          {tab === 'vault' && isApproved && (
-            <motion.div key="vault" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl space-y-4">
+          {tab === 'vault' && isApproved &&
+          <motion.div key="vault" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl space-y-4">
               <ContractsQuickAccess playerId={player.id} />
               <PersonalManagerPanel player={player} />
 
@@ -332,59 +332,59 @@ export default function PlayerProfileView({ player, events }) {
                 <p className="text-white/40 text-xs mb-5">כל המסמכים הרגולטוריים שלך במקום אחד מאובטח</p>
                 <div className="space-y-3">
                   {[
-                    { label: '🪪 תעודת זהות', url: player.id_document_url, status: !!player.id_document_url },
-                    { label: '📎 ספח תעודת זהות', url: player.id_suffix_url, status: !!player.id_suffix_url, youthOnly: true },
-                    { label: '🩺 אישור רפואי', url: player.medical_certificate_url, status: !!player.medical_certificate_url, expiry: player.medical_expiry_date },
-                  ].filter(d => !d.youthOnly || !player.is_adult).map((doc, i) => (
-                    <div key={i} className={`flex items-center justify-between p-3 rounded-lg border ${doc.status ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}`}>
+                { label: '🪪 תעודת זהות', url: player.id_document_url, status: !!player.id_document_url },
+                { label: '📎 ספח תעודת זהות', url: player.id_suffix_url, status: !!player.id_suffix_url, youthOnly: true },
+                { label: '🩺 אישור רפואי', url: player.medical_certificate_url, status: !!player.medical_certificate_url, expiry: player.medical_expiry_date }].
+                filter((d) => !d.youthOnly || !player.is_adult).map((doc, i) =>
+                <div key={i} className={`flex items-center justify-between p-3 rounded-lg border ${doc.status ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}`}>
                       <div className="flex items-center gap-2">
                         <span className={doc.status ? 'text-green-400 text-xs font-bold' : 'text-red-400 text-xs font-bold'}>
                           {doc.status ? '✓' : '✗'}
                         </span>
                         <span className="text-white text-sm">{doc.label}</span>
-                        {doc.expiry && (
-                          <span className={`text-[10px] ${isMedicalExpired ? 'text-red-400' : isMedicalSoon ? 'text-amber-400' : 'text-green-400'}`}>
+                        {doc.expiry &&
+                    <span className={`text-[10px] ${isMedicalExpired ? 'text-red-400' : isMedicalSoon ? 'text-amber-400' : 'text-green-400'}`}>
                             · {doc.expiry}
                           </span>
-                        )}
+                    }
                       </div>
-                      {doc.url && (
-                        <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] text-xs hover:text-amber-300">
+                      {doc.url &&
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] text-xs hover:text-amber-300">
                           <Download size={14} />
                         </a>
-                      )}
+                  }
                     </div>
-                  ))}
+                )}
                 </div>
               </div>
 
-              {player.is_adult && (
-                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
+              {player.is_adult &&
+            <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
                   <h3 className="text-white font-black text-base mb-1">💳 פרטים פיננסיים</h3>
                   <p className="text-white/40 text-xs mb-3">שמורים מוצפנים — מוצגות 4 ספרות אחרונות בלבד</p>
                   <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3">
                     <span className="text-white/60 text-sm">{player.bank_token ? `•••• •••• •••• ${player.bank_token.slice(-4)}` : 'לא הוזן אמצעי תשלום'}</span>
                   </div>
                 </div>
-              )}
+            }
 
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6">
                 <h3 className="text-white font-black text-base mb-3">📋 אישורים משפטיים</h3>
                 <div className="space-y-2">
-                  {Object.entries(player.legal_terms_accepted || {}).map(([key, val]) => (
-                    <div key={key} className="flex items-center gap-2 text-xs">
+                  {Object.entries(player.legal_terms_accepted || {}).map(([key, val]) =>
+                <div key={key} className="flex items-center gap-2 text-xs">
                       <CheckCircle2 size={14} className={val ? 'text-green-400' : 'text-red-400'} />
                       <span className="text-white/60 capitalize">{key.replace(/_/g, ' ')}</span>
                     </div>
-                  ))}
+                )}
                 </div>
               </div>
             </motion.div>
-          )}
+          }
 
           {/* 3. CV ENGINE */}
-          {tab === 'cv' && (
-            <motion.div key="cv" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
+          {tab === 'cv' &&
+          <motion.div key="cv" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
               <div className="bg-[#1B263B] border border-white/10 rounded-lg p-6 mb-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -425,25 +425,25 @@ export default function PlayerProfileView({ player, events }) {
                     </div>
                   </div>
 
-                  {player.previous_clubs && (
-                    <div>
+                  {player.previous_clubs &&
+                <div>
                       <p className="text-[#D4AF37] font-bold text-xs mb-1">היסטוריית קריירה</p>
                       <p className="text-white/60 text-xs">{player.previous_clubs}</p>
                     </div>
-                  )}
+                }
 
-                  {player.achievements && (
-                    <div>
+                  {player.achievements &&
+                <div>
                       <p className="text-[#D4AF37] font-bold text-xs mb-1">🏆 הישגים</p>
                       <p className="text-white/60 text-xs">{player.achievements}</p>
                     </div>
-                  )}
+                }
 
-                  {player.transfermarkt_url && (
-                    <a href={player.transfermarkt_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#D4AF37] text-xs hover:text-amber-300">
+                  {player.transfermarkt_url &&
+                <a href={player.transfermarkt_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#D4AF37] text-xs hover:text-amber-300">
                       <Globe size={12} /> פרופיל Transfermarkt
                     </a>
-                  )}
+                }
                 </div>
               </div>
 
@@ -452,25 +452,25 @@ export default function PlayerProfileView({ player, events }) {
                 <CertificatesPanel player={player} />
               </div>
             </motion.div>
-          )}
+          }
 
           {/* 4. TRANSFER HUB */}
-          {tab === 'transfers' && isApproved && (
-            <motion.div key="transfers" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+          {tab === 'transfers' && isApproved &&
+          <motion.div key="transfers" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <PlayerOffersPanel player={player} />
               <TransferTrackerPanel playerId={player.id} playerName={player.full_name} />
             </motion.div>
-          )}
+          }
 
           {/* 5. REQUESTS */}
-          {tab === 'requests' && isApproved && (
-            <motion.div key="requests" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {tab === 'requests' && isApproved &&
+          <motion.div key="requests" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <RequestHub playerId={player.id} playerName={player.full_name} />
             </motion.div>
-          )}
+          }
 
         </AnimatePresence>
       </div>
-    </div>
-  );
+    </div>);
+
 }
