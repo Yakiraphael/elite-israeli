@@ -128,7 +128,7 @@ export default function PlayerProfileView({ player, events }) {
                 <Star size={11} /> {player.position}
               </span>
               {player.secondary_position &&
-              <span className="bg-white/15 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+              <span className="bg-white/15 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20 hidden">
                   ↔ {player.secondary_position}
                 </span>
               }
