@@ -116,10 +116,26 @@ export default function DetailedOfferModal({ player, onClose }) {
         </div>
 
         <div className="p-5 space-y-4">
-          {/* סוג פעולה */}
+          {/* סיכום נמען — שחקן */}
+          <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center flex-shrink-0">
+              {isAdult ? <User size={20} className="text-[#D4AF37]" /> : <Baby size={20} className="text-[#D4AF37]" />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-white font-black text-sm">{player.full_name}</div>
+              <div className="text-white/50 text-xs truncate">
+                {player.position}{player.team_name ? ` · ${player.team_name}` : ''}{player.is_free_agent ? ' · Free Agent' : ''}
+              </div>
+            </div>
+            <span className={`text-[10px] font-bold px-2 py-1 rounded-full border flex-shrink-0 ${isAdult ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/15 border-amber-500/30 text-amber-400'}`}>
+              {isAdult ? 'בוגר' : 'נוער — אפוטרופוס'}
+            </span>
+          </div>
+
+          {/* 1 — סוג פעולה */}
           <div>
             <label className="text-[#D4AF37] text-xs font-bold mb-2 block flex items-center gap-1.5">
-              <Repeat size={12} /> סוג פעולה (קובע תהליך אישורים)
+              <Repeat size={12} /> סוג פעולה · קובע שרשרת אישורים + דרישות מסמכים
             </label>
             <select
               value={form.transfer_category}
@@ -135,23 +151,11 @@ export default function DetailedOfferModal({ player, onClose }) {
             )}
           </div>
 
+          {/* 2 — תנאי החוזה · ליבת ההצעה */}
           <div>
-            <p className="text-[#D4AF37] text-xs font-bold mb-2">פרטי המועדון</p>
+            <p className="text-[#D4AF37] text-xs font-bold mb-2">תנאי החוזה {isAdult ? '' : '(נוער — השאלה/העברה ללא שכר)'}</p>
             <div className="space-y-2.5">
-              <input value={form.club_name} onChange={set('club_name')} placeholder="שם המועדון" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
-              <div className="grid grid-cols-2 gap-2.5">
-                <input value={form.contact_name} onChange={set('contact_name')} placeholder="איש קשר" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
-                <input value={form.contact_phone} onChange={set('contact_phone')} placeholder="טלפון" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
-              </div>
-              <input value={form.contact_email} onChange={set('contact_email')} placeholder="מייל ליצירת קשר" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
-            </div>
-          </div>
-
-          {/* תנאי הצעה — בוגרים בלבד לשכר */}
-          <div>
-            <p className="text-[#D4AF37] text-xs font-bold mb-2">תנאי ההצעה {isAdult ? '' : '(נוער — השאלה/העברה ללא שכר)'}</p>
-            <div className="space-y-2.5">
-              <input value={form.role_offered} onChange={set('role_offered')} placeholder="עמדה מוצעת" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
+              <input value={form.role_offered} onChange={set('role_offered')} placeholder="עמדה מוצעת בסגל" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
               {isAdult && (
                 <div className="grid grid-cols-3 gap-2.5">
                   <input type="number" value={form.salary} onChange={set('salary')} placeholder="שכר חודשי" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
@@ -190,11 +194,26 @@ export default function DetailedOfferModal({ player, onClose }) {
             </div>
           </div>
 
+          {/* 3 — פרטי המועדון הפונה · מנהלתי */}
+          <div>
+            <p className="text-[#D4AF37] text-xs font-bold mb-2">פרטי המועדון הפונה</p>
+            <div className="space-y-2.5">
+              <input value={form.club_name} onChange={set('club_name')} placeholder="שם המועדון הפונה" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
+              <div className="grid grid-cols-2 gap-2.5">
+                <input value={form.contact_name} onChange={set('contact_name')} placeholder="איש קשר ותפקיד" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
+                <input value={form.contact_phone} onChange={set('contact_phone')} placeholder="טלפון ליצירת קשר" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
+              </div>
+              <input value={form.contact_email} onChange={set('contact_email')} placeholder="מייל רשמי להעברת מסמכים" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
+            </div>
+          </div>
+
+          {/* 4 — הודעה אישית */}
           <div>
             <p className="text-[#D4AF37] text-xs font-bold mb-2">הודעה אישית</p>
             <textarea value={form.message} onChange={set('message')} rows={3} placeholder="ספר על החזון, התפקיד הצפוי בסגל..." className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60 resize-none" />
           </div>
 
+          {/* 5 — מסמך נלווה */}
           <div>
             <p className="text-[#D4AF37] text-xs font-bold mb-2">מסמך נלווה (PDF, אופציונלי)</p>
             <label className="flex items-center justify-center gap-2 border border-dashed border-white/25 rounded-sm py-3 text-white/60 text-xs cursor-pointer hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors">
@@ -204,9 +223,9 @@ export default function DetailedOfferModal({ player, onClose }) {
             </label>
           </div>
 
-          {/* תצוגת שרשרת אישורים */}
+          {/* 6 — מפת דרכים · שרשרת אישורים */}
           <div className="bg-[#0D1B2A] border border-white/10 rounded-sm p-3">
-            <div className="text-white/40 text-[10px] font-bold mb-2">מסלול אישורים צפוי:</div>
+            <div className="text-white/40 text-[10px] font-bold mb-2">מפת דרכים · שרשרת אישורים צפויה:</div>
             <div className="flex items-center gap-1.5 flex-wrap text-[10px]">
               {!isAdult ? (
                 <>
@@ -218,11 +237,11 @@ export default function DetailedOfferModal({ player, onClose }) {
                 </>
               ) : (
                 <>
-                  <span className="text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full">1. שחקן</span>
+                  <span className="text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full">1. אישור שחקן</span>
                   <span className="text-white/20">→</span>
-                  <span className="text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded-full">2. תשלום</span>
+                  <span className="text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded-full">2. אימות תשלום</span>
                   <span className="text-white/20">→</span>
-                  <span className="text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full">3. התאחדות</span>
+                  <span className="text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full">3. אימות התאחדות (IFA)</span>
                 </>
               )}
             </div>

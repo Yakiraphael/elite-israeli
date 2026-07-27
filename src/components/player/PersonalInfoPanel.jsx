@@ -12,6 +12,8 @@ const FIELDS = [
   { key: 'city', label: '📍 עיר מגורים', type: 'text' },
   { key: 'phone', label: '📞 טלפון', type: 'text' },
   { key: 'team_name', label: '🏟️ קבוצה נוכחית', type: 'text' },
+  { key: 'league_name', label: '🏅 ליגה', type: 'text' },
+  { key: 'organization_name', label: '🏥 ארגון / עמותה', type: 'text' },
 ];
 
 export default function PersonalInfoPanel({ player }) {

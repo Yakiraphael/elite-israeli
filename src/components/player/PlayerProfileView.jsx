@@ -104,28 +104,70 @@ export default function PlayerProfileView({ player, events }) {
         </div>
       )}
 
-      {/* Hero */}
+      {/* Hero — תעודת זהות מקצועית ויזואלית */}
       <div className={`bg-gradient-to-l ${posInfo.color} relative overflow-hidden`}>
-        <div className="absolute inset-0 bg-[#0D1B2A]/65" />
+        <div className="absolute inset-0 bg-[#0D1B2A]/75" />
+        <div className="absolute top-0 left-0 w-40 h-40 rounded-full blur-3xl opacity-25" style={{ backgroundColor: '#D4AF37' }} />
+        <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-15" style={{ backgroundColor: posInfo.color.replace('from-', '').split(' ')[0] }} />
         <div className="relative max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center gap-6">
-          <div className="w-20 h-20 rounded-full bg-[#D4AF37]/20 border-4 border-[#D4AF37] flex items-center justify-center flex-shrink-0">
-            <User size={36} className="text-[#D4AF37]" />
+          {/* אווטאר עשיר */}
+          <div className="w-24 h-24 rounded-2xl bg-[#D4AF37]/15 border-4 border-[#D4AF37] flex items-center justify-center flex-shrink-0 overflow-hidden shadow-2xl">
+            {player.avatar_url
+              ? <img src={player.avatar_url} alt={player.full_name} className="w-full h-full object-cover" />
+              : <User size={42} className="text-[#D4AF37]" />}
           </div>
-          <div className="flex-1">
-            <div className="text-[#D4AF37] text-xs tracking-[0.3em] font-bold uppercase mb-1">
+          <div className="flex-1 text-center md:text-right">
+            <div className="text-[#D4AF37] text-xs tracking-[0.3em] font-bold uppercase mb-1 flex items-center gap-2 justify-center md:justify-start flex-wrap">
               {player.is_adult ? 'שחקן בוגר' : 'שחקן נוער'} · עילית ישראלית
+              {player.elite_id && <span className="bg-[#D4AF37] text-[#0D1B2A] text-[10px] px-2 py-0.5 rounded-full tracking-normal font-black">{player.elite_id}</span>}
             </div>
-            <h1 className="text-white text-2xl md:text-4xl font-black">{player.full_name}</h1>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <span className="bg-[#D4AF37] text-[#0D1B2A] text-xs font-black px-3 py-1 rounded-full">{player.position}</span>
-              <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">{posInfo.role}</span>
-              {player.team_name && <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">{player.team_name}</span>}
-              {player.city && <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={10} />{player.city}</span>}
-              <span className={`text-xs font-black px-3 py-1 rounded-full ${player.is_free_agent ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/70'}`}>
+            <h1 className="text-white text-3xl md:text-5xl font-black">{player.full_name}</h1>
+            {/* שורת זהות ויזואלית — עמדות, אזור, גיל */}
+            <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
+              <span className="bg-[#D4AF37] text-[#0D1B2A] text-xs font-black px-3 py-1 rounded-full flex items-center gap-1">
+                <Star size={11} /> {player.position}
+              </span>
+              {player.secondary_position && (
+                <span className="bg-white/15 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+                  ↔ {player.secondary_position}
+                </span>
+              )}
+              {posInfo.role && <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">{posInfo.role}</span>}
+              {player.region && (
+                <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={11} />{player.region}</span>
+              )}
+              {player.city && (
+                <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1"><MapPin size={10} />{player.city}</span>
+              )}
+            </div>
+            {/* שיוך מקצועי — קבוצה / ליגה / ארגון */}
+            <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
+              {player.team_name && (
+                <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                  ⚽ {player.team_name}
+                </span>
+              )}
+              {player.league_name && (
+                <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                  🏅 {player.league_name}
+                </span>
+              )}
+              {player.organization_name && (
+                <span className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                  🏥 {player.organization_name}
+                </span>
+              )}
+              <span className={`text-xs font-black px-3 py-1 rounded-full border ${player.is_free_agent ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-white/10 text-white/70 border-white/15'}`}>
                 {player.is_free_agent ? '🟢 Free Agent' : '⚪ Under Contract'}
               </span>
+              {player.contract_end_date && (
+                <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full flex items-center gap-1 border border-white/15">
+                  📅 חוזה עד {player.contract_end_date}
+                </span>
+              )}
             </div>
           </div>
+          {/* סטטוסים צדדיים */}
           <div className="flex flex-col gap-2">
             <div className="rounded-lg px-4 py-2 text-center border" style={{ backgroundColor: `${MEDICAL_LIGHT_INFO[medicalLight].color}20`, borderColor: `${MEDICAL_LIGHT_INFO[medicalLight].color}50` }}>
               <div className="text-xs font-bold flex items-center justify-center gap-1.5" style={{ color: MEDICAL_LIGHT_INFO[medicalLight].color }}>

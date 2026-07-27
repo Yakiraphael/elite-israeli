@@ -8,6 +8,7 @@ import SocialFloat from '../components/SocialFloat';
 import MentalJourneyChart from '../components/player/MentalJourneyChart';
 import SquadManagementPanel from '../components/squad/SquadManagementPanel';
 import DetailedOfferModal from '../components/scouting/DetailedOfferModal';
+import ScoutPlayerProfileModal from '../components/scouting/ScoutPlayerProfileModal';
 import {
   Search, Filter, Star, MapPin, Baby, Building2, ChevronRight, Lock,
   Heart, X, Send, BarChart3, Globe, Loader2, CheckCircle2, Zap, Shield, Users, ExternalLink
@@ -156,9 +157,9 @@ export default function ScoutingArena() {
         )}
       </div>
 
-      {/* Player detail modal */}
+      {/* Player detail modal — Scout View (כרטיס שחקן מנקודת מבט הסקאוט) */}
       {selectedPlayer && !selectedPlayer.compare && (
-        <PlayerDetailModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} onOffer={() => { setShowOffer(selectedPlayer); setSelectedPlayer(null); }} />
+        <ScoutPlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} onOffer={() => { setShowOffer(selectedPlayer); setSelectedPlayer(null); }} />
       )}
 
       {/* Compare modal */}

@@ -68,6 +68,7 @@ function DashboardContent({ onLogout }) {
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [openFormKey, setOpenFormKey] = useState(null);
+  const [subCF, setSubCF] = useState('contracts');
 
   const { data: players = [], isLoading: loadPlayers } = useQuery({
     queryKey: ['dir-players'],
@@ -164,14 +165,22 @@ function DashboardContent({ onLogout }) {
         )}
 
         {tab === 'contracts_forms' && (
-          <div className="space-y-8">
-            <ContractsPanel />
-            <TemplatesPanel onOpenForm={setOpenFormKey} />
+          <div className="space-y-5">
+            <div className="flex gap-1.5 bg-[#1B263B] border border-white/10 rounded-lg p-1.5">
+              <button onClick={() => setSubCF('contracts')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'contracts' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
+                <FileText size={14} /> ניהול חוזים קיימים
+              </button>
+              <button onClick={() => setSubCF('templates')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'templates' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
+                <Crown size={14} /> בנק התבניות הרשמיות
+              </button>
+            </div>
+            {subCF === 'contracts' && <ContractsPanel />}
+            {subCF === 'templates' && <TemplatesPanel onOpenForm={setOpenFormKey} />}
           </div>
         )}
 
         {tab === 'requests' && (
-          <RequestsTab requests={requests} />
+          <RequestsTab requests={requests} players={players} />
         )}
 
         {tab === 'finance' && (
@@ -327,7 +336,7 @@ function SquadTab({ players, loading, onSelect }) {
 }
 
 // ---- REQUESTS TAB ----
-function RequestsTab({ requests }) {
+function RequestsTab({ requests, players = [] }) {
   const queryClient = useQueryClient();
   const update = useMutation({
     mutationFn: ({ id, status }) => base44.entities.PlayerRequest.update(id, { status }),
@@ -336,6 +345,14 @@ function RequestsTab({ requests }) {
 
   const pending = requests.filter(r => r.status === 'נשלח' || r.status === 'בטיפול');
   const done = requests.filter(r => r.status === 'אושר' || r.status === 'נדחה');
+
+  // סידור פעולות לפי מצבי ניהול חוזים — שחקנים שזקוקים לחידוש (90 יום ומטה)
+  const contractsExpiring = players
+    .filter(p => {
+      const d = calcDaysLeft(p.contract_end_date);
+      return d !== null && d < 90;
+    })
+    .sort((a, b) => calcDaysLeft(a.contract_end_date) - calcDaysLeft(b.contract_end_date));
 
   const CAT_ROUTE = {
     'חופשה/היעדרות': 'מאמן',
@@ -346,6 +363,36 @@ function RequestsTab({ requests }) {
   };
 
   return (
+    <div className="space-y-5">
+      {contractsExpiring.length > 0 && (
+        <div className="bg-[#1B263B] border border-amber-500/30 rounded-lg p-5">
+          <h3 className="text-amber-400 font-black text-sm mb-3 flex items-center gap-2">
+            <FileText size={14} /> חוזים דורשים חידוש · {contractsExpiring.length} שחקנים
+          </h3>
+          <div className="space-y-2">
+            {contractsExpiring.map(p => {
+              const d = calcDaysLeft(p.contract_end_date);
+              const expired = d < 0;
+              return (
+                <div key={p.id} className="flex items-center justify-between bg-[#0D1B2A] border border-white/10 rounded-md p-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${expired ? 'bg-red-400' : 'bg-amber-400'}`} />
+                    <span className="text-white font-bold text-sm">{p.full_name}</span>
+                    <span className="text-white/40 text-xs">{p.position}</span>
+                  </div>
+                  <div className="text-xs text-left">
+                    <div className="text-white/40">חוזה עד {p.contract_end_date}</div>
+                    <div className={`font-bold ${expired ? 'text-red-400' : 'text-amber-400'}`}>
+                      {expired ? `פג תוקף לפני ${-d} ימים` : `${d} ימים לסיום`}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
     <div className="space-y-3">
       <h3 className="text-white font-black text-base mb-1">תור פעולות — {pending.length} ממתינות</h3>
       {pending.length === 0 && <div className="text-center py-10 text-white/30 text-sm">🎉 אין בקשות פתוחות</div>}
@@ -391,6 +438,7 @@ function RequestsTab({ requests }) {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 }
