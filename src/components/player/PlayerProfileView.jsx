@@ -127,11 +127,11 @@ export default function PlayerProfileView({ player, events }) {
               <span className="bg-[#D4AF37] text-[#0D1B2A] text-xs font-black px-3 py-1 rounded-full flex items-center gap-1">
                 <Star size={11} /> {player.position}
               </span>
-              {player.secondary_position &&
-              <span className="bg-white/15 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20 hidden">
-                  ↔ {player.secondary_position}
-                </span>
-              }
+              
+
+
+
+              
               {posInfo.role && <span className="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">{posInfo.role}</span>}
               {player.region &&
               <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 hidden"><MapPin size={11} />{player.region}</span>
