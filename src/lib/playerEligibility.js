@@ -48,3 +48,42 @@ export function computeEligibility(player) {
 
   return { color, eligible: color !== 'red', reasons };
 }
+
+// ============================================================
+// IFA Regulatory Gate — חסימת טופס סגל רשמי (Match Lineup Lock)
+// מונעת אוטומטית מהמאמן להוסיף שחקן לטופס המשחק הרשמי אם לא הושלמו
+// תנאי הרגולציה: פג תוקף אישור רפואי, חוסר רישום IFA פעיל, או צבירת
+// כרטיסים המובילה להשעיה תקנונית.
+// ============================================================
+
+export const IFA_SUSPENSION_YELLOW_THRESHOLD = 5;
+
+export function isMatchLineupLocked(player) {
+  const reasons = [];
+  let locked = false;
+  const block = (reason) => {
+    reasons.push(reason);
+    locked = true;
+  };
+
+  // 1. אישור רפואי — פג תוקף / חסר
+  if (!player.medical_certificate_url) {
+    block('חסר אישור רפואי תקף');
+  } else {
+    const days = calcDaysLeft(player.medical_expiry_date);
+    if (days !== null && days < 0) block('אישור רפואי פג תוקף — נדרש חידוש');
+  }
+
+  // 2. רישום IFA פעיל
+  if (player.ifa_registration_status === 'Unverified' || (!player.ifa_id && !player.ifa_player_id)) {
+    block('חסר רישום פעיל בהתאחדות לכדורגל (IFA ID)');
+  }
+
+  // 3. השעיה / צבירת כרטיסים תקנונית
+  if (player.is_suspended) block('שחקן מושעה רשמית מפעילות');
+  if ((player.yellow_cards_count || 0) >= IFA_SUSPENSION_YELLOW_THRESHOLD) {
+    block(`השעיה אוטומטית — ${player.yellow_cards_count} כרטיסים צהובים (תקנון IFA)`);
+  }
+
+  return { locked, reasons };
+}

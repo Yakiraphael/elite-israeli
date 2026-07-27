@@ -3,17 +3,17 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import {
   Calendar, Repeat, Briefcase, AlertTriangle, CheckCircle2, XCircle,
-  Loader2, FileText, Lock, Unlock, ChevronDown, ChevronUp, Baby, Heart,
-  User, Building2, Info
+  Loader2, FileText, Lock, Unlock, ChevronDown, ChevronUp, User,
+  Building2, Info, ShieldCheck
 } from 'lucide-react';
-import { PERSONAL_PACKAGES, IFA_PACKAGES, INDEPENDENT_PACKAGES, computePackageStatus } from '@/lib/documentPackages';
+import { IFA_CLUB_PACKAGES, IFA_PERSONAL_PACKAGES, computePackageStatus } from '@/lib/documentPackages';
 
-const ICONS = { Calendar, Repeat, Briefcase, AlertTriangle, Baby, Heart };
+const ICONS = { Calendar, Repeat, Briefcase, AlertTriangle, User, ShieldCheck };
 
-// לוח חבילות מסמכים — מחולק לשלושה מסלולים:
-// (א) חבילות אישיות (שחקן / מאמן) — להפקה ושליחה ישירה.
-// (ב) חבילות מועדוניות — מסלול IFA (חובה מול ההתאחדות הרשמית).
-// (ג) חבילות מועדוניות — מסלול עצמאי / עילית ישראלית (חינוכי-קהילתי).
+// לוח חבילות מסמכים רשמיות מול ההתאחדות לכדורגל (IFA) בלבד.
+// שני מסלולי חובה:
+// (א) חבילות מוסדיות — רישום עונתי + בקרת משמעת והעברות.
+// (ב) חבילות אישיות — תיק שחקן + תיק צוות/מאמן.
 
 export default function DocumentPackagesPanel() {
   const [collapsed, setCollapsed] = useState({});
@@ -29,42 +29,31 @@ export default function DocumentPackagesPanel() {
     <div className="space-y-6">
       <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
         <h3 className="text-white font-black text-base flex items-center gap-2">
-          <Building2 size={16} className="text-[#D4AF37]" />
-          חבילות מסמכים — אישיות ומועדוניות
+          <ShieldCheck size={16} className="text-[#D4AF37]" />
+          חבילות מסמכים רשמיות — התאחדות לכדורגל בישראל (IFA)
         </h3>
         <p className="text-white/40 text-xs mt-1 leading-relaxed">
-          המערכת מפרידה בין חבילות אישיות (להפקה ושליחה ישירה לשחקן/מאמן) לבין חבילות מועדוניות.
-          חבילות מועדוניות מותאמות אוטומטית למודל הניהול: <span className="text-emerald-400">רשום מול ההתאחדות (IFA)</span> לעומת <span className="text-purple-400">עצמאי / עילית ישראלית</span>.
+          כל החבילות נשענות אך ורק על תקנון ההתאחדות ובנק התבניות הרשמי. כל חבילה חוסמת פעולה מערכתית עד להשלמתה — רישום סגלים, סגירת העברה, הוספה למשחק רשמי או פעילות מקצועית.
         </p>
       </div>
 
       {isLoading && <div className="flex justify-center py-12"><Loader2 size={22} className="animate-spin text-[#D4AF37]" /></div>}
 
       <SectionBlock
-        title="חבילות אישיות — שחקן / מאמן"
-        subtitle="נבנות אוטומטית ונשלחות ישירות לחצי הדיגיטלי האישי לחתימה"
-        icon={User}
-        packages={PERSONAL_PACKAGES}
-        collapsed={collapsed}
-        onToggle={toggle}
-        contracts={contracts}
-      />
-
-      <SectionBlock
-        title="חבילות מועדוניות — מסלול מול ההתאחדות הרשמית (IFA)"
-        subtitle="חובה רגולטורית מלאה. כל חבילה חוסמת פעולה מערכתית עד להשלמה"
+        title="חבילות מוסדיות — רישום עונתי ובקרת העברות"
+        subtitle="חובה רגולטורית מול ההתאחדות. חסימת רישום סגלים וסגירת העברה עד להשלמה"
         icon={Building2}
-        packages={IFA_PACKAGES}
+        packages={IFA_CLUB_PACKAGES}
         collapsed={collapsed}
         onToggle={toggle}
         contracts={contracts}
       />
 
       <SectionBlock
-        title="חבילות מועדוניות — מסלול עצמאי / עילית ישראלית"
-        subtitle="מסגרת חינוכית-קהילתית עצמאית — פטורה מתקנוני ההתאחדות"
-        icon={Heart}
-        packages={INDEPENDENT_PACKAGES}
+        title="חבילות אישיות — תיק שחקן ותיק צוות מקצועי"
+        subtitle="פרופיל מסמכים מלא ומאושר לכל שחקן ואיש צוות בסגל הרשמי"
+        icon={User}
+        packages={IFA_PERSONAL_PACKAGES}
         collapsed={collapsed}
         onToggle={toggle}
         contracts={contracts}
@@ -149,8 +138,9 @@ function PackageCard({ pkg, collapsed, onToggle, contracts }) {
                     {d.status === 'signed' ? 'נחתם ואושר'
                       : d.status === 'pending' ? 'ממתין לחתימה / אישור'
                       : d.is_finance ? 'ממתין לאישור תשלום — דמי העברה 5,000 ₪'
+                      : d.is_sell_on ? 'ממתין לעיגון חוזה דמי השבחה (Sell-On)'
                       : 'טרם נפתח'}
-                    {d.optional && ' · לא חובה'}
+                    {d.optional && ' · במידת הצורך'}
                   </div>
                 </div>
               </div>
