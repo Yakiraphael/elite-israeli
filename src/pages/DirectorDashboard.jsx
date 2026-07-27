@@ -23,6 +23,7 @@ import SubmissionProgressBar from '../components/registration/SubmissionProgress
 import DirectorComplianceMatrix from '@/components/director/DirectorComplianceMatrix';
 import DocumentPackagesPanel from '@/components/director/DocumentPackagesPanel';
 import PlayerGapModal from '@/components/director/PlayerGapModal';
+import MovePlayerBetweenTeamsModal from '@/components/director/MovePlayerBetweenTeamsModal';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -90,6 +91,7 @@ function DashboardContent({ onLogout }) {
     queryFn: () => base44.entities.Contract.list('-created_date', 300),
   });
   const [gapPlayer, setGapPlayer] = useState(null);
+  const [movePlayer, setMovePlayer] = useState(null);
 
   const filtered = players.filter(p => !search || p.full_name?.includes(search) || p.position?.includes(search) || p.team_name?.includes(search));
 
@@ -168,7 +170,7 @@ function DashboardContent({ onLogout }) {
         {tab === 'squad_compliance' && (
           <div className="space-y-8">
             <SquadTab players={filtered} loading={loadPlayers} onSelect={setSelectedPlayer} search={search} setSearch={setSearch} />
-            <ComplianceTab players={filtered} contracts={contracts} onTriggerPackage={setGapPlayer} />
+            <ComplianceTab players={filtered} contracts={contracts} onTriggerPackage={setGapPlayer} onMovePlayer={setMovePlayer} />
           </div>
         )}
 
@@ -222,6 +224,12 @@ function DashboardContent({ onLogout }) {
           formKey={openFormKey}
           signerRole="director"
           onClose={() => setOpenFormKey(null)}
+        />
+      )}
+      {movePlayer && (
+        <MovePlayerBetweenTeamsModal
+          player={movePlayer}
+          onClose={() => setMovePlayer(null)}
         />
       )}
     </div>
@@ -464,7 +472,7 @@ function RequestsTab({ requests, players = [] }) {
 }
 
 // ---- COMPLIANCE TAB ----
-function ComplianceTab({ players, contracts = [], onTriggerPackage }) {
+function ComplianceTab({ players, contracts = [], onTriggerPackage, onMovePlayer }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -476,6 +484,7 @@ function ComplianceTab({ players, contracts = [], onTriggerPackage }) {
         contracts={contracts}
         viewerRole="director"
         onTriggerPackage={onTriggerPackage}
+        onMovePlayer={onMovePlayer}
       />
     </div>
   );

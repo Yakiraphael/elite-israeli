@@ -1,7 +1,7 @@
 import { useState, Fragment } from 'react';
 import {
   ChevronDown, ChevronUp, Phone, Mail, ShieldCheck,
-  Building2, FileText, MapPin, AlertTriangle, Send, ShieldAlert, CheckCircle2, XCircle
+  Building2, FileText, MapPin, AlertTriangle, Send, ShieldAlert, CheckCircle2, XCircle, ArrowLeftRight
 } from 'lucide-react';
 import { computePlayerIfaCompliance } from '@/lib/documentPackages';
 
@@ -75,7 +75,7 @@ function Indicator({ s }) {
   );
 }
 
-export default function DirectorComplianceMatrix({ players = [], viewerRole = 'director', contracts = [], onTriggerPackage }) {
+export default function DirectorComplianceMatrix({ players = [], viewerRole = 'director', contracts = [], onTriggerPackage, onMovePlayer }) {
   const [expanded, setExpanded] = useState({});
   const [onlyAlerts, setOnlyAlerts] = useState(false);
 
@@ -184,7 +184,7 @@ export default function DirectorComplianceMatrix({ players = [], viewerRole = 'd
               {expanded[r.player.id] && (
                 <tr>
                   <td colSpan={headers.length} className="bg-[#0D1B2A]/60 p-4 border-t-0">
-                    <DetailRow player={r.player} contracts={contracts} viewerRole={viewerRole} onTriggerPackage={onTriggerPackage} rowAlert={r.rowAlert} />
+                    <DetailRow player={r.player} contracts={contracts} viewerRole={viewerRole} onTriggerPackage={onTriggerPackage} onMovePlayer={onMovePlayer} rowAlert={r.rowAlert} />
                   </td>
                 </tr>
               )}
@@ -219,7 +219,7 @@ function ProfileCompletionBar({ pct }) {
   );
 }
 
-function DetailRow({ player, contracts = [], viewerRole = 'director', onTriggerPackage, rowAlert }) {
+function DetailRow({ player, contracts = [], viewerRole = 'director', onTriggerPackage, onMovePlayer, rowAlert }) {
   const compliance = computePlayerIfaCompliance(player, contracts);
   const missingChecks = compliance.checks.filter(c => !c.passed);
   const facts = [
@@ -241,14 +241,24 @@ function DetailRow({ player, contracts = [], viewerRole = 'director', onTriggerP
             <ShieldAlert size={13} className="text-amber-400 flex-shrink-0" />
             תיק IFA אישי — {compliance.completed}/{compliance.total} הושלמו ({compliance.pct}%)
           </div>
-          {onTriggerPackage && missingChecks.length > 0 && (
-            <button
-              onClick={() => onTriggerPackage(player)}
-              className="flex items-center gap-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-[11px] font-bold px-2.5 py-1.5 rounded border border-amber-500/30 transition-colors flex-shrink-0"
-            >
-              <Send size={11} /> שלח חבילת השלמה
-            </button>
-          )}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {onMovePlayer && (
+              <button
+                onClick={() => onMovePlayer(player)}
+                className="flex items-center gap-1.5 bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 text-[11px] font-bold px-2.5 py-1.5 rounded border border-blue-500/30 transition-colors"
+              >
+                <ArrowLeftRight size={11} /> העברת קבוצה
+              </button>
+            )}
+            {onTriggerPackage && missingChecks.length > 0 && (
+              <button
+                onClick={() => onTriggerPackage(player)}
+                className="flex items-center gap-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-[11px] font-bold px-2.5 py-1.5 rounded border border-amber-500/30 transition-colors"
+              >
+                <Send size={11} /> שלח חבילת השלמה
+              </button>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {compliance.checks.map(c => (
