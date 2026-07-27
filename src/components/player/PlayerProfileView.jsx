@@ -69,13 +69,13 @@ export default function PlayerProfileView({ player, events }) {
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
-      {/* Header */}
-      <div className="border-b border-white/10 py-4 px-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <BackButton label="חזרה" fallback="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold" />
-          <img src={LOGO_URL} alt="עילית ישראלית" className="h-10" />
-          <button onClick={() => setShowNotificationSettings(true)} className="flex items-center gap-1.5 text-white/50 hover:text-white text-xs font-bold transition-colors">
-            <Settings size={13} /> הגדרות התראות
+      {/* Header — סרגל כלים עליון אחיד */}
+      <div className="sticky top-0 z-20 bg-[#0D1B2A]/95 backdrop-blur border-b border-white/10">
+        <div className="max-w-5xl mx-auto h-14 px-5 flex items-center justify-between gap-3">
+          <BackButton label="חזרה" fallback="/transfer-portal" className="flex items-center gap-1.5 text-white/60 hover:text-[#D4AF37] transition-colors text-xs font-bold" />
+          <img src={LOGO_URL} alt="עילית ישראלית" className="h-7" />
+          <button onClick={() => setShowNotificationSettings(true)} className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs font-bold transition-colors px-2.5 py-1.5 rounded hover:bg-white/5">
+            <Settings size={12} /> <span className="hidden sm:inline">הגדרות התראות</span>
           </button>
         </div>
       </div>
@@ -182,46 +182,100 @@ export default function PlayerProfileView({ player, events }) {
       <div className="max-w-5xl mx-auto px-6 py-8">
         <AnimatePresence mode="wait">
 
-          {/* 1. SHOWCASE */}
+          {/* 1. SHOWCASE — תיק פרופיל משפטי מסודר */}
           {tab === 'showcase' && (
-            <motion.div key="showcase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-1 space-y-4">
-                <PersonalInfoPanel player={player} />
-
-                {(player.elite_id || player.stats) && (
-                  <DynamicPlayerCard player={player} />
-                )}
+            <motion.div key="showcase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
+              {/* תיק רגולטורי — באנר פרטיות */}
+              <div className="bg-[#1B263B] border border-white/10 rounded-lg p-4 flex items-start gap-3">
+                <Shield size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-white/60 leading-relaxed">
+                  <span className="font-bold text-white">תיק פרופיל משפטי.</span> פרטים אישיים ורפואיים נקבצים בנפרד ואסורים לפרטיות נתונים — נגישים לאדמיניסטרציה מורשית בלבד. שחקן או אפוטרופוס יכולים לחתום מסמכים בכספת האישית. כל צפייה בתיק המלא נרשמת ביומן פיקוח רגולטורי.
+                </p>
               </div>
 
-              <div className="md:col-span-2 space-y-4">
-                {/* Video highlights */}
-                <VideoHighlightsGallery player={player} />
-
-                {/* Unified career timeline — journey + Transfermarkt + in-system transfers */}
-                <UnifiedTimeline player={player} />
-
-                {/* Mental chart */}
-                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
-                  <MentalJourneyChart
-                    playerId={player.id}
-                    isEliteOrg={!!player.elite_id}
-                  />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* ימין — פרטים אישיים (פרטי) */}
+                <div className="md:col-span-1 space-y-4">
+                  <PersonalInfoPanel player={player} />
+                  {(player.elite_id || player.stats) && <DynamicPlayerCard player={player} />}
                 </div>
 
-                {/* Visual progress report — NLP, physiotherapist & resilience over time */}
-                <PlayerProgressChart player={player} />
-
-                {player.achievements && (
+                {/* שמאל — סטטוס מקצועי + היסטוריית חוזים + ציר קריירה */}
+                <div className="md:col-span-2 space-y-4">
+                  {/* כרטיס סטטוס מקצועי */}
                   <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
-                    <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2"><Trophy size={12} /> הישגים</h3>
-                    <p className="text-white/80 text-sm leading-relaxed">{player.achievements}</p>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase flex items-center gap-2"><Briefcase size={12} /> סטטוס מקצועי</h3>
+                      <span className="text-white/30 text-[10px]">מידע גלוי לאדמיניסטרציה</span>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className={`rounded-lg p-3 border text-center ${player.is_free_agent ? 'bg-green-500/10 border-green-500/30' : 'bg-white/5 border-white/10'}`}>
+                        <div className={`font-bold text-[11px] ${player.is_free_agent ? 'text-green-400' : 'text-white/60'}`}>חוזה</div>
+                        <div className={`font-black text-sm mt-1 ${player.is_free_agent ? 'text-green-400' : 'text-white'}`}>{player.is_free_agent ? 'חופשי' : 'תחת חוזה'}</div>
+                      </div>
+                      <div className="rounded-lg p-3 border text-center" style={{ backgroundColor: `${MEDICAL_LIGHT_INFO[medicalLight].color}15`, borderColor: `${MEDICAL_LIGHT_INFO[medicalLight].color}40` }}>
+                        <div className="font-bold text-[11px]" style={{ color: MEDICAL_LIGHT_INFO[medicalLight].color }}>כשירות רפואית</div>
+                        <div className="font-black text-sm mt-1" style={{ color: MEDICAL_LIGHT_INFO[medicalLight].color }}>{MEDICAL_LIGHT_INFO[medicalLight].label}</div>
+                      </div>
+                      <div className={`rounded-lg p-3 border text-center ${player.ifa_ready ? 'bg-green-500/10 border-green-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
+                        <div className={`font-bold text-[11px] ${player.ifa_ready ? 'text-green-400' : 'text-amber-400'}`}>מוכן IFA</div>
+                        <div className={`font-black text-sm mt-1 ${player.ifa_ready ? 'text-green-400' : 'text-amber-400'}`}>{player.ifa_ready ? '✓ מוכן' : 'חסר'}</div>
+                      </div>
+                      <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-lg p-3 text-center">
+                        <div className="font-bold text-[11px] text-[#D4AF37]">ציון משוקלל</div>
+                        <div className="font-black text-sm mt-1 text-white">{player.overall_rating ?? '—'}</div>
+                      </div>
+                    </div>
+                    {(player.contract_end_date || player.experience_years != null || player.ifa_id) && (
+                      <div className="mt-4 pt-3 border-t border-white/10 grid grid-cols-3 gap-3 text-[11px]">
+                        {player.contract_end_date && (
+                          <div>
+                            <div className="text-white/40">תוקף חוזה עד</div>
+                            <div className="text-white font-bold">{player.contract_end_date}</div>
+                          </div>
+                        )}
+                        {player.experience_years != null && (
+                          <div>
+                            <div className="text-white/40">ניסיון</div>
+                            <div className="text-white font-bold">{player.experience_years} שנים</div>
+                          </div>
+                        )}
+                        {player.ifa_id && (
+                          <div className="min-w-0">
+                            <div className="text-white/40">כרטיס IFA</div>
+                            <div className="text-white font-bold truncate" title={player.ifa_id}>{player.ifa_id}</div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                )}
 
-                {isApproved && player.transfermarkt_url && (
-                  <TransfermarktCareerPanel player={player} />
-                )}
+                  {/* היסטוריית חוזים — נגישה ישירות מהתיק המשפטי */}
+                  {isApproved && <ContractsQuickAccess playerId={player.id} />}
+
+                  {/* ציר קריירה אחיד */}
+                  <UnifiedTimeline player={player} />
+                </div>
               </div>
+
+              {/* שורה תחתונה — וידאו + מנטלי (לפרופיל ציבורי) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <VideoHighlightsGallery player={player} />
+                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
+                  <MentalJourneyChart playerId={player.id} isEliteOrg={!!player.elite_id} />
+                </div>
+              </div>
+
+              <PlayerProgressChart player={player} />
+
+              {player.achievements && (
+                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
+                  <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2"><Trophy size={12} /> הישגים</h3>
+                  <p className="text-white/80 text-sm leading-relaxed">{player.achievements}</p>
+                </div>
+              )}
+
+              {isApproved && player.transfermarkt_url && <TransfermarktCareerPanel player={player} />}
             </motion.div>
           )}
 

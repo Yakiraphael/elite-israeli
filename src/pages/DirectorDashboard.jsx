@@ -92,18 +92,16 @@ function DashboardContent({ onLogout }) {
   const ifaReady = players.filter(p => p.ifa_ready).length;
   const complianceScore = players.length > 0 ? Math.round((ifaReady / players.length) * 100) : 0;
 
-  // סדר פרקטי: סקירה → תור דחוף → סגל → חוזים → העברות → Compliance → תבניות → כספים → ניתוח → גיוס
+  // סדר יעדים: סקירה → תהליכי העברה → סגל ותאימות IFA → חוזים ומסמכים → תור פעולות → כספים → ניתוח → גיוס
   const tabs = [
-    { id: 'overview', label: 'סקירה כללית', icon: BarChart3 },
+    { id: 'overview', label: 'סקירה', icon: BarChart3 },
+    { id: 'transfers', label: 'תהליכי העברה', icon: Send },
+    { id: 'squad_compliance', label: 'סגל ותאימות IFA', icon: Shield },
+    { id: 'contracts_forms', label: 'חוזים ומסמכים', icon: FileText },
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
-    { id: 'squad', label: 'ניהול סגל', icon: Users },
-    { id: 'contracts', label: 'חוזים', icon: FileText },
-    { id: 'transfers', label: 'העברות', icon: Send },
-    { id: 'compliance', label: 'תאימות רגולטורית', icon: Shield },
-    { id: 'templates', label: 'בנק תבניות', icon: Crown },
     { id: 'finance', label: 'כספים', icon: Wallet },
     { id: 'analytics', label: 'ניתוח נתונים', icon: BarChart3 },
-    { id: 'invite', label: 'הזמנת שחקנים', icon: UserPlus },
+    { id: 'invite', label: 'גיוס שחקנים', icon: UserPlus },
   ];
 
   return (
@@ -113,12 +111,9 @@ function DashboardContent({ onLogout }) {
       {/* Header */}
       <div className="bg-[#1B263B] border-b border-white/10 py-4 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={LOGO_URL} alt="" className="h-9" />
-            <div>
-              <span className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase">דשבורד מנהל מקצועי</span>
-              <div className="text-white/40 text-[10px]">חדר בקרה מנהל מקצועי</div>
-            </div>
+          <div>
+            <h1 className="text-white font-black text-xl">חדר בקרה מנהל מקצועי</h1>
+            <p className="text-white/40 text-xs">תהליכי העברה · תיקים משפטיים · תאימות חוקית להרכב (IFA)</p>
           </div>
           <div className="flex items-center gap-4">
             {/* Global search */}
@@ -157,32 +152,26 @@ function DashboardContent({ onLogout }) {
           />
         )}
 
-        {tab === 'squad' && (
-          <SquadTab players={filtered} loading={loadPlayers} onSelect={setSelectedPlayer} search={search} setSearch={setSearch} />
-        )}
-
-        {tab === 'requests' && (
-          <RequestsTab requests={requests} />
-        )}
-
-        {tab === 'compliance' && (
-          <ComplianceTab players={filtered} />
-        )}
-
-        {tab === 'contracts' && (
-          <ContractsPanel />
-        )}
-
-        {tab === 'templates' && (
-          <TemplatesPanel onOpenForm={setOpenFormKey} />
-        )}
-
         {tab === 'transfers' && (
           <TransfersManager />
         )}
 
-        {tab === 'invite' && (
-          <InvitePlayerPanel />
+        {tab === 'squad_compliance' && (
+          <div className="space-y-8">
+            <SquadTab players={filtered} loading={loadPlayers} onSelect={setSelectedPlayer} search={search} setSearch={setSearch} />
+            <ComplianceTab players={filtered} />
+          </div>
+        )}
+
+        {tab === 'contracts_forms' && (
+          <div className="space-y-8">
+            <ContractsPanel />
+            <TemplatesPanel onOpenForm={setOpenFormKey} />
+          </div>
+        )}
+
+        {tab === 'requests' && (
+          <RequestsTab requests={requests} />
         )}
 
         {tab === 'finance' && (
@@ -191,6 +180,10 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'analytics' && (
           <AnalyticsTab players={filtered} />
+        )}
+
+        {tab === 'invite' && (
+          <InvitePlayerPanel />
         )}
       </div>
 
