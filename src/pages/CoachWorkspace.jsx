@@ -83,10 +83,10 @@ export default function CoachWorkspace() {
   const activeSquad = blockingEnabled ? filtered.filter(p => getMedicalStatus(p).color !== 'red') : filtered;
   const blockedCount = filtered.length - activeSquad.length;
 
-  // KPI computed
-  const medicalIssues = players.filter(p => getMedicalStatus(p).color === 'red').length;
-  const medicalWarnings = players.filter(p => getMedicalStatus(p).color === 'yellow').length;
-  const ifaReady = players.filter(p => p.ifa_ready).length;
+  // KPI computed — תחום לקבוצה הפעילה (filtered) כדי שיתאים לקונטקסט המאמן, לא לכל המועדון
+  const medicalIssues = filtered.filter(p => getMedicalStatus(p).color === 'red').length;
+  const medicalWarnings = filtered.filter(p => getMedicalStatus(p).color === 'yellow').length;
+  const ifaReady = filtered.filter(p => p.ifa_ready).length;
   const pendingRequests = requests.length;
 
   const { data: pendingApprovals = [] } = useQuery({
@@ -149,10 +149,10 @@ export default function CoachWorkspace() {
 
           {/* KPI Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            <KpiCard label="שחקנים פעילים" value={players.length} color="blue" icon={Users} />
+            <KpiCard label="שחקנים פעילים" value={filtered.length} color="blue" icon={Users} />
             <KpiCard label="בעיות רפואיות" value={medicalIssues} color="red" icon={AlertTriangle} urgent={medicalIssues > 0} />
             <KpiCard label="בקשות פתוחות" value={pendingRequests} color="amber" icon={ClipboardList} urgent={pendingRequests > 0} />
-            <KpiCard label="מוכנים להתאחדות (IFA)" value={`${ifaReady}/${players.length}`} color="green" icon={CheckCircle2} />
+            <KpiCard label="מוכנים להתאחדות (IFA)" value={`${ifaReady}/${filtered.length}`} color="green" icon={CheckCircle2} />
           </div>
 
           {/* Search */}
