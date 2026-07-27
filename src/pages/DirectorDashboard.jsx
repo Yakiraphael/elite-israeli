@@ -22,6 +22,7 @@ import DirectorPlayerProfileModal from '../components/director/DirectorPlayerPro
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
 import DirectorComplianceMatrix from '@/components/director/DirectorComplianceMatrix';
 import DocumentPackagesPanel from '@/components/director/DocumentPackagesPanel';
+import PlayerGapModal from '@/components/director/PlayerGapModal';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -84,6 +85,11 @@ function DashboardContent({ onLogout }) {
     queryKey: ['dir-transfers'],
     queryFn: () => base44.entities.TransferTracker.list('-created_date', 50),
   });
+  const { data: contracts = [] } = useQuery({
+    queryKey: ['dir-contracts'],
+    queryFn: () => base44.entities.Contract.list('-created_date', 300),
+  });
+  const [gapPlayer, setGapPlayer] = useState(null);
 
   const filtered = players.filter(p => !search || p.full_name?.includes(search) || p.position?.includes(search) || p.team_name?.includes(search));
 
@@ -162,7 +168,7 @@ function DashboardContent({ onLogout }) {
         {tab === 'squad_compliance' && (
           <div className="space-y-8">
             <SquadTab players={filtered} loading={loadPlayers} onSelect={setSelectedPlayer} search={search} setSearch={setSearch} />
-            <ComplianceTab players={filtered} />
+            <ComplianceTab players={filtered} contracts={contracts} onTriggerPackage={setGapPlayer} />
           </div>
         )}
 
@@ -203,6 +209,14 @@ function DashboardContent({ onLogout }) {
       </div>
 
       {selectedPlayer && <DirectorPlayerProfileModal player={selectedPlayer} allPlayers={players} onClose={() => setSelectedPlayer(null)} />}
+      {gapPlayer && (
+        <PlayerGapModal
+          player={gapPlayer}
+          contracts={contracts}
+          viewerRole="director"
+          onClose={() => setGapPlayer(null)}
+        />
+      )}
       {openFormKey && (
         <UniversalPdfFormModal
           formKey={openFormKey}
@@ -450,14 +464,19 @@ function RequestsTab({ requests, players = [] }) {
 }
 
 // ---- COMPLIANCE TAB ----
-function ComplianceTab({ players }) {
+function ComplianceTab({ players, contracts = [], onTriggerPackage }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית — תאימות מול ההתאחדות הרשמית</h3>
         <span className="text-white/30 text-[10px]">מטריצה מלאה · רפואי · רישום · חוזה · משמעת · משפטי · פציעה · זמינות · כרטיסים</span>
       </div>
-      <DirectorComplianceMatrix players={players} />
+      <DirectorComplianceMatrix
+        players={players}
+        contracts={contracts}
+        viewerRole="director"
+        onTriggerPackage={onTriggerPackage}
+      />
     </div>
   );
 }

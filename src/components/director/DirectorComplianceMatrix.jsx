@@ -1,8 +1,9 @@
 import { useState, Fragment } from 'react';
 import {
   ChevronDown, ChevronUp, Phone, Mail, ShieldCheck,
-  Building2, FileText, MapPin
+  Building2, FileText, MapPin, AlertTriangle, Send, ShieldAlert, CheckCircle2, XCircle
 } from 'lucide-react';
+import { computePlayerIfaCompliance } from '@/lib/documentPackages';
 
 // מטריצת תאימות רגולטורית מורחבת למנהל המקצועי — כל מדדי החובה לכל שחקן בטבלה אחת:
 // רפואי/ביטוח · רישום IFA · חוזה בתוקף · משמעת · משפטי/אפוטרופוס · פציעה פעילה ·
@@ -74,7 +75,7 @@ function Indicator({ s }) {
   );
 }
 
-export default function DirectorComplianceMatrix({ players = [] }) {
+export default function DirectorComplianceMatrix({ players = [], viewerRole = 'director', contracts = [], onTriggerPackage }) {
   const [expanded, setExpanded] = useState({});
   const [onlyAlerts, setOnlyAlerts] = useState(false);
 
@@ -183,7 +184,7 @@ export default function DirectorComplianceMatrix({ players = [] }) {
               {expanded[r.player.id] && (
                 <tr>
                   <td colSpan={headers.length} className="bg-[#0D1B2A]/60 p-4 border-t-0">
-                    <DetailRow player={r.player} />
+                    <DetailRow player={r.player} contracts={contracts} viewerRole={viewerRole} onTriggerPackage={onTriggerPackage} rowAlert={r.rowAlert} />
                   </td>
                 </tr>
               )}
@@ -218,7 +219,9 @@ function ProfileCompletionBar({ pct }) {
   );
 }
 
-function DetailRow({ player }) {
+function DetailRow({ player, contracts = [], viewerRole = 'director', onTriggerPackage, rowAlert }) {
+  const compliance = computePlayerIfaCompliance(player, contracts);
+  const missingChecks = compliance.checks.filter(c => !c.passed);
   const facts = [
     { icon: Phone, label: 'טלפון שחקן', value: player.phone, dir: 'ltr' },
     { icon: Mail, label: 'מייל מנהל אישי', value: player.manager_email, dir: 'ltr' },
@@ -229,22 +232,65 @@ function DetailRow({ player }) {
     { icon: MapPin, label: 'אזור פעילות', value: player.region },
     { icon: FileText, label: 'מסמכים מצורפים', value: (player.documents || []).length > 0 ? `${player.documents.length} מסמכים` : null },
   ].filter(f => f.value);
-  if (facts.length === 0) {
-    return <div className="text-white/30 text-xs">אין פרטים נוספים לשחקן זה</div>;
-  }
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-      {facts.map(f => (
-        <div key={f.label} className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center flex-shrink-0">
-            <f.icon size={12} className="text-[#D4AF37]" />
+    <div className="space-y-4">
+      {/* דרישות חסרות לפי IFA — תיק אישי */}
+      <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-3">
+        <div className="flex items-center justify-between mb-2 gap-2">
+          <div className="flex items-center gap-1.5 text-white/70 text-xs font-bold">
+            <ShieldAlert size={13} className="text-amber-400 flex-shrink-0" />
+            תיק IFA אישי — {compliance.completed}/{compliance.total} הושלמו ({compliance.pct}%)
           </div>
-          <div className="min-w-0">
-            <div className="text-white/40 text-[10px]">{f.label}</div>
-            <div className="text-white text-xs font-bold truncate" dir={f.dir || 'rtl'}>{f.value}</div>
-          </div>
+          {onTriggerPackage && missingChecks.length > 0 && (
+            <button
+              onClick={() => onTriggerPackage(player)}
+              className="flex items-center gap-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-[11px] font-bold px-2.5 py-1.5 rounded border border-amber-500/30 transition-colors flex-shrink-0"
+            >
+              <Send size={11} /> שלח חבילת השלמה
+            </button>
+          )}
         </div>
-      ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {compliance.checks.map(c => (
+            <div key={c.key} className={`flex items-center gap-2 text-[11px] ${c.passed ? 'text-green-400' : 'text-red-400'}`}>
+              {c.passed ? <CheckCircle2 size={12} className="flex-shrink-0" /> : <XCircle size={12} className="flex-shrink-0" />}
+              <span className="font-bold">{c.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* תצוגת מנהל מקצועי — שערים מוסדיים (רלוונטי לדירקטור בלבד) */}
+      {viewerRole === 'director' && (
+        <div className="flex items-start gap-2 text-[10px] text-white/50 bg-white/[0.02] border border-white/5 rounded-md p-2">
+          <AlertTriangle size={11} className="text-amber-400 mt-0.5 flex-shrink-0" />
+          <span>
+            שערים מוסדיים נוספים (רישום עונתי, בקרת העברות) נבדקים בלשונית "חבילות מסמכים משפטיים".
+            שחקן זה {missingChecks.length > 0
+              ? <span className="text-red-400 font-bold">חסום מהסגל הרשמי</span>
+              : <span className="text-green-400 font-bold">עומד בדרישות האישיות</span>} לפי תיק IFA.
+          </span>
+        </div>
+      )}
+
+      {/* פרטי קשר */}
+      {facts.length === 0 ? (
+        <div className="text-white/30 text-xs">אין פרטי קשר נוספים לשחקן זה</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          {facts.map(f => (
+            <div key={f.label} className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center flex-shrink-0">
+                <f.icon size={12} className="text-[#D4AF37]" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-white/40 text-[10px]">{f.label}</div>
+                <div className="text-white text-xs font-bold truncate" dir={f.dir || 'rtl'}>{f.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
