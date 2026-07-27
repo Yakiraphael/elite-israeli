@@ -87,7 +87,9 @@ export default function CoachWorkspace() {
   const medicalIssues = filtered.filter(p => getMedicalStatus(p).color === 'red').length;
   const medicalWarnings = filtered.filter(p => getMedicalStatus(p).color === 'yellow').length;
   const ifaReady = filtered.filter(p => p.ifa_ready).length;
-  const pendingRequests = requests.length;
+  // בקשות פתוחות תחומות לקבוצה הפעילה — מצליבות מול שחקני הסגל (לבקשות אין שדה team_id ישיר)
+  const teamPlayerIds = new Set(filtered.map(p => p.id).filter(Boolean));
+  const pendingRequests = requests.filter(r => teamPlayerIds.size === 0 ? false : teamPlayerIds.has(r.player_id)).length;
 
   const { data: pendingApprovals = [] } = useQuery({
     queryKey: ['coach-transfer-approvals'],
