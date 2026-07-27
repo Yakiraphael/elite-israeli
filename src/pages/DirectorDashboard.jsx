@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
-  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus
+  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus, Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
@@ -20,7 +20,8 @@ import TransfersManager from '../components/admin/TransfersManager';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import DirectorPlayerProfileModal from '../components/director/DirectorPlayerProfileModal';
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
-import IfaComplianceMatrix from '@/components/shared/IfaComplianceMatrix';
+import DirectorComplianceMatrix from '@/components/director/DirectorComplianceMatrix';
+import DocumentPackagesPanel from '@/components/director/DocumentPackagesPanel';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -174,9 +175,13 @@ function DashboardContent({ onLogout }) {
               <button onClick={() => setSubCF('templates')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'templates' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
                 <Crown size={14} /> בנק התבניות הרשמיות
               </button>
+              <button onClick={() => setSubCF('packages')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'packages' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
+                <Package size={14} /> חבילות מסמכים משפטיים
+              </button>
             </div>
             {subCF === 'contracts' && <ContractsPanel />}
             {subCF === 'templates' && <TemplatesPanel onOpenForm={setOpenFormKey} />}
+            {subCF === 'packages' && <DocumentPackagesPanel />}
           </div>
         )}
 
@@ -450,9 +455,9 @@ function ComplianceTab({ players }) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית — תאימות מול ההתאחדות הרשמית</h3>
-        <span className="text-white/30 text-[10px]">4 מדדי חובה מול ההתאחדות לכדורגל</span>
+        <span className="text-white/30 text-[10px]">מטריצה מלאה · רפואי · רישום · חוזה · משמעת · משפטי · פציעה · זמינות · כרטיסים</span>
       </div>
-      <IfaComplianceMatrix players={players} showPosition />
+      <DirectorComplianceMatrix players={players} />
     </div>
   );
 }

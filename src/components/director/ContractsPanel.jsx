@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, X, Loader2, FileText, ShieldAlert, Send, ExternalLink, PenLine, Baby, User, Edit3 } from 'lucide-react';
+import { Plus, X, Loader2, FileText, ShieldAlert, Send, ExternalLink, PenLine, Baby, User, Edit3, Repeat } from 'lucide-react';
 import ContractFillModal from '../contracts/ContractFillModal';
 import { getContractForms, getOfficialForm } from '@/lib/ifaOfficialForms';
 import { signatureStatus } from '@/lib/contractTemplates';
@@ -184,8 +184,16 @@ function CreateContractModal({ onClose }) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [salary, setSalary] = useState('');
+  const [openTransfer, setOpenTransfer] = useState(true);
+  const [notifyPlayer, setNotifyPlayer] = useState(true);
 
   const selectedForm = getOfficialForm(selectedFormKey);
+  const formIsTransfer = selectedForm?.category === 'transfer'
+    || !!selectedFormKey?.includes('player_loan')
+    || !!selectedFormKey?.includes('player_transfer')
+    || !!selectedFormKey?.includes('player_removal')
+    || !!selectedFormKey?.includes('player_cancellation');
+  const formIsPlayerContract = selectedForm?.category === 'player_contract';
 
   const { data: players = [] } = useQuery({
     queryKey: ['contract-player-search', search],
@@ -203,7 +211,10 @@ function CreateContractModal({ onClose }) {
   const create = useMutation({
     mutationFn: async () => {
       const isGuardianRequired = selectedForm?.requires_guardian && playerData && !playerData.is_adult;
-      return base44.entities.Contract.create({
+      const user = await base44.auth.me().catch(() => null);
+
+      // 1. יצירת החוזה עצמו
+      const contract = await base44.entities.Contract.create({
         player_id: playerData?.id || '',
         player_name: playerData?.full_name || search,
         contract_type: selectedForm?.category === 'coach_contract' ? 'חוזה מאמן' : salary ? 'חוזה מקצועי' : 'חוזה חובבני',
@@ -217,8 +228,58 @@ function CreateContractModal({ onClose }) {
         document_content: `טופס רשמי: ${selectedForm?.label} — ${selectedForm?.pdf_url}`,
         status: 'ממתין לחתימה',
       });
+
+      // 2. פתיחת תהליך העברה/השאלה במקביל (ברירת מחדל לטפסי העברה/השאלה ולחוזי שחקן חדשים)
+      let transferProposal = null;
+      if (openTransfer && playerData && (formIsTransfer || formIsPlayerContract)) {
+        const ageFlag = !!playerData.is_adult;
+        const isLoan = selectedFormKey?.includes('loan');
+        const category = isLoan
+          ? (ageFlag ? 'השאלה - בוגרים - תוך ארצי' : 'השאלת נוער')
+          : (ageFlag ? 'בוגרים - תוך ארצי' : 'העברת נוער');
+        try {
+          transferProposal = await base44.entities.TransferProposal.create({
+            club_name: clubName || playerData.team_name || 'מועדון קולט',
+            contact_name: user?.full_name || 'מנהל מקצועי',
+            player_elite_id: playerData.elite_id || playerData.id,
+            player_name: playerData.full_name,
+            proposal_details: `נפתח אוטומטית מיצירת חוזה: ${selectedForm?.label} (חוזה #${contract.id})`,
+            transfer_category: category,
+            is_adult: ageFlag,
+            player_consent: false,
+            status: 'ממתין לאישור הנהלה',
+            notes: `תהליך שנפתח אוטומטית מתוך יצירת חוזה על ידי ${user?.full_name || 'מנהל מקצועי'}`,
+          });
+        } catch (err) { console.error('Auto-transfer open failed:', err); }
+      }
+
+      // 3. שליחת הודעה לשחקן/הורה על חוזה הממתין לחתימה
+      if (notifyPlayer && playerData) {
+        const audience = playerData.is_adult ? 'player' : 'parent';
+        const targetEmail = playerData.is_adult ? (playerData.manager_email || '') : (playerData.parent_email || '');
+        try {
+          await base44.entities.Notification.create({
+            audience,
+            type: 'contract_pending',
+            title: `חוזה חדש ממתין לחתימה — ${selectedForm?.label}`,
+            body: `נפתח חוזה עבור ${playerData.full_name} על ידי ${clubName || 'המועדון'}. יש להיכנס לפורטל ולחתום דיגיטלית.`,
+            player_id: playerData.id,
+            player_name: playerData.full_name,
+            link_tab: 'transfer',
+            target_user_email: targetEmail || undefined,
+            is_read: false,
+          });
+        } catch (err) { console.error('Notification create failed:', err); }
+      }
+
+      return { contract, transferProposal };
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['contracts'] }); onClose(); },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      queryClient.invalidateQueries({ queryKey: ['dir-transfers'] });
+      queryClient.invalidateQueries({ queryKey: ['transfer-proposals'] });
+      onClose();
+    },
   });
 
   return (
@@ -302,6 +363,38 @@ function CreateContractModal({ onClose }) {
                 className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm mt-1 focus:outline-none" />
             </div>
           </div>
+
+          {/* פעולות אוטומטיות בעת יצירת החוזה */}
+          {(formIsTransfer || formIsPlayerContract) && playerData && (
+            <div className="bg-[#0D1B2A]/60 border border-white/10 rounded-lg p-3 space-y-2.5">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" checked={openTransfer} onChange={e => setOpenTransfer(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-[#D4AF37] flex-shrink-0" />
+                <div>
+                  <div className="text-white font-bold text-xs flex items-center gap-1.5">
+                    <Repeat size={11} className="text-blue-400" /> פתח תהליך העברה/השאלה במקביל
+                  </div>
+                  <div className="text-white/40 text-[10px] mt-0.5 leading-snug">
+                    {formIsTransfer
+                      ? 'הטופס שנבחר שייך למשפחת ההעברות — יפתח תיק העברה עם שלבי אישור מול מועדון קולט/מעביר ואימות התאחדות הרשמית.'
+                      : 'חוזה שחקן חדש דורש פתיחת תיק העברה/השאלה במקביל כדי לאפשר אימות מול ההתאחדות הרשמית. ניתן לבטל אם מדובר בחידוש חוזה לאותו מועדון.'}
+                  </div>
+                </div>
+              </label>
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" checked={notifyPlayer} onChange={e => setNotifyPlayer(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-[#D4AF37] flex-shrink-0" />
+                <div>
+                  <div className="text-white font-bold text-xs flex items-center gap-1.5">
+                    <Send size={11} className="text-green-400" /> שלח הודעה לשחקן{!playerData.is_adult ? '/הורה' : ''}
+                  </div>
+                  <div className="text-white/40 text-[10px] mt-0.5 leading-snug">
+                    השחקן יקבל התראה בפורטל שלו על חוזה הממתין לחתימה, עם קישור לחתימה דיגיטלית.
+                  </div>
+                </div>
+              </label>
+            </div>
+          )}
 
           <button
             disabled={(!playerData && !search) || !endDate || create.isPending}
