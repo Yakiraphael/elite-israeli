@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import {
-  Calendar, Loader2, CheckCircle2, Save, Users, Plus, Activity,
+  Calendar, Loader2, CheckCircle2, Save, Users, Plus, Activity, ClipboardList,
 } from 'lucide-react';
+import FieldReportsStudio from '@/components/fieldreports/FieldReportsStudio';
 
 // פאנל דיווח אימון / סדנה — מאפשר למאמן:
 //   1) לפתוח אירוע TeamEvent עם סיכום עיבוד פסיכולוגי.
 //   2) לסמן נוכחות + ציון משמעת + הערות עבור כל שחקן באזור.
 //   3) לבצע bulk insert של רשומות BehaviorLog — מה שמפעיל אוטומציה שמחשבת מחדש attendance/dicipline.
-export default function CoachTrainingReportPanel({ region }) {
+export default function CoachTrainingReportPanel({ region, team, teamPlayers = [] }) {
   const queryClient = useQueryClient();
+  const [subtab, setSubtab] = useState('reports');
 
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({
@@ -106,8 +108,36 @@ export default function CoachTrainingReportPanel({ region }) {
 
   const rosterCount = Object.keys(roster).length;
 
+  if (subtab === 'reports') {
+    return (
+      <div className="space-y-4">
+        <div className="flex gap-1 border-b border-white/10">
+          <button onClick={() => setSubtab('reports')}
+            className="px-4 py-2.5 text-xs font-bold border-b-2 text-[#D4AF37] border-[#D4AF37] flex items-center gap-1.5">
+            <ClipboardList size={13} /> דוחות וסיכומים
+          </button>
+          <button onClick={() => setSubtab('attendance')}
+            className="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-white/40 hover:text-white/70 flex items-center gap-1.5">
+            <Calendar size={13} /> דיווח נוכחות ואימון
+          </button>
+        </div>
+        <FieldReportsStudio team={team} players={teamPlayers} authorRole="מאמן" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5">
+      <div className="flex gap-1 border-b border-white/10">
+        <button onClick={() => setSubtab('reports')}
+          className="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-white/40 hover:text-white/70 flex items-center gap-1.5">
+          <ClipboardList size={13} /> דוחות וסיכומים
+        </button>
+        <button onClick={() => setSubtab('attendance')}
+          className="px-4 py-2.5 text-xs font-bold border-b-2 text-[#D4AF37] border-[#D4AF37] flex items-center gap-1.5">
+          <Calendar size={13} /> דיווח נוכחות ואימון
+        </button>
+      </div>
       {/* Session header */}
       <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5 space-y-4">
         <div className="flex items-center gap-2 text-white font-black text-sm">
