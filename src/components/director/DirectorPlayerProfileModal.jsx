@@ -9,16 +9,18 @@ import AssetContractTab from './AssetContractTab';
 import ProgressionTab from './ProgressionTab';
 import RiskAssessmentTab from './RiskAssessmentTab';
 import PipelineTab from './PipelineTab';
+import DirectorLegalCaseFileTab from './DirectorLegalCaseFileTab';
 
 const TABS = [
   { id: 'asset', label: '💰 ערך וחוזה' },
+  { id: 'legal', label: '⚖️ תיק משפטי' },
   { id: 'progression', label: '📈 התפתחות' },
   { id: 'risk', label: '⚠️ סיכון מול סיכוי' },
   { id: 'pipeline', label: '🎯 ניהול קריירה' },
 ];
 
 export default function DirectorPlayerProfileModal({ player, allPlayers, onClose }) {
-  const [tab, setTab] = useState('asset');
+  const [tab, setTab] = useState('legal');
 
   const { data: contracts = [], isLoading: loadingContracts } = useQuery({
     queryKey: ['dir-contracts', player.id],
@@ -87,6 +89,7 @@ export default function DirectorPlayerProfileModal({ player, allPlayers, onClose
           ) : (
             <>
               {tab === 'asset' && <AssetContractTab player={player} contracts={contracts} transfers={transfers} />}
+              {tab === 'legal' && <DirectorLegalCaseFileTab player={player} contracts={contracts} transfers={transfers} />}
               {tab === 'progression' && <ProgressionTab player={player} mentalHistory={mentalHistory} teammates={teammates} />}
               {tab === 'risk' && <RiskAssessmentTab player={player} />}
               {tab === 'pipeline' && <PipelineTab player={player} />}
