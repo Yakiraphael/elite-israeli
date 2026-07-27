@@ -13,6 +13,9 @@ import SubmissionProgressBar from '../components/registration/SubmissionProgress
 import SquadCallupPanel from '../components/coach/SquadCallupPanel';
 import InjuryLogModal from '../components/coach/InjuryLogModal';
 import CoachRosterContractsView from '../components/coach/CoachRosterContractsView';
+import CoachRegionalFilter from '../components/coach/CoachRegionalFilter';
+import CoachAlertsStream from '../components/coach/CoachAlertsStream';
+import CoachTrainingReportPanel from '../components/coach/CoachTrainingReportPanel';
 import { computeEligibility } from '@/lib/playerEligibility';
 import { whatsappLink } from '@/lib/contactLinks';
 import {
@@ -50,6 +53,7 @@ export default function CoachWorkspace() {
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [onlyEligible, setOnlyEligible] = useState(false);
+  const [region, setRegion] = useState(() => localStorage.getItem('coachRegion') || 'all');
 
   const { data: players = [], isLoading: loadingPlayers } = useQuery({
     queryKey: ['coach-players'],
@@ -67,8 +71,10 @@ export default function CoachWorkspace() {
   });
   const blockingEnabled = !!settingsList[0]?.enforce_medical_blocking;
 
+  // סינון אזורי רב-מתחם: המאמן רואה רק את שחקני האזור שלו (אלא אם "כל האזורים")
   const filtered = players.filter(p =>
-    !search || p.full_name?.includes(search) || p.team_name?.includes(search)
+    (!search || p.full_name?.includes(search) || p.team_name?.includes(search)) &&
+    (region === 'all' || p.region === region)
   );
   const activeSquad = blockingEnabled ? filtered.filter(p => getMedicalStatus(p).color !== 'red') : filtered;
   const blockedCount = filtered.length - activeSquad.length;
@@ -90,6 +96,10 @@ export default function CoachWorkspace() {
       try { setCurrentUser(await base44.auth.me()); } catch { setCurrentUser(null); }
     })();
   }, []);
+  // שמירת אזור הפעילות של המאמן בין כניסות
+  useEffect(() => {
+    localStorage.setItem('coachRegion', region);
+  }, [region]);
 
   const { data: clubUserRecords = [] } = useQuery({
     queryKey: ['coach-clubuser-approval', currentUser?.email],
@@ -103,6 +113,7 @@ export default function CoachWorkspace() {
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
     { id: 'roster', label: 'סגל — חוזים', icon: FileText },
     { id: 'callup', label: 'זימון וניהול סגל', icon: ListChecks },
+    { id: 'training', label: 'דיווח אימון / שטח', icon: Calendar },
     { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
     { id: 'compliance', label: 'תקינות (Compliance)', icon: AlertTriangle },
@@ -141,6 +152,11 @@ export default function CoachWorkspace() {
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חפש שחקן..."
               className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg pr-10 pl-4 py-2.5 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
           </div>
+
+          {/* סינון אזורי — רב-מתחם (Multi-Tenant) */}
+          <div className="pt-3">
+            <CoachRegionalFilter region={region} onChange={setRegion} />
+          </div>
         </div>
 
         {/* Tabs */}
@@ -156,6 +172,11 @@ export default function CoachWorkspace() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
+        {(tab === 'squad' || tab === 'training') && (
+          <div className="mb-5">
+            <CoachAlertsStream players={filtered} medicalStatusOf={getMedicalStatus} onPick={setSelectedPlayer} />
+          </div>
+        )}
         {tab === 'squad' && (
           <>
             {blockingEnabled && blockedCount > 0 && (
@@ -173,6 +194,7 @@ export default function CoachWorkspace() {
         {tab === 'requests' && <RequestsView />}
         {tab === 'roster' && <CoachRosterContractsView players={filtered} onSelect={setSelectedPlayer} />}
         {tab === 'callup' && <SquadCallupPanel players={filtered} />}
+        {tab === 'training' && <CoachTrainingReportPanel region={region} />}
         {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
         {tab === 'invite' && isApprovedCoach && <InvitePlayerPanel />}

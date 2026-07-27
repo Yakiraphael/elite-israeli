@@ -10,6 +10,7 @@ import InjuryLogModal from './InjuryLogModal';
 import PlayerProgressChart from './PlayerProgressChart';
 import PlayerCentralDashboard from './PlayerCentralDashboard';
 import { computeEligibility } from '@/lib/playerEligibility';
+import { COACH_REGIONS } from './CoachRegionalFilter';
 
 function calcDaysLeft(dateStr) {
   if (!dateStr) return null;
@@ -270,6 +271,29 @@ export default function CoachPlayerProfileModal({ player, onClose }) {
                       <button onClick={saveTalk}><Check size={14} className="text-green-400" /></button>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* אזור פעילות + מדדים אוטומטיים */}
+              <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4 space-y-3">
+                <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">אזור פעילות ומדדי שטח</h4>
+                <div className="flex gap-1.5 flex-wrap">
+                  {COACH_REGIONS.filter(r => r.id !== 'all').map(r => (
+                    <button key={r.id}
+                      onClick={() => update.mutate({ region: r.id })}
+                      className={`text-[11px] font-bold px-2.5 py-1.5 rounded-full border transition-colors ${
+                        (player.region || 'אחר') === r.id
+                          ? 'bg-[#D4AF37] text-[#0D1B2A] border-[#D4AF37]'
+                          : 'text-white/55 border-white/15 hover:text-white hover:border-white/40'
+                      }`}>
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-[11px]">
+                  <div className="text-white/50">📊 נוכחות: <b className="text-white">{typeof player.attendance_rate === 'number' ? `${player.attendance_rate}%` : '—'}</b></div>
+                  <div className="text-white/50">🎽 משמעת: <b className="text-white">{typeof player.discipline_avg === 'number' ? player.discipline_avg : '—'}</b></div>
+                  <div className="text-white/50">🚫 היעדרויות: <b className="text-white">{player.consecutive_absences || 0}</b></div>
                 </div>
               </div>
             </>
