@@ -201,7 +201,7 @@ export default function CoachWorkspace() {
         {tab === 'requests' && <RequestsView />}
         {tab === 'roster' && <CoachRosterContractsView players={filtered} onSelect={setSelectedPlayer} />}
         {tab === 'callup' && <SquadCallupPanel players={filtered} />}
-        {tab === 'training' && <CoachTrainingReportPanel region={activeAssignment?.team_label} team={{ id: activeTeamId, name: activeAssignment?.team_label || (filtered[0]?.team_name) }} teamPlayers={filtered} />}
+        {tab === 'training' && <CoachTrainingReportPanel />}
         {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
         {tab === 'invite' && isApprovedCoach && <InvitePlayerPanel />}

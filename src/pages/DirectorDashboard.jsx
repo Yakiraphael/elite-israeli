@@ -24,7 +24,6 @@ import DirectorComplianceMatrix from '@/components/director/DirectorComplianceMa
 import DocumentPackagesPanel from '@/components/director/DocumentPackagesPanel';
 import PlayerGapModal from '@/components/director/PlayerGapModal';
 import MovePlayerBetweenTeamsModal from '@/components/director/MovePlayerBetweenTeamsModal';
-import FieldReportsStudio from '@/components/fieldreports/FieldReportsStudio';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -93,18 +92,6 @@ function DashboardContent({ onLogout }) {
   });
   const [gapPlayer, setGapPlayer] = useState(null);
   const [movePlayer, setMovePlayer] = useState(null);
-  const [reportTeamId, setReportTeamId] = useState('');
-
-  const { data: clubTeams = [] } = useQuery({
-    queryKey: ['director-club-teams'],
-    queryFn: async () => {
-      let me = null;
-      try { me = await base44.auth.me(); } catch { /* */ }
-      if (me?.club_id) return base44.entities.Team.filter({ club_id: me.club_id }, 'name', 50);
-      return base44.entities.Team.list('-name', 50);
-    },
-  });
-  const activeReportTeam = clubTeams.find(t => t.id === reportTeamId) || clubTeams[0] || null;
 
   const filtered = players.filter(p => !search || p.full_name?.includes(search) || p.position?.includes(search) || p.team_name?.includes(search));
 
@@ -121,7 +108,6 @@ function DashboardContent({ onLogout }) {
     { id: 'overview', label: 'סקירה', icon: BarChart3 },
     { id: 'transfers', label: 'תהליכי העברה', icon: Send },
     { id: 'squad_compliance', label: 'סגל ותאימות מול ההתאחדות הרשמית', icon: Shield },
-    { id: 'field_reports', label: 'דיווח מהשטח', icon: Activity },
     { id: 'contracts_forms', label: 'חוזים ומסמכים', icon: FileText },
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
     { id: 'finance', label: 'כספים', icon: Wallet },
@@ -205,16 +191,6 @@ function DashboardContent({ onLogout }) {
             {subCF === 'templates' && <TemplatesPanel onOpenForm={setOpenFormKey} />}
             {subCF === 'packages' && <DocumentPackagesPanel />}
           </div>
-        )}
-
-        {tab === 'field_reports' && (
-          <FieldReportsStudio
-            teams={clubTeams}
-            team={activeReportTeam}
-            players={filtered}
-            authorRole="מנהל מקצועי"
-            onPickTeam={setReportTeamId}
-          />
         )}
 
         {tab === 'requests' && (
