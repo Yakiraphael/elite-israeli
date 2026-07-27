@@ -21,6 +21,7 @@ import { getOfficialForm } from '@/lib/ifaOfficialForms';
 import { pdfWithAnnotations, signOriginalPdf } from '@/lib/signOriginalIfoPdf';
 import PdfFieldEditor from '@/components/contracts/PdfFieldEditor';
 import SignatureCanvas from '@/components/contracts/SignatureCanvas';
+import SendToPlayerCard from './SendToPlayerCard';
 
 const SIGNER_LABELS = {
   player: 'שחקן',
@@ -178,6 +179,8 @@ export default function UniversalPdfFormModal({
                     <Download size={13} /> הורד / צפה ב-PDF המולא
                   </a>
                 </div>
+
+                <SendToPlayerCard documentUrl={filledDocUrl} documentLabel={form.label} formKey={formKey} />
 
                 {/* חתימה דיגיטלית אופציונלית */}
                 <div className="border-t border-white/10 pt-4 space-y-3">

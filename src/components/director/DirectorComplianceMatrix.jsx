@@ -81,7 +81,14 @@ export default function DirectorComplianceMatrix({ players = [] }) {
     const m = medStatus(p), r = regStatus(p), c = contractStatus(p), d = discStatus(p);
     const l = legalStatus(p), i = injuryStatus(p), a = availStatus(p), yc = ycStatus(p);
     const rowAlert = m.light === 'red' || p.is_suspended || i.light === 'red' || c.light === 'red';
-    return { player: p, m, r, c, d, l, i, a, yc, rowAlert };
+    // פרופיל מסמכים מלא — חישוב השלמת 4 מדדי חובה לפי הוראה 2.
+    let profileDone = 0;
+    if (p.elite_id || p.ifa_id || p.ifa_player_id) profileDone++;
+    if (m.light === 'green') profileDone++;
+    if (l.light === 'green') profileDone++;
+    if ((c.light === 'green' || c.light === 'yellow') || r.light === 'green') profileDone++;
+    const profile = Math.round((profileDone / 4) * 100);
+    return { player: p, m, r, c, d, l, i, a, yc, profile, rowAlert };
   });
 
   const toggle = (id) => setExpanded(e => ({ ...e, [id]: !e[id] }));
@@ -98,6 +105,7 @@ export default function DirectorComplianceMatrix({ players = [] }) {
     { key: 'injury', label: '🤕 פציעה' },
     { key: 'avail', label: '🎯 זמין' },
     { key: 'yc', label: '🟨' },
+    { key: 'profile', label: '📊 תיק' },
     { key: 'ifa_id', label: 'IFA ID' },
   ];
 
@@ -152,6 +160,9 @@ export default function DirectorComplianceMatrix({ players = [] }) {
                 <td className="py-3 px-2"><Indicator s={r.i} /></td>
                 <td className="py-3 px-2"><Indicator s={r.a} /></td>
                 <td className="py-3 px-2"><Indicator s={r.yc} /></td>
+                <td className="py-3 px-2 whitespace-nowrap">
+                  <ProfileCompletionBar pct={r.profile} />
+                </td>
                 <td className="py-3 px-2 whitespace-nowrap" dir="ltr">
                   <span className="text-white/60 text-[10px]">{r.player.ifa_id || r.player.ifa_player_id || '—'}</span>
                 </td>
@@ -173,8 +184,22 @@ export default function DirectorComplianceMatrix({ players = [] }) {
         <span className="text-green-400">🟢 תקין</span>
         <span className="text-amber-400">🟡 התראה (ימים לפקיעה / סכנת השעיה)</span>
         <span className="text-red-400">🔴 חסר / פג תוקף / מושעה — חסימה מיידית מהסגל</span>
+        <span className="text-white/40">· 📊 תיק = פרופיל מסמכים מלא (4 מדדי חובה)</span>
         <span className="text-white/40">· לחץ על שורה לפירוט מלא</span>
       </div>
+    </div>
+  );
+}
+
+function ProfileCompletionBar({ pct }) {
+  const color = pct === 100 ? '#22c55e' : pct >= 75 ? '#facc15' : pct >= 50 ? '#f59e0b' : '#ef4444';
+  const label = pct === 100 ? '🟢' : pct >= 75 ? '🟡' : '🔴';
+  return (
+    <div className="flex items-center gap-1.5 flex-shrink-0" title={`פרופיל מסמכים: ${pct}% השלמה`}>
+      <div className="w-10 h-1.5 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
+      </div>
+      <span className="text-[10px] font-bold whitespace-nowrap" style={{ color }}>{label} {pct}%</span>
     </div>
   );
 }

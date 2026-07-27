@@ -168,7 +168,7 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'contracts_forms' && (
           <div className="space-y-5">
-            <div className="flex gap-1.5 bg-[#1B263B] border border-white/10 rounded-lg p-1.5">
+            <div className="flex gap-1.5 bg-[#1B263B] border border-white/10 rounded-lg p-1.5 justify-center items-center">
               <button onClick={() => setSubCF('contracts')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'contracts' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
                 <FileText size={14} /> ניהול חוזים קיימים
               </button>
