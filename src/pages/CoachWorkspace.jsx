@@ -14,6 +14,7 @@ import InjuryLogModal from '../components/coach/InjuryLogModal';
 import CoachRosterContractsView from '../components/coach/CoachRosterContractsView';
 import CoachAlertsStream from '../components/coach/CoachAlertsStream';
 import CoachTrainingReportPanel from '../components/coach/CoachTrainingReportPanel';
+import IfaComplianceMatrix from '@/components/shared/IfaComplianceMatrix';
 import { computeEligibility } from '@/lib/playerEligibility';
 import { whatsappLink } from '@/lib/contactLinks';
 import {
@@ -291,58 +292,11 @@ function SquadView({ players, loading, onSelect, onlyEligible }) {
 function ComplianceMatrix({ players }) {
   return (
     <div>
-      <h3 className="text-white font-black text-base mb-4">מטריצת תקינות — Compliance Matrix</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-white/10">
-              {['שם שחקן', 'סטטוס רפואי', 'מוכן IFA', 'מסמכים', 'פעולה מהירה'].map(h => (
-                <th key={h} className="text-white/40 font-bold py-3 px-3 text-right">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {players.map(p => {
-              const med = getMedicalStatus(p);
-              const missingDocs = [];
-              if (!p.id_document_url) missingDocs.push('ת.ז');
-              if (!p.is_adult && !p.id_suffix_url) missingDocs.push('ספח');
-              if (!p.medical_certificate_url) missingDocs.push('רפואי');
-              return (
-                <tr key={p.id} className="border-b border-white/5 hover:bg-white/2 transition-colors">
-                  <td className="py-3 px-3">
-                    <div className="text-white font-bold">{p.full_name}</div>
-                    <div className="text-white/30">{p.position}</div>
-                  </td>
-                  <td className="py-3 px-3">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_BADGE[med.color]}`}>
-                      {med.color === 'red' ? '🔴' : med.color === 'yellow' ? '🟡' : '🟢'} {med.label}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3">
-                    <span className={`text-[10px] font-bold ${p.ifa_ready ? 'text-green-400' : 'text-red-400'}`}>
-                      {p.ifa_ready ? '✓ מוכן' : '✗ חסר'}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3">
-                    {missingDocs.length === 0
-                      ? <span className="text-green-400 text-[10px]">✓ שלם</span>
-                      : <span className="text-red-400 text-[10px]">חסר: {missingDocs.join(', ')}</span>
-                    }
-                  </td>
-                  <td className="py-3 px-3">
-                    {(med.color === 'red' || missingDocs.length > 0) && (
-                      <button className="text-[10px] font-bold bg-amber-500/20 text-amber-400 px-2 py-1 rounded hover:bg-amber-500/30 transition-colors">
-                        שלח התראה
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-white font-black text-base">מטריצת תקינות — IFA Compliance Matrix</h3>
+        <span className="text-white/30 text-[10px]">4 מדדי חובה · עדכון אוטומטי מ-Feed ההתאחדות</span>
       </div>
+      <IfaComplianceMatrix players={players} />
     </div>
   );
 }

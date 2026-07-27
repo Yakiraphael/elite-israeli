@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History, FolderOpen, Building2 } from 'lucide-react';
+import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History, FolderOpen, Building2, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TransfersManager from '../components/admin/TransfersManager';
+import AdminMissionControl from '../components/admin/AdminMissionControl';
 import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
 import PlayerVerificationModal from '../components/admin/PlayerVerificationModal';
 import PermissionsManager from '../components/admin/PermissionsManager';
@@ -67,7 +68,7 @@ export default function AdminPanel() {
 }
 
 function AdminDashboard({ onLogout }) {
-  const [tab, setTab] = useState('clubs');
+  const [tab, setTab] = useState('mission_control');
 
   return (
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
@@ -92,7 +93,7 @@ function AdminDashboard({ onLogout }) {
       {/* Tabs */}
       <div className="border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {[{ id: 'clubs', label: 'מועדונים', icon: Building2 }, { id: 'club-docs', label: 'ארכיון מסמכים', icon: FolderOpen }, { id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }, { id: 'audit', label: 'יומן ביקורת', icon: History }].map(t => (
+          {[{ id: 'mission_control', label: 'Mission Control', icon: BarChart3 }, { id: 'clubs', label: 'מועדונים', icon: Building2 }, { id: 'club-docs', label: 'ארכיון מסמכים', icon: FolderOpen }, { id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }, { id: 'audit', label: 'יומן ביקורת', icon: History }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-6 py-4 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={14} />{t.label}
@@ -102,6 +103,7 @@ function AdminDashboard({ onLogout }) {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-10">
+        {tab === 'mission_control' && <AdminMissionControl />}
         {tab === 'clubs' && <ClubsManager />}
         {tab === 'club-docs' && <ClubDocumentsPanel />}
         {tab === 'events' && <EventsManager />}

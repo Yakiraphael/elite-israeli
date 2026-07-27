@@ -20,6 +20,7 @@ import TransfersManager from '../components/admin/TransfersManager';
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import DirectorPlayerProfileModal from '../components/director/DirectorPlayerProfileModal';
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
+import IfaComplianceMatrix from '@/components/shared/IfaComplianceMatrix';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -448,57 +449,10 @@ function ComplianceTab({ players }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית</h3>
-        <button className="text-xs bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 px-3 py-1.5 rounded hover:bg-[#D4AF37]/20 transition-colors">
-          📄 הפק דוח PDF
-        </button>
+        <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית — IFA Compliance Matrix</h3>
+        <span className="text-white/30 text-[10px]">4 מדדי חובה מול ההתאחדות לכדורגל</span>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-white/10">
-        <table className="w-full text-xs">
-          <thead className="bg-[#1B263B]">
-            <tr>
-              {['שם שחקן', 'עמדה', 'סטטוס רפואי', 'מוכן IFA', 'מסמכים', 'ימים לתוקף', 'פעולה'].map(h => (
-                <th key={h} className="text-white/40 font-bold py-3 px-4 text-right whitespace-nowrap">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((p, i) => {
-              const days = calcDaysLeft(p.medical_expiry_date);
-              const medColor = !p.medical_certificate_url ? 'red' : days === null ? 'green' : days < 0 ? 'red' : days < 30 ? 'yellow' : 'green';
-              const medLabel = !p.medical_certificate_url ? '🔴 חסר' : days === null ? '🟢 תקין' : days < 0 ? '🔴 פג תוקף' : days < 30 ? `🟡 ${days}י׳` : '🟢 תקין';
-              const missDocs = [!p.id_document_url && 'ת.ז', !p.is_adult && !p.id_suffix_url && 'ספח', !p.medical_certificate_url && 'רפואי'].filter(Boolean);
-              const rowBg = medColor === 'red' ? 'bg-red-500/5' : missDocs.length > 0 ? 'bg-amber-500/5' : '';
-
-              return (
-                <tr key={p.id} className={`border-t border-white/5 ${rowBg} hover:bg-white/2 transition-colors`}>
-                  <td className="py-3 px-4 text-white font-bold whitespace-nowrap">{p.full_name}</td>
-                  <td className="py-3 px-4 text-white/50">{p.position}</td>
-                  <td className="py-3 px-4 whitespace-nowrap">{medLabel}</td>
-                  <td className="py-3 px-4">
-                    <span className={p.ifa_ready ? 'text-green-400' : 'text-red-400'}>{p.ifa_ready ? '✅' : '❌'}</span>
-                  </td>
-                  <td className="py-3 px-4">
-                    {missDocs.length === 0
-                      ? <span className="text-green-400">✓ שלם</span>
-                      : <span className="text-red-400">חסר: {missDocs.join(', ')}</span>}
-                  </td>
-                  <td className="py-3 px-4">
-                    {days !== null ? <span className={days < 0 ? 'text-red-400' : days < 30 ? 'text-amber-400' : 'text-white/40'}>{days} ימים</span> : <span className="text-white/20">—</span>}
-                  </td>
-                  <td className="py-3 px-4">
-                    {(medColor === 'red' || missDocs.length > 0) && (
-                      <button className="text-[10px] font-bold bg-amber-500/20 text-amber-400 px-2 py-1 rounded hover:bg-amber-500/30 transition-colors whitespace-nowrap">
-                        שלח התראה
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <IfaComplianceMatrix players={players} showPosition />
     </div>
   );
 }
