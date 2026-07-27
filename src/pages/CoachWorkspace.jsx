@@ -17,6 +17,8 @@ import CoachTrainingReportPanel from '../components/coach/CoachTrainingReportPan
 import IfaComplianceMatrix from '@/components/shared/IfaComplianceMatrix';
 import { computeEligibility } from '@/lib/playerEligibility';
 import { whatsappLink } from '@/lib/contactLinks';
+import useActiveTeam from '@/components/coach/useActiveTeam';
+import TeamContextSwitcher from '@/components/coach/TeamContextSwitcher';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -53,9 +55,12 @@ export default function CoachWorkspace() {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [onlyEligible, setOnlyEligible] = useState(false);
 
+  // קונטקסט קבוצה פעילה — מאפשר למאמן לעבור בין שנתונים/קבוצות במקביל
+  const { assignments, activeTeamId, activeAssignment, setActiveTeam, loading: loadingTeam } = useActiveTeam();
+
   const { data: players = [], isLoading: loadingPlayers } = useQuery({
-    queryKey: ['coach-players'],
-    queryFn: () => base44.entities.PlayerRegistration.list('-created_date', 100),
+    queryKey: ['coach-players', activeTeamId],
+    queryFn: () => base44.entities.PlayerRegistration.list('-created_date', 300),
   });
 
   const { data: requests = [], isLoading: loadingRequests } = useQuery({
@@ -69,8 +74,10 @@ export default function CoachWorkspace() {
   });
   const blockingEnabled = !!settingsList[0]?.enforce_medical_blocking;
 
-  // המאמן אחראי על שחקני הקבוצה שתחתיו — מוצגים כל שחקני הרישום של הקבוצה
+  // נעילת קונטקסט: אם נבחרה קבוצה פעילה — מציגים אך ורק שחקנים ששויכו אליה (team_id).
+  // אם אין שיוך פעיל כלל — מוצגת רשימה ריקה כדי לא להציג שחקנים שאינם באחריות המאמן.
   const filtered = players.filter(p =>
+    (!activeTeamId || p.team_id === activeTeamId) &&
     (!search || p.full_name?.includes(search) || p.team_name?.includes(search))
   );
   const activeSquad = blockingEnabled ? filtered.filter(p => getMedicalStatus(p).color !== 'red') : filtered;
@@ -123,9 +130,21 @@ export default function CoachWorkspace() {
           <div className="flex items-center gap-3 mb-6 justify-between">
             <div>
               <h1 className="text-white font-black text-xl">מרחב עבודה למאמן</h1>
-              <p className="text-white/40 text-xs">מעקב בריאות הסגל, בקשות ואישורי העברה</p>
+              <p className="text-white/40 text-xs">
+                {activeAssignment
+                  ? `${activeAssignment.team_label || 'קבוצה פעילה'} · ${filtered.length} שחקנים בסגל`
+                  : 'מעקב בריאות הסגל, בקשות ואישורי העברה'}
+              </p>
             </div>
-            <NotificationBell audience="coach" onNavigate={setTab} />
+            <div className="flex items-center gap-3">
+              <TeamContextSwitcher
+                assignments={assignments}
+                activeTeamId={activeTeamId}
+                onSelect={setActiveTeam}
+                loading={loadingTeam}
+              />
+              <NotificationBell audience="coach" onNavigate={setTab} />
+            </div>
           </div>
 
           {/* KPI Row */}

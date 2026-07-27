@@ -76,8 +76,9 @@ function Indicator({ s }) {
 
 export default function DirectorComplianceMatrix({ players = [] }) {
   const [expanded, setExpanded] = useState({});
+  const [onlyAlerts, setOnlyAlerts] = useState(false);
 
-  const rows = players.map(p => {
+  const allRows = players.map(p => {
     const m = medStatus(p), r = regStatus(p), c = contractStatus(p), d = discStatus(p);
     const l = legalStatus(p), i = injuryStatus(p), a = availStatus(p), yc = ycStatus(p);
     const rowAlert = m.light === 'red' || p.is_suspended || i.light === 'red' || c.light === 'red';
@@ -90,6 +91,9 @@ export default function DirectorComplianceMatrix({ players = [] }) {
     const profile = Math.round((profileDone / 4) * 100);
     return { player: p, m, r, c, d, l, i, a, yc, profile, rowAlert };
   });
+
+  const alertCount = allRows.filter(r => r.rowAlert).length;
+  const rows = onlyAlerts ? allRows.filter(r => r.rowAlert) : allRows;
 
   const toggle = (id) => setExpanded(e => ({ ...e, [id]: !e[id] }));
 
@@ -110,7 +114,16 @@ export default function DirectorComplianceMatrix({ players = [] }) {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-white/10">
+    <div className="space-y-3">
+      <div className="flex items-center justify-between bg-[#1B263B] border border-white/10 rounded-lg px-4 py-2.5">
+        <label className="flex items-center gap-2 text-white/70 text-xs cursor-pointer select-none">
+          <input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} className="accent-[#D4AF37] w-3.5 h-3.5" />
+          הצג שחקנים לא תקינים בלבד
+          {alertCount > 0 && <span className="text-red-400 font-bold">({alertCount})</span>}
+        </label>
+        <span className="text-white/40 text-[10px]">{rows.length} מתוך {allRows.length} שחקנים מוצגים</span>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-white/10">
       <table className="w-full text-xs">
         <thead className="bg-[#1B263B]">
           <tr>
@@ -180,12 +193,13 @@ export default function DirectorComplianceMatrix({ players = [] }) {
       </table>
 
       <div className="px-3 py-2 bg-[#1B263B] border-t border-white/5 flex items-center gap-3 text-[10px] text-white/40 flex-wrap">
-        <span className="text-white/30">מקרא רמזורים:</span>
-        <span className="text-green-400">🟢 תקין</span>
-        <span className="text-amber-400">🟡 התראה (ימים לפקיעה / סכנת השעיה)</span>
-        <span className="text-red-400">🔴 חסר / פג תוקף / מושעה — חסימה מיידית מהסגל</span>
-        <span className="text-white/40">· 📊 תיק = פרופיל מסמכים מלא (4 מדדי חובה)</span>
-        <span className="text-white/40">· לחץ על שורה לפירוט מלא</span>
+          <span className="text-white/30">מקרא רמזורים:</span>
+          <span className="text-green-400">🟢 תקין</span>
+          <span className="text-amber-400">🟡 התראה (ימים לפקיעה / סכנת השעיה)</span>
+          <span className="text-red-400">🔴 חסר / פג תוקף / מושעה — חסימה מיידית מהסגל</span>
+          <span className="text-white/40">· 📊 תיק = פרופיל מסמכים מלא (4 מדדי חובה)</span>
+          <span className="text-white/40">· לחץ על שורה לפירוט מלא</span>
+        </div>
       </div>
     </div>
   );

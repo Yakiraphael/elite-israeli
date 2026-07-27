@@ -28,6 +28,7 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
   const [draftFontSize, setDraftFontSize] = useState(13);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
   const draftInputRef = useRef(null);
 
   // טעינת PDF — משתמשים ב-pdf.js אך ורק לשליפת מספר העמודים ויחס העמוד.
@@ -148,8 +149,14 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
     setDraftText('');
   };
 
-  const handleSave = () => {
-    onSaved?.(annotations);
+  const handleSave = async () => {
+    if (saving) return; // מונע לחיצות כפולות בזמן יצירת ה-PDF
+    setSaving(true);
+    try {
+      await onSaved?.(annotations);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -172,9 +179,10 @@ export default function PdfFieldEditor({ pdfUrl, initialAnnotations = [], onSave
             </button>
           )}
           <button onClick={handleSave}
-            disabled={annotations.length === 0}
-            className="flex items-center gap-1.5 text-xs font-bold bg-[#D4AF37] text-[#0D1B2A] px-3 py-1.5 rounded hover:bg-amber-400 disabled:opacity-40">
-            <Save size={13} /> שמור וסגור
+            disabled={annotations.length === 0 || saving}
+            className="flex items-center gap-1.5 text-xs font-bold bg-[#D4AF37] text-[#0D1B2A] px-3 py-1.5 rounded hover:bg-amber-400 disabled:opacity-60 disabled:cursor-not-allowed">
+            {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+            {saving ? 'שומר...' : 'שמור וסגור'}
           </button>
           <button onClick={onClose} className="text-white/40 hover:text-white">
             <X size={18} />
