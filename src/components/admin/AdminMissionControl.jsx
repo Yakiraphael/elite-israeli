@@ -86,7 +86,7 @@ export default function AdminMissionControl() {
             <BarChart3 size={22} className="text-[#D4AF37]" />
           </div>
           <div>
-            <span className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase">Mission Control · חדר הבקרה העליון</span>
+            <span className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase">חדר הבקרה העליון · מערכת מבט-על</span>
             <h1 className="text-white text-2xl font-black">מבט-על על כלל המערך · עילית ישראלית</h1>
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function AdminMissionControl() {
       {/* System Pulse */}
       <div>
         <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2">
-          <Activity size={14} /> מדד חיות המערך · System Pulse
+          <Activity size={14} /> מדד חיות המערך
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <PulseCard label="חניכים פעילים" value={activePlayers.length} sub={`מתוך ${players.length} רשומים`} color="green" icon={Users} />
@@ -108,12 +108,12 @@ export default function AdminMissionControl() {
       {/* Risk & Compliance Radar */}
       <div>
         <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2">
-          <AlertTriangle size={14} /> רדאר חריגים וסיכונים · Risk & Compliance Alerts
+          <AlertTriangle size={14} /> רדאר חריגים וסיכונים רגולטוריים
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <RiskCard count={ineligiblePlayers.length} title="שחקנים לא כשירים" sub="פג תוקף רפואי / השעיה פעילה" color="red" icon={HeartPulse}
             list={ineligiblePlayers.slice(0, 5).map(p => ({ id: p.id, label: `${p.full_name}${p.team_name ? ` · ${p.team_name}` : ''}` }))} />
-          <RiskCard count={pendingSignOff.length} title="ממתינים לחותמת חתימה" sub="טרם נחתם Pre-Signature Sign-Off" color="amber" icon={FileClock}
+          <RiskCard count={pendingSignOff.length} title="ממתינים לאישור חתימה מקדים" sub="טרם נחתם אישור חתימה מקדים (Pre-Signature)" color="amber" icon={FileClock}
             list={pendingSignOff.slice(0, 5).map(p => ({ id: p.id, label: p.full_name }))} />
           <RiskCard count={lowAttendanceTeams.length} title="קבוצות חריגות נוכחות" sub="מתחת ל-60% נוכחות ממוצעת" color="red" icon={Activity}
             list={lowAttendanceTeams.slice(0, 5).map(([team, s]) => ({ id: team, label: `${team} · ${Math.round(s.total / s.count)}%` }))} />
@@ -123,7 +123,7 @@ export default function AdminMissionControl() {
       {/* Regional / Municipal Partnerships */}
       <div>
         <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2">
-          <MapPin size={14} /> סטטוס שותפויות עירוניות · Municipal Partnerships
+          <MapPin size={14} /> סטטוס שותפויות עירוניות
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {REGIONS.map(r => (
@@ -138,7 +138,7 @@ export default function AdminMissionControl() {
       {/* Audit preview */}
       <div>
         <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase mb-3 flex items-center gap-2">
-          <ShieldCheck size={14} /> פעילות אחרונה · Audit Trail
+          <ShieldCheck size={14} /> פעילות אחרונה — יומן ביקורת
         </h3>
         {auditLogs.length === 0 ? (
           <div className="text-white/30 text-xs text-center py-6">אין רשומות עדיין</div>

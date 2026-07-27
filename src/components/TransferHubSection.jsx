@@ -13,8 +13,8 @@ const YOUTH_STEPS = [
 const ADULT_STEPS = [
   { icon: FileText, title: 'המועדון מגיש הצעה', desc: 'הצעה דיגיטלית לשחקן בוגר חופשי — שכר מוצע + טיוטת חוזה.' },
   { icon: CheckCircle2, title: 'אישור השחקן', desc: 'השחקן הבוגר בוחן את התנאים, לוחץ "מאשר תנאים" וחותם דיגיטלית.' },
-  { icon: CreditCard, title: 'אימות תשלום (Payment Gate)', desc: 'המערכת מייצרת דרישת תשלום לעמלת IEFA (2%). תיק ההעברה נשאר חסום עד אישור תשלום (PAID).' },
-  { icon: ShieldCheck, title: 'אימות התאחדות (IFA)', desc: 'המערכת משחררת את תיק הרישום, עוקבת אחר עדכון שם הקבוצה באתר ההתאחדות עד אישור סופי (COMPLETED).' },
+  { icon: CreditCard, title: 'אימות תשלום (שער תשלום)', desc: 'המערכת מייצרת דרישת תשלום לעמלת IEFA (2%). תיק ההעברה נשאר חסום עד אישור תשלום (שולם).' },
+  { icon: ShieldCheck, title: 'אימות ההתאחדות הרשמית', desc: 'המערכת משחררת את תיק הרישום, עוקבת אחר עדכון שם הקבוצה באתר ההתאחדות עד אישור סופי (הושלם).' },
 ];
 
 export default function TransferHubSection() {
@@ -39,7 +39,7 @@ export default function TransferHubSection() {
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             className="font-body text-xs tracking-[0.3em] text-gold font-bold uppercase block"
           >
-            Transfer Hub · מערכת העברות IEFA
+            מערכת העברות והשאלות · IEFA
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}

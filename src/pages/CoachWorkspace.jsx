@@ -106,7 +106,7 @@ export default function CoachWorkspace() {
     { id: 'training', label: 'דיווח שטח', icon: Calendar },
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
     { id: 'callup', label: 'זימון סגל', icon: ListChecks },
-    { id: 'compliance', label: 'תקינות IFA', icon: AlertTriangle },
+    { id: 'compliance', label: 'תקינות מול ההתאחדות הרשמית', icon: AlertTriangle },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
     { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
     { id: 'roster', label: 'סגל — חוזים', icon: FileText },
@@ -293,7 +293,7 @@ function ComplianceMatrix({ players }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-black text-base">מטריצת תקינות — IFA Compliance Matrix</h3>
+        <h3 className="text-white font-black text-base">מטריצת תקינות — תאימות מול ההתאחדות הרשמית</h3>
         <span className="text-white/30 text-[10px]">4 מדדי חובה · עדכון אוטומטי מ-Feed ההתאחדות</span>
       </div>
       <IfaComplianceMatrix players={players} />

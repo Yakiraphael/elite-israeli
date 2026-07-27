@@ -98,7 +98,7 @@ function DashboardContent({ onLogout }) {
   const tabs = [
     { id: 'overview', label: 'סקירה', icon: BarChart3 },
     { id: 'transfers', label: 'תהליכי העברה', icon: Send },
-    { id: 'squad_compliance', label: 'סגל ותאימות IFA', icon: Shield },
+    { id: 'squad_compliance', label: 'סגל ותאימות מול ההתאחדות הרשמית', icon: Shield },
     { id: 'contracts_forms', label: 'חוזים ומסמכים', icon: FileText },
     { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
     { id: 'finance', label: 'כספים', icon: Wallet },
@@ -115,7 +115,7 @@ function DashboardContent({ onLogout }) {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-white font-black text-xl">חדר בקרה מנהל מקצועי</h1>
-            <p className="text-white/40 text-xs">תהליכי העברה · תיקים משפטיים · תאימות חוקית להרכב (IFA)</p>
+            <p className="text-white/40 text-xs">תהליכי העברה · תיקים משפטיים · תאימות חוקית להרכב מול ההתאחדות הרשמית</p>
           </div>
           <div className="flex items-center gap-4">
             {/* Global search */}
@@ -261,7 +261,7 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: 'סה״כ שחקנים', value: players.length, icon: '👥' },
-          { label: 'מוכן להתאחדות (IFA)', value: ifaReady, icon: '✅' },
+          { label: 'מוכן להתאחדות הרשמית', value: ifaReady, icon: '✅' },
           { label: 'שחקנים חופשיים', value: players.filter(p => p.is_free_agent).length, icon: '🟢' },
           { label: 'העברות פעילות', value: transfers.filter(t => t.status === 'Trialist' || t.status === 'Contract Pending').length, icon: '🔄' },
         ].map(s => (
@@ -449,7 +449,7 @@ function ComplianceTab({ players }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית — IFA Compliance Matrix</h3>
+        <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית — תאימות מול ההתאחדות הרשמית</h3>
         <span className="text-white/30 text-[10px]">4 מדדי חובה מול ההתאחדות לכדורגל</span>
       </div>
       <IfaComplianceMatrix players={players} showPosition />
