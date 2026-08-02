@@ -347,6 +347,15 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
 }
 
 function Backdrop({ children, onClose }) {
+  // נעילת גלילת הגוף ברקע כל עוד המודאל פתוח — מונע גלילה כפולה (Zero Double Scrollbars).
+  useEffect(() => {
+    const root = document.documentElement;
+    const prev = root.style.overflow;
+    root.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape' && onClose) onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => { root.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [onClose]);
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>

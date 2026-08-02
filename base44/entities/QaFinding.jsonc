@@ -1,0 +1,124 @@
+{
+  "name": "QaFinding",
+  "type": "object",
+  "properties": {
+    "check_key": {
+      "type": "string",
+      "title": "\u05de\u05e4\u05ea\u05d7 \u05d9\u05d9\u05d7\u05d5\u05d3\u05d9 (check_type:target_id) \u2014 \u05dc\u05de\u05e0\u05d9\u05e2\u05ea \u05db\u05e4\u05d9\u05dc\u05d5\u05d9\u05d5\u05ea \u05d1\u05d9\u05df \u05e8\u05d9\u05e6\u05d5\u05ea"
+    },
+    "check_type": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05d1\u05d3\u05d9\u05e7\u05d4",
+      "enum": [
+        "minor_missing_guardian",
+        "minor_missing_id_suffix",
+        "minor_missing_media_consent",
+        "medical_expired",
+        "medical_expiring",
+        "contract_guardian_unsigned",
+        "contract_unsigned_stale",
+        "transfer_guardian_otp_gap",
+        "audit_actor_missing",
+        "ui_modal_scroll_risk"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "title": "\u05e8\u05de\u05ea \u05d7\u05d5\u05de\u05e8\u05d4",
+      "enum": [
+        "critical",
+        "warning",
+        "info"
+      ],
+      "default": "warning"
+    },
+    "category": {
+      "type": "string",
+      "title": "\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d4 \u05e8\u05d2\u05d5\u05dc\u05d8\u05d5\u05e8\u05d9\u05ea",
+      "enum": [
+        "\u05e8\u05d9\u05e9\u05d5\u05dd \u05e7\u05d8\u05d9\u05e0\u05d9\u05dd",
+        "\u05d1\u05e8\u05d9\u05d0\u05d5\u05ea \u05d5\u05d1\u05d9\u05d8\u05d5\u05d7",
+        "\u05d7\u05d5\u05d6\u05d9\u05dd",
+        "\u05d4\u05e2\u05d1\u05e8\u05d5\u05ea \u05d5\u05de\u05d5\"\u05de",
+        "\u05d9\u05d5\u05de\u05df \u05d1\u05d9\u05e7\u05d5\u05e8\u05ea",
+        "UX/\u05d0\u05e8\u05db\u05d9\u05d8\u05e7\u05d8\u05d5\u05e8\u05d4"
+      ],
+      "default": "\u05e8\u05d9\u05e9\u05d5\u05dd \u05e7\u05d8\u05d9\u05e0\u05d9\u05dd"
+    },
+    "title": {
+      "type": "string",
+      "title": "\u05db\u05d5\u05ea\u05e8\u05ea \u05de\u05de\u05e6\u05d0"
+    },
+    "detail": {
+      "type": "string",
+      "title": "\u05e4\u05d9\u05e8\u05d5\u05d8"
+    },
+    "fix_hint": {
+      "type": "string",
+      "title": "\u05d4\u05e0\u05d7\u05d9\u05d4 \u05dc\u05ea\u05d9\u05e7\u05d5\u05df \u05d9\u05d3\u05e0\u05d9 / \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9"
+    },
+    "target_type": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05d9\u05e9\u05d5\u05ea \u05d9\u05e2\u05d3"
+    },
+    "target_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05d9\u05e9\u05d5\u05ea \u05d9\u05e2\u05d3"
+    },
+    "target_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd / \u05ea\u05d9\u05d0\u05d5\u05e8 \u05d9\u05e2\u05d3"
+    },
+    "run_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e8\u05d9\u05e6\u05ea \u05e1\u05e8\u05d9\u05e7\u05d4"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05de\u05de\u05e6\u05d0",
+      "enum": [
+        "open",
+        "auto_fixed",
+        "resolved",
+        "ignored"
+      ],
+      "default": "open"
+    },
+    "auto_fix_applied": {
+      "type": "string",
+      "title": "\u05ea\u05d9\u05d0\u05d5\u05e8 \u05ea\u05d9\u05e7\u05d5\u05df \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9 \u05e9\u05d1\u05d5\u05e6\u05e2"
+    },
+    "resolved_at": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05e4\u05ea\u05e8\u05d5\u05df"
+    }
+  },
+  "required": [
+    "check_type",
+    "severity",
+    "title",
+    "check_key"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
