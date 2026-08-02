@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings, FileSignature } from 'lucide-react';
 import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
+import GuardianComplianceGate from './GuardianComplianceGate';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
 import NegotiationHub from '@/components/negotiation/NegotiationHub';
@@ -190,29 +191,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
                     </button>
                   </div>
 
-                  {!confirm[offer.id] ? (
-                    <button onClick={() => setConfirm(c => ({ ...c, [offer.id]: true }))}
-                      className="w-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-amber-500/25 transition-colors">
-                      לחץ לאישור וחתימה על ההעברה כאפוטרופוס
-                    </button>
-                  ) : (
-                    <div className="space-y-2">
-                      <input
-                        value={signName}
-                        onChange={e => setSignName(e.target.value)}
-                        placeholder="הקלד את שמך המלא כאישור לחתימה דיגיטלית"
-                        className="w-full bg-[#1B263B] border border-white/15 rounded-sm px-3 py-2 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60"
-                      />
-                      <button
-                        onClick={() => signOffer.mutate(offer)}
-                        disabled={!signName.trim() || signOffer.isPending}
-                        className="w-full bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs py-2.5 rounded-sm hover:bg-green-500/25 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
-                      >
-                        {signOffer.isPending ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
-                        אני מאשר/ת את ההעברה בחתימה דיגיטלית
-                      </button>
-                    </div>
-                  )}
+                  <GuardianComplianceGate offer={offer} player={player} guardianUser={guardianUser} onApproved={(o) => signOffer.mutate(o)} />
                 </>
               )}
             </div>
