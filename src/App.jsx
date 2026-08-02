@@ -20,6 +20,7 @@ import CoachRoster from './pages/CoachRoster';
 import DirectorDashboard from './pages/DirectorDashboard';
 import SignContract from './pages/SignContract';
 import GuardianPortal from './pages/GuardianPortal';
+import SuperAdminPanel from './pages/SuperAdminPanel';
 import QaEnginePanel from './components/admin/QaEnginePanel';
 
 const AuthenticatedApp = () => {
@@ -63,6 +64,7 @@ const AuthenticatedApp = () => {
       <Route path="/sign-contract" element={<SignContract />} />
       <Route path="/guardian-portal" element={<GuardianPortal />} />
       <Route path="/qa-engine" element={<QaEnginePanel />} />
+      <Route path="/super-admin" element={<SuperAdminPanel />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
