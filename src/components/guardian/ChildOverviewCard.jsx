@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings, FileSignature } from 'lucide-react';
 import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
 import GuardianComplianceGate from './GuardianComplianceGate';
+import GuardianConsentPanel from './GuardianConsentPanel';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
 import NegotiationHub from '@/components/negotiation/NegotiationHub';
@@ -110,6 +111,10 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
 
       {showNotifSettings && (
         <GuardianNotificationSettingsModal player={player} onClose={() => setShowNotifSettings(false)} />
+      )}
+
+      {!player.is_adult && (
+        <GuardianConsentPanel player={player} guardianUser={guardianUser} />
       )}
 
       <div className="grid grid-cols-2 gap-3 mb-4">

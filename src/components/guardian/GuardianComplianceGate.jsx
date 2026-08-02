@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, FileText, HeartPulse, UserCheck, KeyRound, Send, Loader2, CheckCircle2, AlertTriangle, ExternalLink, ImageIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { guardianGatesForPlayer, blockingGates as getBlockingGates, docsReady as checkDocsReady } from '@/lib/minorGuard';
@@ -7,14 +8,22 @@ import { guardianGatesForPlayer, blockingGates as getBlockingGates, docsReady as
 // לוגיקת השערים מיובאת מ-@/lib/minorGuard.js (מקור יחיד לאמת) כדי לאכוף את אותם
 // חסמים גם בזרימות אחרות (חוזה, רישום, אישור מדיה). OTP מטופל מקומית ברכיב זה.
 export default function GuardianComplianceGate({ offer, player, guardianUser, onApproved }) {
+  const queryClient = useQueryClient();
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpExpected, setOtpExpected] = useState('');
-  const [otpVerified, setOtpVerified] = useState(false);
+  // אימות OTP נשמר על ההצעה (guardian_otp_verified) — לאחר אימות חד-פעני, הוא לא נדרש שוב לאותה הצעה.
+  const [otpVerified, setOtpVerified] = useState(!!offer.guardian_otp_verified);
   const [otpError, setOtpError] = useState('');
   const [sendingOtp, setSendingOtp] = useState(false);
+  const [persistingOtp, setPersistingOtp] = useState(false);
   const [signName, setSignName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // סנכרון: אם ההצעה התעדכנה מבחוץ (לאחר refetch) וה-OTP כבר אומת — הצג ירוק מיד.
+  useEffect(() => {
+    if (offer.guardian_otp_verified && !otpVerified) setOtpVerified(true);
+  }, [offer.guardian_otp_verified, otpVerified]);
 
   // --- שערים רגולטוריים (מקור יחיד: @/lib/minorGuard) ---
   const GATE_ICONS = {
@@ -53,10 +62,21 @@ export default function GuardianComplianceGate({ offer, player, guardianUser, on
     setSendingOtp(false);
   };
 
-  const verifyOtp = () => {
+  // אימות קוד + שמירה מתמשכת על ההצעה — כך חזרה לפורטל לא תדרוש אימות מחדש.
+  const verifyOtp = async () => {
     if (otpCode.trim() === otpExpected) {
       setOtpVerified(true);
       setOtpError('');
+      setPersistingOtp(true);
+      try {
+        await base44.entities.TransferProposal.update(offer.id, { guardian_otp_verified: true });
+        queryClient.invalidateQueries({ queryKey: ['guardian-offers'] });
+      } catch (e) {
+        // אם השמירה נכשלה — האימות תקף להפעלה הנוכחית בלבד
+        setOtpError('האימות הצליח, אך שמירתו נכשלה — ייתכן שתתבקש שוב בכניסה הבאה');
+      } finally {
+        setPersistingOtp(false);
+      }
     } else {
       setOtpError('קוד שגוי — נא הזן שוב');
       setOtpVerified(false);
