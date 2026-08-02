@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { resolveOrgContext } from '@/lib/orgProfileContext';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -35,6 +36,24 @@ export default function ScoutPlayerProfileModal({ player, onClose, onOffer }) {
     mutationFn: (data) => base44.entities.PlayerRegistration.update(player.id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['scouting-players'] }),
   });
+
+  // זיהוי הסיווג הארגוני של השחקן דרך הקבוצה ← המועדון, כדי להתאים את כרטיס השחקן ומדדי הסקאוטינג.
+  const { data: orgCtx = null } = useQuery({
+    queryKey: ['scout-org-context', player.id, player.team_id || 'no-team'],
+    queryFn: async () => {
+      if (!player.team_id) return resolveOrgContext('YOUTH_DEPARTMENT');
+      try {
+        const team = await base44.entities.Team.get(player.team_id);
+        const club = team?.club_id ? await base44.entities.Club.get(team.club_id) : null;
+        return resolveOrgContext(club?.org_classification || 'YOUTH_DEPARTMENT');
+      } catch {
+        return resolveOrgContext('YOUTH_DEPARTMENT');
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+  const ctx = orgCtx || resolveOrgContext('YOUTH_DEPARTMENT');
+  const tm = player.transfermarkt_data || {};
 
   const age = calcAge(player.birth_date);
   const minutes = player.last_match_minutes || [];
@@ -73,6 +92,9 @@ export default function ScoutPlayerProfileModal({ player, onClose, onOffer }) {
                   {player.is_free_agent && (
                     <span className="text-[10px] text-green-400 bg-green-400/10 border border-green-400/30 px-2 py-0.5 rounded-full">Free Agent</span>
                   )}
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ctx.isProfessional ? 'text-[#D4AF37] bg-[#D4AF37]/10 border-[#D4AF37]/30' : 'text-white/50 bg-white/5 border-white/15'}`} title="סיווג ארגוני מותאם-הקשר">
+                    {ctx.label}
+                  </span>
                 </div>
               </div>
             </div>
@@ -181,6 +203,37 @@ export default function ScoutPlayerProfileModal({ player, onClose, onOffer }) {
           {/* TAB B — Performance */}
           {tab === 'perf' && (
             <>
+              {ctx.show.officialAppearances && (
+                <div className="bg-[#0D1B2A] border border-[#D4AF37]/20 rounded-lg p-4">
+                  <h4 className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase mb-3">הופעות רשמיות בהתאחדות · לפי עונה</h4>
+                  {tm.career_stats?.length ? (
+                    <div className="space-y-1.5">
+                      {tm.career_stats.map((s, i) => (
+                        <div key={i} className="flex items-center justify-between text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1.5">
+                          <span className="text-white/70 font-bold">{s.season} · {s.club || '—'}</span>
+                          <span className="text-white/50">{s.competition || ''}</span>
+                          <span className="text-[#D4AF37] font-bold">{s.appearances ?? 0} הופע' · {s.goals ?? 0} שערים</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : <p className="text-white/30 text-xs">אין היסטוריית הופעות רשמית מסונכרנת מ-Transfermarkt.</p>}
+                  {ctx.show.sellOnContribution && (
+                    <div className="mt-3 pt-3 border-t border-white/10 text-[11px] text-white/50">
+                      דמי השבחה ומעקב חוזים · ערך שוק נוכחי: <span className="text-[#D4AF37] font-bold">{tm.market_value_current || '—'}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {ctx.show.tournamentMetrics && (
+                <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4">
+                  <h4 className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase mb-3">נתוני טורניר והשתתפות</h4>
+                  <div className="flex items-end gap-3">
+                    <div className="text-white font-black text-2xl">{player.attendance_rate ?? 0}%</div>
+                    <div className="text-white/40 text-xs mb-1">נוכחות באימונים</div>
+                  </div>
+                  <p className="text-white/40 text-[11px] mt-2">סקאוטינג פנימי גמיש — מדדי טורניר קהילתיים והשתתפות רגילה.</p>
+                </div>
+              )}
               <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4">
                 <h4 className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase mb-3">מדד נוכחות והתמדה</h4>
                 <div className="flex items-end gap-2">

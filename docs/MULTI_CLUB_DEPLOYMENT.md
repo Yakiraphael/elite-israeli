@@ -23,6 +23,21 @@
 | TransferProposal | (חדש: `from_club_id`/`to_club_id`) | — | Phase 2 |
 | AuditLog, BehaviorLog, TeamReport | ✗ | — | Phase 3 |
 
+### סיווג ארגוני (Org Classification)
+`Club.org_classification` — ארבעה ערכים קובעים את פרופיל השחקן ומנוע הסקאוטינג:
+- `IFA_VERIFIED` — מועדון מאומת התאחדות: הופעות רשמיות, דמי השבחה, מעקב חוזים, בדיקת כרטיס IFA.
+- `YOUTH_DEPARTMENT` — מחלקת נוער: סקאוטינג פנימי גמיש + נתוני טורניר/השתתפות.
+- `AMATEUR_LEAGUE` / `ASSOCIATION` — ליגת חובבנים/עמותה: נתוני טורניר והשתתפות בלבד.
+מנוע ההקשר ב-`src/lib/orgProfileContext.js` (`resolveOrgContext`); הסיווג נקבע בעת בחינת המועדון (`ClubReviewModal`).
+
+### מיפוי תפקידי RBAC (אפיון → פלטפורמה)
+| אפיון | `User.role` | הרשאות |
+|------|-----------|--------|
+| SUPER_ADMIN | `admin` | קליטת מועדונים, אישור מסמכים, פקוח עברות בין-מועדוניות |
+| CLUB_OWNER / SPORT_DIRECTOR | `director` | אישור חוזים, מו"מ, הגשת סגלים — במועדון שלהם בלבד |
+| COACH | `coach` | צפייה בסגל, הגשת טפסי משחק (מותנה רגולטורית) |
+| PLAYER / GUARDIAN | `player` / `guardian` | גישה לפרופיל השחקן בלבד |
+
 ### עיקרון הסליאה
 - **Super Admin** (`role: admin`) — חוצה-מועדונים (קליטת מועדונים, אימות, השעיה).
 - **מנהל מקצועי/מאמן/סקאוט** — מוגבל ל-`club_id` שלהם (RLS קשיח בצד שרת).

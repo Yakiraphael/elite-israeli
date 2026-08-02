@@ -14,6 +14,7 @@ export default function ClubReviewModal({ club, user, onClose }) {
   const [verificationStatus, setVerificationStatus] = useState(club.verification_status || 'ממתין לאימות');
   const [onboardingStage, setOnboardingStage] = useState(club.onboarding_stage || 'הגשה');
   const [isVerified, setIsVerified] = useState(!!club.is_verified);
+  const [orgClassification, setOrgClassification] = useState(club.org_classification || 'YOUTH_DEPARTMENT');
   const [rejectionReason, setRejectionReason] = useState(club.rejection_reason || '');
   const [now, setNow] = useState('');
 
@@ -33,6 +34,7 @@ export default function ClubReviewModal({ club, user, onClose }) {
         operational_status: operationalStatus,
         verification_status: verificationStatus,
         onboarding_stage: onboardingStage,
+        org_classification: orgClassification,
         is_verified: isVerified,
         rejection_reason: operationalStatus === 'נדחה' || verificationStatus === 'נדחה' ? rejectionReason : '',
         reviewer_id: user?.id || '',
@@ -119,6 +121,11 @@ export default function ClubReviewModal({ club, user, onClose }) {
               <Field label="שלב קליטה">
                 <select value={onboardingStage} onChange={e => setOnboardingStage(e.target.value)} className="w-full bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line">
                   {STAGE.map(o => <option key={o} value={o} className="bg-surface text-ink">{o}</option>)}
+                </select>
+              </Field>
+              <Field label="סיווג ארגוני (מנוע פרופיל/סקאוטינג)">
+                <select value={orgClassification} onChange={e => setOrgClassification(e.target.value)} className="w-full bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line">
+                  {['IFA_VERIFIED','YOUTH_DEPARTMENT','AMATEUR_LEAGUE','ASSOCIATION'].map(o => <option key={o} value={o} className="bg-surface text-ink">{o}</option>)}
                 </select>
               </Field>
               <label className="flex items-center gap-2 bg-panel border border-hairline rounded-sm px-3 py-2 cursor-pointer">
