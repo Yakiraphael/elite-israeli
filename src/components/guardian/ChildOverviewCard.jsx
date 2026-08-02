@@ -10,6 +10,7 @@ import GuardianPlayerProfileModal from './GuardianPlayerProfileModal';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
 import NegotiationHub from '@/components/negotiation/NegotiationHub';
+import ContractClausesView from '@/components/negotiation/ContractClausesView';
 import { consentSnapshot } from '@/lib/regulationVersion';
 
 // מכאן מתבצעת החתימה הדיגיטלית האינטראקטיבית על טופס ההתאחדות — אפוטרופוס/שחקן ממלא השלמות וחותם.
@@ -192,8 +193,8 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
 
               {player.is_adult ? (
                 // שחקן בוגר עם מנהל אישי — המנהל אינו חותם, רק מנהל משא ומתן על סעיפי החוזה.
-                // השחקן הבוגר חותם בעצמו דרך פרופיל השחקן שלו.
-                <NegotiationHub offer={offer} player={player} currentUser={guardianUser} />
+                // השחקן הבוגר חותם בעצמו דרך פרופיל השחקן שלו. תצוגה מובנה מאוחדת לשני הצדדים.
+                <ContractClausesView proposal={offer} player={player} role="manager" currentUser={guardianUser} />
               ) : (
                 // קטין — אפוטרופוס חותם בלבד
                 <>

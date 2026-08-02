@@ -8,8 +8,7 @@ import {
 import TransferPipelineStepper from './TransferPipelineStepper';
 import TransferApprovalGate from './TransferApprovalGate';
 import NegotiationPanel from '@/components/negotiation/NegotiationPanel';
-import TransparencyDashboard from '@/components/negotiation/TransparencyDashboard';
-import NegotiationTimeline from '@/components/negotiation/NegotiationTimeline';
+import ContractClausesView from '@/components/negotiation/ContractClausesView';
 import { TRANSFER_CATEGORIES } from '@/lib/transferDocumentRequirements';
 
 const STATUSES = [
@@ -312,10 +311,9 @@ function TransferDetail({ proposal, section, onSection, updateProposal, requestC
         {section === 'details' && <DetailsSection p={p} onContractValueChange={onContractValueChange} />}
         {section === 'compliance' && <ComplianceSection p={p} updateProposal={updateProposal} requestCoachApproval={requestCoachApproval} />}
         {section === 'negotiation' && (
-          <div className="space-y-3">
-            <TransparencyDashboard proposal={p} role="club" />
+          <div className="space-y-4">
+            <ContractClausesView proposal={p} role="club" />
             <NegotiationPanel proposal={p} />
-            <NegotiationTimeline proposalId={p.id} proposal={p} />
           </div>
         )}
         {section === 'gate' && <GateSection p={p} updateProposal={updateProposal} readyMap={readyMap} setReadyMap={setReadyMap} />}
