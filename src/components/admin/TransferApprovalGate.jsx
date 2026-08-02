@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle2, XCircle, Loader2, ShieldCheck, FolderLock, FileCheck2, PackageCheck } from 'lucide-react';
-import { computeTransferReadiness } from '@/lib/transferDocumentRequirements';
+import { CheckCircle2, XCircle, Loader2, ShieldCheck, FolderLock, FileCheck2, PackageCheck, AlertTriangle } from 'lucide-react';
+import { buildApprovalChecks, DOC_PROFILE_LABEL } from '@/lib/templateWorkflowEngine';
 import TransferDocumentsChecklist from '../transfer/TransferDocumentsChecklist';
 import { generateBundlePdf } from '@/lib/generateIfoFormPdf';
 import TransferFormsChecklist from './TransferFormsChecklist';
@@ -26,7 +26,7 @@ export default function TransferApprovalGate({ proposal, onReadyChange }) {
     enabled: !!proposal.player_elite_id,
   });
 
-  const { category, checks, ready } = computeTransferReadiness(proposal, docs);
+  const { category, profile, coverage, checks, ready, matching } = buildApprovalChecks(proposal, docs);
 
   useEffect(() => {
     onReadyChange?.(ready);
@@ -72,17 +72,50 @@ export default function TransferApprovalGate({ proposal, onReadyChange }) {
   return (
     <div className="space-y-3">
       <div className="bg-[#0D1B2A] border border-white/10 rounded-lg p-4">
-        <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold mb-3 uppercase tracking-widest">
-          <ShieldCheck size={12} /> מנגנון אימות לאישור סופי
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-bold uppercase tracking-widest">
+            <ShieldCheck size={12} /> מנגנון אימות לאישור סופי
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${profile === 'minor' ? 'text-amber-300 bg-amber-500/10 border-amber-500/30' : 'text-blue-300 bg-blue-500/10 border-blue-500/30'}`}>
+              פרופיל: {DOC_PROFILE_LABEL[profile]}
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border text-white/60 bg-white/5 border-white/20">
+              כיסוי {Math.round(coverage * 100)}%
+            </span>
+          </div>
         </div>
         <div className="space-y-1.5">
-          {checks.map((c, i) => (
-            <div key={i} className={`flex items-center gap-2 text-xs ${c.passed ? 'text-green-400' : 'text-red-400'}`}>
-              {c.passed ? <CheckCircle2 size={13} className="flex-shrink-0" /> : <XCircle size={13} className="flex-shrink-0" />}
-              {c.label}
-            </div>
-          ))}
+          {checks.map((c, i) => {
+            const warn = !c.passed && c.key === 'mismatch';
+            return (
+              <div key={i}>
+                <div className={`flex items-start gap-2 text-xs ${c.passed ? 'text-green-400' : warn ? 'text-amber-400' : 'text-red-400'}`}>
+                  {c.passed ? <CheckCircle2 size={13} className="flex-shrink-0 mt-0.5" /> : warn ? <AlertTriangle size={13} className="flex-shrink-0 mt-0.5" /> : <XCircle size={13} className="flex-shrink-0 mt-0.5" />}
+                  <span className="flex-1">{c.label}</span>
+                </div>
+                {c.detail?.missing?.length > 0 && (
+                  <div className="mr-5 mt-1 text-[10px] text-red-400/80">חסרים: {c.detail.missing.map(d => d.label).join(', ')}</div>
+                )}
+                {c.detail?.unsigned?.length > 0 && (
+                  <div className="mr-5 mt-1 text-[10px] text-amber-400/80">לא חתומו: {c.detail.unsigned.map(d => d.label).join(', ')}</div>
+                )}
+                {c.detail?.mismatched?.length > 0 && (
+                  <div className="mr-5 mt-1 text-[10px] text-amber-400/80">פרופיל שגוי: {c.detail.mismatched.map(d => d.doc_label || d.doc_type).join(', ')}</div>
+                )}
+              </div>
+            );
+          })}
         </div>
+
+        {/* אבחנת מנוע ההתאמה — מסמכים מיותרים שלא שייכים לקטגוריה */}
+        {matching.extra.length > 0 && (
+          <div className="mt-3 flex items-start gap-1.5 text-[10px] text-white/50 bg-white/5 border border-white/10 rounded px-2 py-1.5">
+            <AlertTriangle size={11} className="text-white/40 mt-0.5 flex-shrink-0" />
+            <span>מסמכים מיותרים שלא נכללו בדרישות הקטגוריה: {matching.extra.map(d => d.doc_label || d.doc_type).join(', ')}</span>
+          </div>
+        )}
+
         {!ready && (
           <p className="text-amber-400 text-[10px] mt-3 leading-relaxed">
             ⚠️ לא ניתן לאשר סופית עד להשלמת כל הדרישות — התאחדות הכדורגל דורשת תיעוד מלא לפני רישום {category?.startsWith('השאל') ? 'ההשאלה' : 'ההעברה'}.
