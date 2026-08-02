@@ -73,6 +73,9 @@ export default function AdminMissionControl() {
     unauthorized_attempt: '⛔ ניסיון גישה לא מורשה',
     sign_player: '✍️ חתימה על שחקן',
     status_change: '🔄 שינוי סטטוס',
+    consent_signed: '✍️ חתימת הסכמה',
+    retention_anonymize: '🔒 אנונימיזציה אוטומטית',
+    retention_delete: '🗑️ מחיקת שמירה אוטומטית',
   };
 
   return (

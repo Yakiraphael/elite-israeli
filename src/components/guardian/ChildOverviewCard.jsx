@@ -7,6 +7,7 @@ import GuardianComplianceGate from './GuardianComplianceGate';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
 import NegotiationHub from '@/components/negotiation/NegotiationHub';
+import { consentSnapshot } from '@/lib/regulationVersion';
 
 // מכאן מתבצעת החתימה הדיגיטלית האינטראקטיבית על טופס ההתאחדות — אפוטרופוס/שחקן ממלא השלמות וחותם.
 function primaryFormKeyForOffer(offer, player, role) {
@@ -58,6 +59,7 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
         action: 'sign_player',
         player_id: player.id,
         details: `אפוטרופוס ${signName.trim()} חתם על אישור העברת ${player.full_name} למועדון ${offer.club_name}`,
+        ...consentSnapshot(),
       });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['guardian-children'] }),

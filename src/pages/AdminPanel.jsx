@@ -10,6 +10,7 @@ import EliteIdEditorModal from '../components/admin/EliteIdEditorModal';
 import PlayerVerificationModal from '../components/admin/PlayerVerificationModal';
 import PermissionsManager from '../components/admin/PermissionsManager';
 import AuditLogPanel from '../components/admin/AuditLogPanel';
+import StorageSecurityPanel from '../components/admin/StorageSecurityPanel';
 import PlayerDocumentsModal from '../components/admin/PlayerDocumentsModal';
 import ClubsManager from '../components/admin/ClubsManager';
 import ClubDocumentsPanel from '../components/admin/ClubDocumentsPanel';
@@ -93,7 +94,7 @@ function AdminDashboard({ onLogout }) {
       {/* Tabs */}
       <div className="border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-5xl mx-auto px-6 flex gap-0">
-          {[{ id: 'mission_control', label: 'חדר בקרה עליון', icon: BarChart3 }, { id: 'clubs', label: 'מועדונים', icon: Building2 }, { id: 'club-docs', label: 'ארכיון מסמכים', icon: FolderOpen }, { id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }, { id: 'audit', label: 'יומן ביקורת', icon: History }].map(t => (
+          {[{ id: 'mission_control', label: 'חדר בקרה עליון', icon: BarChart3 }, { id: 'clubs', label: 'מועדונים', icon: Building2 }, { id: 'club-docs', label: 'ארכיון מסמכים', icon: FolderOpen }, { id: 'events', label: 'אירועים', icon: Calendar }, { id: 'players', label: 'שחקנים', icon: Users }, { id: 'transfers', label: 'העברות', icon: Send }, { id: 'permissions', label: 'הרשאות', icon: ShieldCheck }, { id: 'audit', label: 'יומן ביקורת', icon: History }, { id: 'data_security', label: 'אבטחת מידע', icon: ShieldCheck }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-6 py-4 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={14} />{t.label}
@@ -111,6 +112,7 @@ function AdminDashboard({ onLogout }) {
         {tab === 'transfers' && <TransfersManager />}
         {tab === 'permissions' && <PermissionsManager />}
         {tab === 'audit' && <AuditLogPanel />}
+        {tab === 'data_security' && <StorageSecurityPanel />}
       </div>
     </div>
   );
