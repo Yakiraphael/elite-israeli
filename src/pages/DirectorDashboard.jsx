@@ -46,21 +46,21 @@ export default function DirectorDashboard() {
   };
 
   if (!unlocked) return (
-    <div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center" dir="rtl">
+    <div className="min-h-screen bg-surface flex items-center justify-center" dir="rtl">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm px-6 text-center">
         <img src={LOGO_URL} alt="" className="h-16 mx-auto mb-6" />
-        <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto mb-4">
-          <Lock size={22} className="text-[#D4AF37]" />
+        <div className="w-14 h-14 rounded-full bg-brand-soft border border-brand-line flex items-center justify-center mx-auto mb-4">
+          <Lock size={22} className="text-brand" />
         </div>
-        <h1 className="text-white font-black text-xl mb-1">דשבורד מנהל מקצועי</h1>
-        <p className="text-white/40 text-sm mb-6">ממשק מנהל מקצועי</p>
+        <h1 className="text-ink font-black text-xl mb-1">דשבורד מנהל מקצועי</h1>
+        <p className="text-ink-muted text-sm mb-6">ממשק מנהל מקצועי</p>
         <form onSubmit={tryLogin} className="space-y-3">
           <input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder="סיסמה"
-            className={`w-full bg-[#1B263B] border rounded-sm px-4 py-3 text-white text-sm text-center tracking-widest placeholder-white/20 focus:outline-none transition-colors ${pwErr ? 'border-red-500' : 'border-white/15 focus:border-[#D4AF37]/60'}`} />
+            className={`w-full bg-panel border rounded-sm px-4 py-3 text-ink text-sm text-center tracking-widest placeholder-ink-faint focus:outline-none transition-colors ${pwErr ? 'border-red-500' : 'border-hairline focus:border-brand-line'}`} />
           {pwErr && <p className="text-red-400 text-xs">סיסמה שגויה</p>}
-          <button type="submit" className="w-full bg-[#D4AF37] text-[#0D1B2A] font-black text-sm py-3 rounded-sm hover:bg-amber-400">כניסה</button>
+          <button type="submit" className="w-full bg-brand text-brand-ink font-black text-sm py-3 rounded-sm hover:bg-amber-400">כניסה</button>
         </form>
-        <Link to="/" className="text-white/30 text-xs mt-4 inline-block hover:text-white/60">חזרה לאתר</Link>
+        <Link to="/" className="text-ink-faint text-xs mt-4 inline-block hover:text-ink-muted">חזרה לאתר</Link>
       </motion.div>
     </div>
   );
@@ -130,36 +130,36 @@ function DashboardContent({ onLogout }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
+    <div className="min-h-screen bg-surface" dir="rtl">
       <RoleToolbar activeLabel="דשבורד מנהל מקצועי" activeIcon={Crown} />
 
       {/* Header */}
-      <div className="bg-[#1B263B] border-b border-white/10 py-4 px-6">
+      <div className="bg-panel border-b border-hairline py-4 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-white font-black text-xl">חדר בקרה מנהל מקצועי</h1>
-            <p className="text-white/40 text-xs">תהליכי העברה · תיקים משפטיים · תאימות חוקית להרכב מול ההתאחדות הרשמית</p>
+            <h1 className="text-ink font-black text-xl">חדר בקרה מנהל מקצועי</h1>
+            <p className="text-ink-muted text-xs">תהליכי העברה · תיקים משפטיים · תאימות חוקית להרכב מול ההתאחדות הרשמית</p>
           </div>
           <div className="flex items-center gap-4">
             {/* Global search */}
             <div className="relative hidden md:block">
-              <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30" />
+              <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חיפוש מהיר — שחקן, עמדה..."
-                className="bg-[#0D1B2A] border border-white/15 rounded-lg pr-9 pl-4 py-2 text-white text-xs placeholder-white/25 focus:outline-none w-56 focus:border-[#D4AF37]/60" />
+                className="bg-surface border border-hairline rounded-lg pr-9 pl-4 py-2 text-ink text-xs placeholder-ink-faint focus:outline-none w-56 focus:border-brand-line" />
             </div>
             <NotificationBell audience="director" onNavigate={setTab} />
-            <Link to="/" className="text-white/40 hover:text-white text-xs flex items-center gap-1"><ArrowRight size={12} /> אתר</Link>
-            <button onClick={onLogout} className="text-white/30 hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> יציאה</button>
+            <Link to="/" className="text-ink-muted hover:text-ink text-xs flex items-center gap-1"><ArrowRight size={12} /> אתר</Link>
+            <button onClick={onLogout} className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> יציאה</button>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-[#1B263B] border-b border-white/10">
+      <div className="bg-panel border-b border-hairline">
         <div className="max-w-7xl mx-auto px-6 flex gap-0 overflow-x-auto">
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
+              className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap ${tab === t.id ? 'text-brand border-brand' : 'text-ink-muted border-transparent hover:text-ink'}`}>
               <t.icon size={13} /> {t.label}
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">{t.badge}</span>}
             </button>
@@ -200,14 +200,14 @@ function DashboardContent({ onLogout }) {
 
         {tab === 'contracts_forms' && (
           <div className="space-y-5">
-            <div className="flex gap-1.5 bg-[#1B263B] border border-white/10 rounded-lg p-1.5 justify-center items-center">
-              <button onClick={() => setSubCF('contracts')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'contracts' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
+            <div className="flex gap-1.5 bg-panel border border-hairline rounded-lg p-1.5 justify-center items-center">
+              <button onClick={() => setSubCF('contracts')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'contracts' ? 'bg-brand text-brand-ink' : 'text-ink-muted hover:text-ink'}`}>
                 <FileText size={14} /> ניהול חוזים קיימים
               </button>
-              <button onClick={() => setSubCF('templates')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'templates' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
+              <button onClick={() => setSubCF('templates')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'templates' ? 'bg-brand text-brand-ink' : 'text-ink-muted hover:text-ink'}`}>
                 <Crown size={14} /> בנק התבניות הרשמיות
               </button>
-              <button onClick={() => setSubCF('packages')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'packages' ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/60 hover:text-white'}`}>
+              <button onClick={() => setSubCF('packages')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'packages' ? 'bg-brand text-brand-ink' : 'text-ink-muted hover:text-ink'}`}>
                 <Package size={14} /> חבילות מסמכים משפטיים
               </button>
             </div>
@@ -268,7 +268,7 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-l from-[#1B263B] to-[#0D1B2A] p-6 md:p-8">
+      <div className="relative overflow-hidden rounded-xl border border-hairline bg-gradient-to-l from-panel to-surface p-6 md:p-8">
         <div className="absolute -top-10 -left-10 w-56 h-56 rounded-full blur-3xl opacity-10" style={{ backgroundColor: '#D4AF37' }} />
         <div className="relative flex flex-col md:flex-row items-center gap-8">
           <div className="w-36 h-36 flex-shrink-0 relative">
@@ -279,13 +279,13 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="font-black text-2xl" style={{ color: scoreColor }}>{complianceScore}%</span>
-              <span className="text-white/30 text-[9px] font-bold uppercase tracking-wide">תאימות רגולטורית</span>
+              <span className="text-ink-faint text-[9px] font-bold uppercase tracking-wide">תאימות רגולטורית</span>
             </div>
           </div>
           <div className="flex-1 text-center md:text-right">
-            <span className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase">חדר בקרה — עילית ישראלית</span>
-            <h2 className="text-white text-2xl font-black mt-1">מבט כללי על מצב הליגה</h2>
-            <p className="text-white/40 text-sm mt-1">{players.length} שחקנים רשומים · {ifaReady} מוכנים IFA · {transfers.length} העברות במעקב</p>
+            <span className="text-brand text-xs font-bold tracking-widest uppercase">חדר בקרה — עילית ישראלית</span>
+            <h2 className="text-ink text-2xl font-black mt-1">מבט כללי על מצב הליגה</h2>
+            <p className="text-ink-muted text-sm mt-1">{players.length} שחקנים רשומים · {ifaReady} מוכנים IFA · {transfers.length} העברות במעקב</p>
           </div>
         </div>
       </div>
@@ -300,11 +300,11 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
 
       {/* Action Queue preview */}
       {pendingReqs > 0 && (
-        <div className="bg-[#1B263B] border border-amber-500/20 rounded-lg p-5">
+        <div className="bg-panel border border-amber-500/20 rounded-lg p-5">
           <h3 className="text-amber-400 font-black text-sm mb-3 flex items-center gap-2">
             <ClipboardList size={14} /> תור הפעולות — {pendingReqs} ממתינות
           </h3>
-          <p className="text-white/40 text-xs">לחץ על לשונית "תור פעולות" לטיפול מהיר</p>
+          <p className="text-ink-muted text-xs">לחץ על לשונית "תור פעולות" לטיפול מהיר</p>
         </div>
       )}
 
@@ -316,10 +316,10 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
           { label: 'שחקנים חופשיים', value: players.filter(p => p.is_free_agent).length, icon: '🟢' },
           { label: 'העברות פעילות', value: transfers.filter(t => t.status === 'Trialist' || t.status === 'Contract Pending').length, icon: '🔄' },
         ].map(s => (
-          <div key={s.label} className="bg-[#1B263B] border border-white/10 rounded-lg p-4 card-hover">
+          <div key={s.label} className="bg-panel border border-hairline rounded-lg p-4 card-hover">
             <div className="text-2xl mb-1">{s.icon}</div>
-            <div className="text-white font-black text-xl">{s.value}</div>
-            <div className="text-white/40 text-xs">{s.label}</div>
+            <div className="text-ink font-black text-xl">{s.value}</div>
+            <div className="text-ink-muted text-xs">{s.label}</div>
           </div>
         ))}
       </div>
@@ -334,8 +334,8 @@ function DirKpi({ label, value, sub, color, icon: Icon, urgent }) {
     <div className={`rounded-lg p-5 border ${bg} ${border} ${urgent ? 'animate-pulse' : ''}`}>
       <Icon size={18} className={`mb-2 ${tc}`} />
       <div className={`font-black text-3xl ${tc}`}>{value}</div>
-      <div className="text-white/50 text-xs mt-0.5">{label}</div>
-      <div className="text-white/25 text-[10px]">{sub}</div>
+      <div className="text-ink-muted text-xs mt-0.5">{label}</div>
+      <div className="text-ink-faint text-[10px]">{sub}</div>
     </div>
   );
 }
@@ -347,17 +347,17 @@ function SquadTab({ players, loading, onSelect }) {
 
   const filtered2 = posFilter ? players.filter(p => p.position === posFilter) : players;
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 size={24} className="animate-spin text-[#D4AF37]" /></div>;
+  if (loading) return <div className="flex justify-center py-12"><Loader2 size={24} className="animate-spin text-brand" /></div>;
 
   return (
     <div>
       <div className="flex items-center gap-3 mb-5">
         <select value={posFilter} onChange={e => setPosFilter(e.target.value)}
-          className="bg-[#1B263B] border border-white/15 rounded-lg px-3 py-2 text-white text-xs focus:outline-none">
+          className="bg-panel border border-hairline rounded-lg px-3 py-2 text-ink text-xs focus:outline-none">
           <option value="">כל העמדות</option>
           {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
-        <span className="text-white/30 text-xs">{filtered2.length} שחקנים</span>
+        <span className="text-ink-faint text-xs">{filtered2.length} שחקנים</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered2.map(p => {
@@ -365,20 +365,20 @@ function SquadTab({ players, loading, onSelect }) {
           const medAlert = days !== null && days < 30;
           return (
             <button key={p.id} onClick={() => onSelect(p)}
-              className="bg-[#1B263B] border border-white/10 hover:border-[#D4AF37]/30 rounded-lg p-4 flex items-center gap-4 text-right transition-all group">
-              <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center flex-shrink-0">
-                <Users size={14} className="text-[#D4AF37]" />
+              className="bg-panel border border-hairline hover:border-brand-line rounded-lg p-4 flex items-center gap-4 text-right transition-all group">
+              <div className="w-10 h-10 rounded-full bg-brand-soft border border-brand-line flex items-center justify-center flex-shrink-0">
+                <Users size={14} className="text-brand" />
               </div>
               <div className="flex-1">
-                <div className="text-white font-bold text-sm">{p.full_name}</div>
-                <div className="text-white/40 text-xs">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}{p.city ? ` · ${p.city}` : ''}</div>
+                <div className="text-ink font-bold text-sm">{p.full_name}</div>
+                <div className="text-ink-muted text-xs">{p.position}{p.team_name ? ` · ${p.team_name}` : ''}{p.city ? ` · ${p.city}` : ''}</div>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {medAlert && <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full border border-red-500/20">⚠️ רפואי</span>}
-                {p.ifa_ready && <span className="text-[9px] bg-[#D4AF37]/10 text-[#D4AF37] px-1.5 py-0.5 rounded-full border border-[#D4AF37]/20">IFA</span>}
+                {p.ifa_ready && <span className="text-[9px] bg-brand-soft text-brand px-1.5 py-0.5 rounded-full border border-brand-line">IFA</span>}
                 <SubmissionProgressBar player={p} compact />
               </div>
-              <ChevronRight size={14} className="text-white/20 group-hover:text-[#D4AF37] transition-colors flex-shrink-0" />
+              <ChevronRight size={14} className="text-ink-faint group-hover:text-brand transition-colors flex-shrink-0" />
             </button>
           );
         })}
@@ -417,7 +417,7 @@ function RequestsTab({ requests, players = [] }) {
   return (
     <div className="space-y-5">
       {contractsExpiring.length > 0 && (
-        <div className="bg-[#1B263B] border border-amber-500/30 rounded-lg p-5">
+        <div className="bg-panel border border-amber-500/30 rounded-lg p-5">
           <h3 className="text-amber-400 font-black text-sm mb-3 flex items-center gap-2">
             <FileText size={14} /> חוזים דורשים חידוש · {contractsExpiring.length} שחקנים
           </h3>
@@ -426,14 +426,14 @@ function RequestsTab({ requests, players = [] }) {
               const d = calcDaysLeft(p.contract_end_date);
               const expired = d < 0;
               return (
-                <div key={p.id} className="flex items-center justify-between bg-[#0D1B2A] border border-white/10 rounded-md p-3">
+                <div key={p.id} className="flex items-center justify-between bg-surface border border-hairline rounded-md p-3">
                   <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${expired ? 'bg-red-400' : 'bg-amber-400'}`} />
-                    <span className="text-white font-bold text-sm">{p.full_name}</span>
-                    <span className="text-white/40 text-xs">{p.position}</span>
+                    <span className="text-ink font-bold text-sm">{p.full_name}</span>
+                    <span className="text-ink-muted text-xs">{p.position}</span>
                   </div>
                   <div className="text-xs text-left">
-                    <div className="text-white/40">חוזה עד {p.contract_end_date}</div>
+                    <div className="text-ink-muted">חוזה עד {p.contract_end_date}</div>
                     <div className={`font-bold ${expired ? 'text-red-400' : 'text-amber-400'}`}>
                       {expired ? `פג תוקף לפני ${-d} ימים` : `${d} ימים לסיום`}
                     </div>
@@ -446,20 +446,20 @@ function RequestsTab({ requests, players = [] }) {
       )}
 
     <div className="space-y-3">
-      <h3 className="text-white font-black text-base mb-1">תור פעולות — {pending.length} ממתינות</h3>
-      {pending.length === 0 && <div className="text-center py-10 text-white/30 text-sm">🎉 אין בקשות פתוחות</div>}
+      <h3 className="text-ink font-black text-base mb-1">תור פעולות — {pending.length} ממתינות</h3>
+      {pending.length === 0 && <div className="text-center py-10 text-ink-faint text-sm">🎉 אין בקשות פתוחות</div>}
       {pending.map(req => (
-        <div key={req.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
+        <div key={req.id} className="bg-panel border border-hairline rounded-lg p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-white font-bold text-sm">{req.subject}</span>
+                <span className="text-ink font-bold text-sm">{req.subject}</span>
                 {req.priority === 'קריטי' && <span className="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/20">קריטי</span>}
               </div>
-              <div className="text-white/50 text-xs mb-1">{req.player_name} · {req.category}</div>
-              <p className="text-white/40 text-xs leading-relaxed mb-2">{req.details}</p>
+              <div className="text-ink-muted text-xs mb-1">{req.player_name} · {req.category}</div>
+              <p className="text-ink-muted text-xs leading-relaxed mb-2">{req.details}</p>
               {CAT_ROUTE[req.category] && (
-                <div className="text-[#D4AF37] text-[10px] bg-[#D4AF37]/5 border border-[#D4AF37]/10 rounded px-2 py-1 inline-block">
+                <div className="text-brand text-[10px] bg-brand-soft border border-brand-line rounded px-2 py-1 inline-block">
                   → {CAT_ROUTE[req.category]}
                 </div>
               )}
@@ -480,12 +480,12 @@ function RequestsTab({ requests, players = [] }) {
 
       {done.length > 0 && (
         <div className="mt-6">
-          <h4 className="text-white/30 text-xs mb-2">היסטוריה ({done.length})</h4>
+          <h4 className="text-ink-faint text-xs mb-2">היסטוריה ({done.length})</h4>
           {done.slice(0, 5).map(req => (
-            <div key={req.id} className="flex items-center gap-3 py-2 border-b border-white/5 text-xs">
+            <div key={req.id} className="flex items-center gap-3 py-2 border-b border-hairline text-xs">
               <span className={req.status === 'אושר' ? 'text-green-400' : 'text-red-400'}>{req.status === 'אושר' ? '✅' : '❌'}</span>
-              <span className="text-white/60 flex-1">{req.player_name} — {req.subject}</span>
-              <span className="text-white/30">{req.category}</span>
+              <span className="text-ink-muted flex-1">{req.player_name} — {req.subject}</span>
+              <span className="text-ink-faint">{req.category}</span>
             </div>
           ))}
         </div>
@@ -500,8 +500,8 @@ function ComplianceTab({ players, contracts = [], onTriggerPackage, onMovePlayer
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-black text-base">מטריצת תאימות רגולטורית — תאימות מול ההתאחדות הרשמית</h3>
-        <span className="text-white/30 text-[10px]">מטריצה מלאה · רפואי · רישום · חוזה · משמעת · משפטי · פציעה · זמינות · כרטיסים</span>
+        <h3 className="text-ink font-black text-base">מטריצת תאימות רגולטורית — תאימות מול ההתאחדות הרשמית</h3>
+        <span className="text-ink-faint text-[10px]">מטריצה מלאה · רפואי · רישום · חוזה · משמעת · משפטי · פציעה · זמינות · כרטיסים</span>
       </div>
       <DirectorComplianceMatrix
         players={players}

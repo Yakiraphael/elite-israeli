@@ -57,6 +57,11 @@ module.exports = {
   			'alert-error': { DEFAULT: 'hsl(var(--alert-error))', bg: 'hsl(var(--alert-error-bg))' },
   			'alert-warning': { DEFAULT: 'hsl(var(--alert-warning))', bg: 'hsl(var(--alert-warning-bg))' },
   			'alert-success': { DEFAULT: 'hsl(var(--alert-success))', bg: 'hsl(var(--alert-success-bg))' },
+  			surface: { DEFAULT: 'var(--surface)', alt: 'var(--surface-alt)' },
+  			panel: { DEFAULT: 'var(--panel)', alt: 'var(--panel-alt)' },
+  			ink: { DEFAULT: 'var(--ink)', muted: 'var(--ink-muted)', faint: 'var(--ink-faint)' },
+  			hairline: { DEFAULT: 'var(--hairline)', strong: 'var(--hairline-strong)' },
+  			brand: { DEFAULT: 'var(--brand)', ink: 'var(--brand-ink)', soft: 'var(--brand-soft)', line: 'var(--brand-line)' },
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

@@ -136,3 +136,63 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ============================================================
+   THEMING SYSTEM — Semantic Design Tokens
+   ברירת מחדל: כהה (IFA navy/gold). html.light: ערכת יום בהירה.
+   הטוקנים מניעים מחלקות Tailwind: bg-surface, bg-panel, text-ink,
+   text-ink-muted, border-hairline, bg-brand, text-brand, וכו'.
+   שמירת ניגודיות WCAG: ביום — טקסט כהה על בהיר, זהב מוכה לניגוד טקסט.
+   ============================================================ */
+:root {
+  --surface: #0D1B2A;
+  --surface-alt: #0A1626;
+  --panel: #1B263B;
+  --panel-alt: #14213B;
+  --ink: #FFFFFF;
+  --ink-muted: rgba(255, 255, 255, 0.55);
+  --ink-faint: rgba(255, 255, 255, 0.35);
+  --hairline: rgba(255, 255, 255, 0.10);
+  --hairline-strong: rgba(255, 255, 255, 0.18);
+  --brand: #D4AF37;
+  --brand-ink: #0D1B2A;
+  --brand-soft: rgba(212, 175, 55, 0.10);
+  --brand-line: rgba(212, 175, 55, 0.30);
+  color-scheme: dark;
+}
+
+html.light {
+  --surface: #F1F5F9;
+  --surface-alt: #E2E8F0;
+  --panel: #FFFFFF;
+  --panel-alt: #F8FAFC;
+  --ink: #0F172A;
+  --ink-muted: rgba(15, 23, 42, 0.62);
+  --ink-faint: rgba(15, 23, 42, 0.42);
+  --hairline: rgba(15, 23, 42, 0.10);
+  --hairline-strong: rgba(15, 23, 42, 0.18);
+  --brand: #A6802B;      /* זהב מוכה — עובר ניגודיות AA על לבן */
+  --brand-ink: #FFFFFF;
+  --brand-soft: rgba(166, 128, 43, 0.10);
+  --brand-line: rgba(166, 128, 43, 0.32);
+  color-scheme: light;
+}
+
+/* התאמת נכסים גרפיים ליום: טקסט זהב-גרדיאנט וגרדיאנט נייבי */
+html.light .gold-gradient {
+  background: linear-gradient(135deg, #8A6A1E 0%, #B8902C 50%, #8A6A1E 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+html.light .navy-gradient {
+  background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+}
+
+/* בורר ערכת הנושא — כרום מותאם-נושא */
+.theme-switcher { background: var(--panel-alt); border: 1px solid var(--hairline); }
+.theme-switcher button { color: var(--ink-muted); }
+.theme-switcher button:hover { background: var(--hairline); color: var(--ink); }
+.theme-switcher button.is-active { background: var(--brand); color: var(--brand-ink); }
+
+/* תגובת ריחוף כפתור זהב ראשי — שמירה על עומק בשתי הערכות */
+.bg-brand:hover { filter: brightness(1.08); }
