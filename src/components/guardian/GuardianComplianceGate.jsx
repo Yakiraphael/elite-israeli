@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ShieldCheck, FileText, HeartPulse, UserCheck, KeyRound, Send, Loader2, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
+import { ShieldCheck, FileText, HeartPulse, UserCheck, KeyRound, Send, Loader2, CheckCircle2, AlertTriangle, ExternalLink, ImageIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { guardianGatesForPlayer, blockingGates as getBlockingGates, docsReady as checkDocsReady } from '@/lib/minorGuard';
 
 // שער תקינות רגולטורי לחתימת אפוטרופוס על העברת קטין.
-// כל השערים (חוץ מ-OTP) חייבים להיות ירוק/צהוב כדי לאפשר חתימה. שער אדום חוסם ומפנה ישירות למסמך/פעולה החסרה.
-// OTP נשלח במייל לאפוטרופוס המחובר (משתמש רשום) ונדרש לאישור חתימה סופי.
+// לוגיקת השערים מיובאת מ-@/lib/minorGuard.js (מקור יחיד לאמת) כדי לאכוף את אותם
+// חסמים גם בזרימות אחרות (חוזה, רישום, אישור מדיה). OTP מטופל מקומית ברכיב זה.
 export default function GuardianComplianceGate({ offer, player, guardianUser, onApproved }) {
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
@@ -15,60 +16,24 @@ export default function GuardianComplianceGate({ offer, player, guardianUser, on
   const [signName, setSignName] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // --- שערים רגולטוריים ---
-  const isMedExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
-  const isMedSoon = !isMedExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
-  const medStatus = !player.medical_certificate_url ? 'red' : isMedExpired ? 'red' : isMedSoon ? 'yellow' : 'green';
+  // --- שערים רגולטוריים (מקור יחיד: @/lib/minorGuard) ---
+  const GATE_ICONS = {
+    id_doc: FileText,
+    id_suffix: UserCheck,
+    guardian_proof: UserCheck,
+    medical: HeartPulse,
+    media_consent: ImageIcon,
+    otp: KeyRound,
+  };
 
-  const guardianProofOk = !!(player.guardian_name && player.guardian_id);
-  const idSuffixOk = !!player.id_suffix_url;
+  const gates = guardianGatesForPlayer(player, { verified: otpVerified, sent: otpSent }).map(g => ({
+    ...g,
+    icon: GATE_ICONS[g.key] || ShieldCheck,
+  }));
 
-  const gates = [
-    {
-      key: 'id_doc',
-      icon: FileText,
-      label: 'תעודת זהות השחקן',
-      status: player.id_document_url ? 'green' : 'red',
-      detail: player.id_document_url ? 'הועלתה' : 'חסרה — פנה למנהל המועדון להעלאת תעודת הזהות',
-      href: player.id_document_url || null,
-    },
-    {
-      key: 'id_suffix',
-      icon: UserCheck,
-      label: 'ספח תעודת זהות (הוכחת שייכות הורה-קטין)',
-      status: idSuffixOk ? 'green' : 'red',
-      detail: idSuffixOk ? 'הועלה' : 'חסר — נדרש ספח תעודת הזהות של ההורה',
-      href: player.id_suffix_url || null,
-    },
-    {
-      key: 'guardian_proof',
-      icon: UserCheck,
-      label: 'פרטי אפוטרופוס',
-      status: guardianProofOk ? 'green' : 'red',
-      detail: guardianProofOk ? `${player.guardian_name} · ${player.guardian_id}` : 'חסרים שם/ת"ז אפוטרופוס בטופס הרישום',
-      href: null,
-    },
-    {
-      key: 'medical',
-      icon: HeartPulse,
-      label: 'אישור רפואי בתוקף',
-      status: medStatus,
-      detail: medStatus === 'green' ? 'תקין' : medStatus === 'yellow' ? `בתוקף עד ${player.medical_expiry_date}` : medStatus === 'red' && player.medical_certificate_url ? 'פג תוקף — נדרש חידוש' : 'חסר אישור רפואי',
-      href: player.medical_certificate_url || null,
-    },
-    {
-      key: 'otp',
-      icon: KeyRound,
-      label: 'אימות OTP (מייל לאפוטרופוס)',
-      status: otpVerified ? 'green' : otpSent ? 'yellow' : 'red',
-      detail: otpVerified ? 'מאומת' : otpSent ? 'הוזן קוד — ממתין לאימות' : 'נדרש אימות חד-פעני במייל',
-      href: null,
-    },
-  ];
-
-  const blockingGates = gates.filter(g => g.key !== 'otp' && g.status === 'red');
-  const docsReady = blockingGates.length === 0;
-  const canSign = docsReady && otpVerified && signName.trim().length >= 2;
+  const blockingGateList = getBlockingGates(gates);
+  const ready = checkDocsReady(gates);
+  const canSign = ready && otpVerified && signName.trim().length >= 2;
 
   const sendOtp = async () => {
     setSendingOtp(true);
@@ -166,7 +131,7 @@ export default function GuardianComplianceGate({ offer, player, guardianUser, on
       </div>
 
       {/* חתימה סופית — מאופשרת רק כשכל השערים עברו */}
-      {docsReady && otpVerified && (
+      {ready && otpVerified && (
         <div className="mt-3 border-t border-white/10 pt-3 space-y-2">
           <input value={signName} onChange={e => setSignName(e.target.value)} placeholder="הקלד את שמך המלא כאישור לחתימה דיגיטלית"
             className="w-full bg-[#1B263B] border border-white/15 rounded-sm px-3 py-2 text-white text-xs placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
@@ -177,10 +142,10 @@ export default function GuardianComplianceGate({ offer, player, guardianUser, on
           </button>
         </div>
       )}
-      {!docsReady && (
+      {!ready && (
         <div className="mt-3 flex items-start gap-1.5 text-red-400 text-[11px] font-bold">
           <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
-          <span>חתימה חסומה — נדרש להשלים {blockingGates.length} שער(ים) אדומ(ים) לפני אישור ההעברה (תקנון ההתאחדות לכדורגל).</span>
+          <span>חתימה חסומה — נדרש להשלים {blockingGateList.length} שער(ים) אדומ(ים) לפני אישור ההעברה (תקנון ההתאחדות לכדורגל).</span>
         </div>
       )}
     </div>
