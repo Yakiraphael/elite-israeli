@@ -11,6 +11,7 @@ import {
   deriveActionFromCategory, deriveTransferSubType, loanCategoryToAgeGroup,
 } from '@/lib/ifaFormRegistry';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
+import { resolveFormOrDeclaration } from '@/lib/formFallbackResolver';
 
 // פורטל אינטראקטיבי למילוי וחתימה על טופסי ההתאחדות לכדורגל.
 // מציג את הטופס הרשמי, ממלא אוטומטית שדות שהמערכת יודעת (שם שחקן/מועדון/ת.ז. וכו'),
@@ -33,8 +34,9 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
   const [error, setError] = useState(null);
   const [downloading, setDownloading] = useState(false);
 
-  const form = IFA_FORM_CATALOG[formKey];
-  const schema = getFormFieldSchema(formKey) || [];
+  // Fallback Logic: סריקת בנק התבניות → אם אין, יצירת הצהרה דיגיטלית דינמית.
+  const ctx = { player: player || {}, club: club || {}, transfer: transfer || {} };
+  const { form, schema, declarationText, source: formSource } = resolveFormOrDeclaration(formKey, ctx);
 
   // זיהוי כתובת IP של החותם לתיעוד משפטי
   useEffect(() => {
@@ -61,8 +63,6 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
     }
   }, [existingDoc]);
 
-  const ctx = { player: player || {}, club: club || {}, transfer: transfer || {} };
-
   // אתחול ברירת מחדל לשדות editable (default values מהסכמה)
   useEffect(() => {
     const init = {};
@@ -76,7 +76,12 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
   const userFields = schema.filter(f => f.kind === 'editable_user');
   const autoFields = schema.filter(f => f.kind === 'auto');
 
-  const missingDirectorFields = directorFields.filter(f => f.required && !editableValues[f.key]);
+  // תיקון באג מערכתי: שדות editable_director נדרשים רק כשהחותם הוא מנהל מקצועי/מועדון.
+  // אפוטרופוס/שחקן יכולים לחתום על חלקם בלבד — המנהל ישלים את שדותיו במעבר החתימה שלו.
+  const isDirectorSigner = signerRole === 'director' || signerRole === 'club';
+  const missingDirectorFields = isDirectorSigner
+    ? directorFields.filter(f => f.required && !editableValues[f.key])
+    : [];
   const canSign = signatureName.trim().length >= 2 && missingDirectorFields.length === 0;
 
   const persistDoc = useMutation({
@@ -84,6 +89,8 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
       const now = new Date().toISOString();
       const digital_content = JSON.stringify({
         formKey,
+        formSource,
+        declarationText: formSource === 'dynamic' ? declarationText : undefined,
         editableValues,
         autoSnapshot: autoFields.reduce((acc, f) => ({ ...acc, [f.key]: resolveFieldValue(f, ctx) }), {}),
         signedBy: SIGNER_LABELS[signerRole] || signerRole,
@@ -129,7 +136,7 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
           actor_role: signerRole,
           action: 'sign_player',
           player_id: player?.id,
-          details: `${SIGNER_LABELS[signerRole] || signerRole} חתם דיגיטלית על ${form?.label} עבור ${player?.full_name || proposal.player_name}`,
+          details: `${SIGNER_LABELS[signerRole] || signerRole} חתם דיגיטלית על ${form?.label} עבור ${player?.full_name || proposal.player_name}${formSource === 'dynamic' ? ' (הצהרה דיגיטלית מותאמת — Fallback)' : ''}`,
         });
       }
 
@@ -246,8 +253,15 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
                 </Section>
               )}
 
-              {/* חלק 3: שדות למילוי ידני של המנהל המקצועי */}
-              {directorFields.length > 0 && (
+              {/* חלק 3: הצהרה דיגיטלית מותאמת (Fallback) — מוצגת רק כשאין תבנית בבנק המוסדי */}
+              {formSource === 'dynamic' && declarationText && (
+                <Section title="גוף ההצהרה המשפטית הדיגיטלית (Fallback)" icon={FileText} highlight>
+                  <pre className="text-white/75 text-[11px] whitespace-pre-wrap leading-relaxed font-sans">{declarationText}</pre>
+                </Section>
+              )}
+
+              {/* חלק 3ב: שדות למילוי ידני של המנהל המקצועי — מוצגים רק לחותם מנהל/מועדון */}
+              {directorFields.length > 0 && isDirectorSigner && (
                 <Section title={`שדות להשלמה ידנית — ${SIGNER_LABELS.director}`} icon={AlertCircle} highlight>
                   <div className="grid grid-cols-2 gap-3">
                     {directorFields.map(f => (
@@ -263,6 +277,13 @@ export default function IFAFormSignModal({ formKey, proposal, player, club, tran
                     </div>
                   )}
                 </Section>
+              )}
+
+              {/* הודעת שקיפות לאפוטרופוס/שחקן: שדות המנהל יושלמו במעבר נפרד */}
+              {directorFields.length > 0 && !isDirectorSigner && (
+                <div className="text-white/40 text-[10px] bg-white/[0.02] border border-white/10 rounded-md px-3 py-2">
+                  שדות טכניים (תאריך העברה, מועדונים) יושלמו ע"י המנהל המקצועי בחתימתו — חתימתך תקפה ותועדה.
+                </div>
               )}
 
               {/* חלק 4: שדות השלמה אישית של החותם */}
