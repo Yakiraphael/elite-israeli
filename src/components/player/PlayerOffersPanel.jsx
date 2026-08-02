@@ -6,6 +6,8 @@ import {
   CreditCard, Clock, Handshake, ArrowLeft,
 } from 'lucide-react';
 import TransferPipelineStepper from '../admin/TransferPipelineStepper';
+import TransparencyDashboard from '@/components/negotiation/TransparencyDashboard';
+import NegotiationTimeline from '@/components/negotiation/NegotiationTimeline';
 import { isLoanCategory } from '@/lib/transferDocumentRequirements';
 
 const STATUS_STYLES = {
@@ -144,6 +146,10 @@ export default function PlayerOffersPanel({ player }) {
                       {o.proposal_details && (
                         <p className="text-white/70 text-xs leading-relaxed">{o.proposal_details}</p>
                       )}
+
+                      {/* לוח שקיפות — עמדות הצדדים לכל סעיף (צפייה בלבד לשחקן/אפוטרופוס) */}
+                      <TransparencyDashboard proposal={o} role="player" />
+                      <NegotiationTimeline proposalId={o.id} proposal={o} />
 
                       {/* Info grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">

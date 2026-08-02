@@ -8,6 +8,8 @@ import {
 import TransferPipelineStepper from './TransferPipelineStepper';
 import TransferApprovalGate from './TransferApprovalGate';
 import NegotiationPanel from '@/components/negotiation/NegotiationPanel';
+import TransparencyDashboard from '@/components/negotiation/TransparencyDashboard';
+import NegotiationTimeline from '@/components/negotiation/NegotiationTimeline';
 import { TRANSFER_CATEGORIES } from '@/lib/transferDocumentRequirements';
 
 const STATUSES = [
@@ -87,9 +89,25 @@ export default function TransfersManager() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-transfers'] }),
   });
 
-  const handleContractValueChange = (p, value) => {
+  const handleContractValueChange = async (p, value) => {
     const contract_value = Number(value) || 0;
-    updateProposal.mutate({ id: p.id, data: { contract_value, iefa_commission_fee: Math.round(contract_value * 0.05 * 100) / 100 } });
+    const iefa_commission_fee = Math.round(contract_value * 0.05 * 100) / 100;
+    await base44.entities.TransferProposal.update(p.id, { contract_value, iefa_commission_fee });
+    queryClient.invalidateQueries({ queryKey: ['admin-transfers'] });
+    // התראה אוטומטית לשחקן/אפוטרופוס על עריכה ישירה של המועדון בשווי החוזה — שקיפות מלאה
+    try {
+      await base44.entities.Notification.create({
+        audience: p.is_adult ? 'player' : 'parent',
+        type: 'transfer_status',
+        title: 'המועדון עדכן את שווי החוזה',
+        body: `שווי החוזה עודכן ל-₪${contract_value.toLocaleString('he-IL')} · עמלת IEFA: ₪${iefa_commission_fee.toLocaleString('he-IL')}. השינוי מתועד בציר הזמן.`,
+        player_id: p.player_elite_id,
+        player_name: p.player_name,
+        transfer_id: p.id,
+        transfer_category: p.transfer_category,
+        link_tab: 'offers',
+      });
+    } catch { /* logging only */ }
   };
 
   const activeCount = proposals.filter(p => !TERMINAL.includes(p.status)).length;
@@ -293,7 +311,13 @@ function TransferDetail({ proposal, section, onSection, updateProposal, requestC
       <div className="p-5">
         {section === 'details' && <DetailsSection p={p} onContractValueChange={onContractValueChange} />}
         {section === 'compliance' && <ComplianceSection p={p} updateProposal={updateProposal} requestCoachApproval={requestCoachApproval} />}
-        {section === 'negotiation' && <NegotiationPanel proposal={p} />}
+        {section === 'negotiation' && (
+          <div className="space-y-3">
+            <TransparencyDashboard proposal={p} role="club" />
+            <NegotiationPanel proposal={p} />
+            <NegotiationTimeline proposalId={p.id} proposal={p} />
+          </div>
+        )}
         {section === 'gate' && <GateSection p={p} updateProposal={updateProposal} readyMap={readyMap} setReadyMap={setReadyMap} />}
       </div>
     </div>
