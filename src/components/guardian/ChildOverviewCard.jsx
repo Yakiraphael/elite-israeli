@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings, FileSignature } from 'lucide-react';
+import { User, MapPin, FileText, Download, ShieldCheck, PenLine, CheckCircle2, Loader2, Settings, FileSignature, Eye, ShieldX } from 'lucide-react';
 import GuardianNotificationSettingsModal from './GuardianNotificationSettingsModal';
 import GuardianComplianceGate from './GuardianComplianceGate';
 import GuardianConsentPanel from './GuardianConsentPanel';
+import GuardianCloseCardModal from './GuardianCloseCardModal';
+import GuardianPlayerProfileModal from './GuardianPlayerProfileModal';
 import { generateFormPdf } from '@/lib/generateIfoFormPdf';
 import IFAFormSignModal from '@/components/admin/IFAFormSignModal';
 import NegotiationHub from '@/components/negotiation/NegotiationHub';
@@ -39,6 +41,8 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
   const [showNotifSettings, setShowNotifSettings] = useState(false);
   const [generatingForm, setGeneratingForm] = useState({});
   const [signModal, setSignModal] = useState(null); // {offer, formKey}
+  const [showProfile, setShowProfile] = useState(false);
+  const [showClose, setShowClose] = useState(false);
 
   const isExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
   const isSoon = !isExpired && player.medical_expiry_date && (new Date(player.medical_expiry_date) - new Date()) < 30 * 24 * 60 * 60 * 1000;
@@ -104,9 +108,19 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
             {player.city && <span className="flex items-center gap-0.5"><MapPin size={10} />{player.city}</span>}
           </div>
         </div>
-        <button onClick={() => setShowNotifSettings(true)} title="הגדרות התראות" className="text-white/30 hover:text-white transition-colors flex-shrink-0">
-          <Settings size={15} />
-        </button>
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button onClick={() => setShowProfile(true)} title="צפה בפרופיל השחקן"
+            className="flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/25 px-2.5 py-1.5 rounded-sm hover:bg-[#D4AF37]/20 transition-colors">
+            <Eye size={12} /> פרופיל
+          </button>
+          <button onClick={() => setShowClose(true)} title="סגירת כרטיס שחקן"
+            className="flex items-center gap-1 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1.5 rounded-sm hover:bg-amber-500/20 transition-colors">
+            <ShieldX size={12} /> סגור כרטיס
+          </button>
+          <button onClick={() => setShowNotifSettings(true)} title="הגדרות התראות" className="text-white/30 hover:text-white transition-colors p-1">
+            <Settings size={15} />
+          </button>
+        </div>
       </div>
 
       {showNotifSettings && (
@@ -224,6 +238,18 @@ export default function ChildOverviewCard({ player, pendingOffers, guardianUser 
           signerRole={player.is_adult ? 'player' : 'guardian'}
           currentUser={guardianUser}
           onClose={() => setSignModal(null)}
+        />
+      )}
+
+      {showProfile && (
+        <GuardianPlayerProfileModal player={player} onClose={() => setShowProfile(false)} />
+      )}
+
+      {showClose && (
+        <GuardianCloseCardModal
+          player={player}
+          guardianUser={guardianUser}
+          onClose={() => setShowClose(false)}
         />
       )}
     </div>
