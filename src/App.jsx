@@ -58,7 +58,7 @@ const AuthenticatedApp = () => {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={location.pathname}
+        key={location.pathname.split('/')[1] || 'root'}
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -30 }}
@@ -76,9 +76,9 @@ const AuthenticatedApp = () => {
       <Route path="/club-registration" element={<ClubRegistration />} />
       <Route path="/scouting" element={<ScoutingArena />} />
       <Route path="/onboarding" element={<OnboardingFlow />} />
-      <Route path="/coach" element={<CoachWorkspace />} />
+      <Route path="/coach/*" element={<CoachWorkspace />} />
       <Route path="/coach-roster" element={<CoachRoster />} />
-      <Route path="/director" element={<DirectorDashboard />} />
+      <Route path="/director/*" element={<DirectorDashboard />} />
       <Route path="/sign-contract" element={<SignContract />} />
       <Route path="/guardian-portal" element={<GuardianPortal />} />
       <Route path="/qa-engine" element={<QaEnginePanel />} />

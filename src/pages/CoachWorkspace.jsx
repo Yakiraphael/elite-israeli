@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
 import { useTranslation } from '@/lib/i18n/LanguagesContext';
 import NotificationBell from '../components/NotificationBell';
@@ -58,8 +59,10 @@ const STATUS_BADGE = {
 
 export default function CoachWorkspace() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState('squad');
-  const handleTabChange = useTabScrollMemory(tab, setTab);
+  const navigate = useNavigate();
+  const params = useParams();
+  const tab = params['*'] || 'squad';
+  const handleTabChange = useTabScrollMemory(tab, (newTab) => navigate(`/coach/${newTab}`));
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [onlyEligible, setOnlyEligible] = useState(false);

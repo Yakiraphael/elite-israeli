@@ -7,7 +7,7 @@ import {
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
   Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus, Package, CalendarDays, Trophy
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
 import { ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 import NotificationBell from '../components/NotificationBell';
@@ -75,8 +75,10 @@ export default function DirectorDashboard() {
 
 function DashboardContent({ onLogout }) {
   const { t } = useTranslation();
-  const [tab, setTab] = useState('overview');
-  const handleTabChange = useTabScrollMemory(tab, setTab);
+  const navigate = useNavigate();
+  const params = useParams();
+  const tab = params['*'] || 'overview';
+  const handleTabChange = useTabScrollMemory(tab, (newTab) => navigate(`/director/${newTab}`));
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [openFormKey, setOpenFormKey] = useState(null);
