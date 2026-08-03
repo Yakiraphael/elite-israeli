@@ -1,0 +1,185 @@
+{
+  "name": "Competition",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d0\u05e8\u05d2\u05d5\u05df (Club.id)"
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "competition_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05ea\u05d7\u05e8\u05d5\u05ea"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df"
+    },
+    "competition_format": {
+      "type": "string",
+      "title": "\u05e4\u05d5\u05e8\u05de\u05d8 \u05ea\u05d7\u05e8\u05d5\u05ea",
+      "enum": [
+        "SINGLE_ROUND_ROBIN",
+        "DOUBLE_ROUND_ROBIN",
+        "GROUP_STAGE_KNOCKOUT",
+        "FESTIVAL_TOURNAMENT"
+      ],
+      "default": "SINGLE_ROUND_ROBIN",
+      "description": "SINGLE_ROUND_ROBIN = \u05e1\u05d1\u05d1 \u05d9\u05d7\u05d9\u05d3. DOUBLE_ROUND_ROBIN = \u05d1\u05d9\u05ea/\u05d7\u05d5\u05e5 \u05db\u05e4\u05d5\u05dc. GROUP_STAGE_KNOCKOUT = \u05e9\u05dc\u05d1 \u05d1\u05ea\u05d9\u05dd + \u05e0\u05d5\u05e7\u05d0\u05d0\u05d5\u05d8. FESTIVAL_TOURNAMENT = \u05e4\u05e1\u05d8\u05d9\u05d1\u05dc \u05de\u05e8\u05db\u05d6."
+    },
+    "player_count": {
+      "type": "string",
+      "title": "\u05db\u05de\u05d5\u05ea \u05e9\u05d7\u05e7\u05e0\u05d9\u05dd \u05d1\u05de\u05d2\u05e8\u05e9",
+      "enum": [
+        "5V5",
+        "7V7",
+        "9V9",
+        "11V11",
+        "FUTSAL"
+      ],
+      "default": "7V7"
+    },
+    "pitch_type": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05de\u05d2\u05e8\u05e9",
+      "enum": [
+        "SYNTHETIC_TURF",
+        "NATURAL_GRASS",
+        "MULTICOURT_ASPHALT",
+        "INDOOR_HALL"
+      ],
+      "default": "SYNTHETIC_TURF"
+    },
+    "match_duration_minutes": {
+      "type": "number",
+      "title": "\u05de\u05e9\u05da \u05de\u05e9\u05d7\u05e7 (\u05d3\u05e7\u05d5\u05ea)",
+      "default": 40
+    },
+    "max_squad_size": {
+      "type": "number",
+      "title": "\u05de\u05db\u05e1\u05ea \u05e9\u05d7\u05e7\u05e0\u05d9\u05dd \u05de\u05e7\u05e1\u05d9\u05de\u05d0\u05dc\u05d9\u05ea \u05d1\u05e1\u05d2\u05dc",
+      "default": 14
+    },
+    "allowed_substitutions": {
+      "type": "number",
+      "title": "\u05db\u05de\u05d5\u05ea \u05d7\u05d9\u05dc\u05d5\u05e4\u05d9\u05dd \u05de\u05d5\u05ea\u05e8\u05ea",
+      "default": 5
+    },
+    "points_for_win": {
+      "type": "number",
+      "title": "\u05e0\u05e7\u05d5\u05d3\u05d5\u05ea \u05dc\u05e0\u05e6\u05d7\u05d5\u05df",
+      "default": 3
+    },
+    "points_for_draw": {
+      "type": "number",
+      "title": "\u05e0\u05e7\u05d5\u05d3\u05d5\u05ea \u05dc\u05ea\u05d9\u05e7\u05d5",
+      "default": 1
+    },
+    "points_for_loss": {
+      "type": "number",
+      "title": "\u05e0\u05e7\u05d5\u05d3\u05d5\u05ea \u05dc\u05d4\u05e4\u05e1\u05d3",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "\u05ea\u05d7\u05e8\u05d5\u05ea \u05e4\u05e2\u05d9\u05dc\u05d4",
+      "default": true
+    }
+  },
+  "required": [
+    "club_id",
+    "competition_name",
+    "age_group",
+    "competition_format"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

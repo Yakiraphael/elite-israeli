@@ -53,6 +53,7 @@ export default function LeagueStudio() {
           {[
             { id: 'teams', label: 'קבוצות רשומות', icon: ListChecks },
             { id: 'rules', label: 'הגדרות צוות', icon: Settings2 },
+            { id: 'competitions', label: 'תחרויות', icon: Flag },
             { id: 'generate', label: 'הגרלת ליגה', icon: GitMerge },
             { id: 'fixtures', label: 'משחקים ותיאום', icon: CalendarDays },
             { id: 'standings', label: 'טבלת ליגה', icon: Trophy },
@@ -68,6 +69,7 @@ export default function LeagueStudio() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {tab === 'teams' && <TeamsTab club={club} ageGroup={ageGroup} />}
         {tab === 'rules' && <RulesTab club={club} ageGroup={ageGroup} />}
+        {tab === 'competitions' && <CompetitionsTab club={club} ageGroup={ageGroup} />}
         {tab === 'generate' && <GenerateTab club={club} ageGroup={ageGroup} />}
         {tab === 'fixtures' && <FixturesTab club={club} ageGroup={ageGroup} />}
         {tab === 'standings' && <StandingsTab club={club} ageGroup={ageGroup} />}
@@ -177,18 +179,45 @@ function GenerateTab({ club, ageGroup }) {
   const qc = useQueryClient();
   const { data: teams = [] } = useQuery({ queryKey: ['league-teams', club.id, ageGroup], queryFn: async () => (await call('teams', { club_id: club.id, age_group: ageGroup })).teams });
   const { data: rules } = useQuery({ queryKey: ['league-rules', club.id, ageGroup], queryFn: async () => (await call('getRules', { club_id: club.id, age_group: ageGroup })).rules });
+  const { data: comps = [] } = useQuery({ queryKey: ['league-comps', club.id, ageGroup], queryFn: async () => (await call('listCompetitions', { club_id: club.id, age_group: ageGroup })).competitions });
   const [competition, setCompetition] = useState('ליגת הארגון');
+  const [compId, setCompId] = useState('');
   const [res, setRes] = useState(null);
+  const selectedComp = comps.find(c => c.id === compId);
   const gen = useMutation({
-    mutationFn: async () => await call('generateLeague', { club_id: club.id, club_name: club.name, age_group: ageGroup, competition, double_round: rules?.double_round }),
+    mutationFn: async () => await call('generateLeague', {
+      club_id: club.id, club_name: club.name, age_group: ageGroup,
+      competition: selectedComp?.competition_name || competition,
+      double_round: selectedComp?.competition_format === 'DOUBLE_ROUND_ROBIN' || rules?.double_round,
+      competition_id: compId || undefined,
+    }),
     onSuccess: (d) => { setRes(d); qc.invalidateQueries({ queryKey: ['league-fixtures', club.id, ageGroup] }); },
   });
   return (
     <div className="space-y-4">
       <div className="bg-panel border border-hairline rounded-lg p-5">
         <Section><GitMerge size={14} className="text-brand" /> הגרלת ליגה — Round-Robin</Section>
-        <div className="text-ink-muted text-xs mt-2">{teams.length} קבוצות רשומות · מצב זריעה: <span className="text-ink font-bold">{rules?.seeding_mode || 'BALANCED_RANDOM'}</span> · {rules?.double_round ? 'סבב כפול' : 'סבב יחיד'}</div>
-        <input value={competition} onChange={e => setCompetition(e.target.value)} placeholder="שם מסגרת" className="mt-3 w-full bg-surface border border-hairline rounded px-3 py-2 text-ink text-sm focus:outline-none focus:border-brand-line" />
+        <div className="text-ink-muted text-xs mt-2">{teams.length} קבוצות רשומות · מצב זריעה: <span className="text-ink font-bold">{rules?.seeding_mode || 'BALANCED_RANDOM'}</span> · {(selectedComp?.competition_format === 'DOUBLE_ROUND_ROBIN' || rules?.double_round) ? 'סבב כפול' : 'סבב יחיד'}</div>
+        {/* בחירת תחרות מוגדרת — קובעת פורמט/כמות שחקנים/מגרש/ניקוד */}
+        <div className="mt-3">
+          <label className="text-ink-faint text-[10px]">תחרות (אופציונלי — מהגדרות מתקדמות)</label>
+          <select value={compId} onChange={e => setCompId(e.target.value)} className="w-full bg-surface border border-hairline rounded px-3 py-2 text-ink text-sm focus:outline-none focus:border-brand-line">
+            <option value="">— ללא — (שם מסגרת חופשי)</option>
+            {comps.map(c => <option key={c.id} value={c.id}>{c.competition_name} · {c.competition_format} · {c.player_count}</option>)}
+          </select>
+        </div>
+        {!compId && (
+          <input value={competition} onChange={e => setCompetition(e.target.value)} placeholder="שם מסגרת" className="mt-3 w-full bg-surface border border-hairline rounded px-3 py-2 text-ink text-sm focus:outline-none focus:border-brand-line" />
+        )}
+        {selectedComp && (
+          <div className="mt-2 text-ink-faint text-[10px] flex flex-wrap gap-x-3 gap-y-1">
+            <span>פורמט: {selectedComp.competition_format}</span>
+            <span>· שחקנים: {selectedComp.player_count}</span>
+            <span>· מגרש: {selectedComp.pitch_type}</span>
+            <span>· משך: {selectedComp.match_duration_minutes} דק׳</span>
+            <span>· ניקוד: {selectedComp.points_for_win}/{selectedComp.points_for_draw}/{selectedComp.points_for_loss}</span>
+          </div>
+        )}
         <div className="flex gap-2 mt-3">
           <button onClick={() => gen.mutate()} disabled={teams.length < 2} className="bg-brand text-brand-ink font-bold text-sm px-4 py-2.5 rounded hover:brightness-110 disabled:opacity-40 flex items-center gap-1"><GitMerge size={14} /> הגרל מחדש</button>
           {gen.isPending && <Loader2 size={16} className="animate-spin text-brand self-center" />}
@@ -197,6 +226,73 @@ function GenerateTab({ club, ageGroup }) {
         {teams.length < 2 && <div className="mt-2 text-amber-400 text-xs">נדרשות לפחות 2 קבוצות רשומות לשנתון זה.</div>}
         <div className="text-ink-faint text-[10px] mt-3">⚠️ הגרלה מחודשת מוחקת משחקים קודמים שטרם שוחקו. משחקים שנערכו ואומתו נשמרים.</div>
       </div>
+    </div>
+  );
+}
+
+function CompetitionsTab({ club, ageGroup }) {
+  const qc = useQueryClient();
+  const { data: comps = [], isLoading } = useQuery({ queryKey: ['league-comps', club.id, ageGroup], queryFn: async () => (await call('listCompetitions', { club_id: club.id, age_group: ageGroup })).competitions });
+  const [editing, setEditing] = useState(null);
+  const empty = { competition_name: '', age_group: ageGroup, competition_format: 'SINGLE_ROUND_ROBIN', player_count: '7V7', pitch_type: 'SYNTHETIC_TURF', match_duration_minutes: 40, max_squad_size: 14, allowed_substitutions: 5, points_for_win: 3, points_for_draw: 1, points_for_loss: 0, is_active: true };
+  const [form, setForm] = useState(empty);
+  const save = useMutation({
+    mutationFn: async () => call('saveCompetition', { id: editing?.id, club_id: club.id, club_name: club.name, ...form }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['league-comps', club.id, ageGroup] }); setEditing(null); setForm(empty); },
+  });
+  const sel = (c) => { setEditing(c); setForm({ ...empty, ...c, match_duration_minutes: c.match_duration_minutes ?? 40, max_squad_size: c.max_squad_size ?? 14, allowed_substitutions: c.allowed_substitutions ?? 5, points_for_win: c.points_for_win ?? 3, points_for_draw: c.points_for_draw ?? 1, points_for_loss: c.points_for_loss ?? 0 }); };
+  const setF = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const cancel = () => { setEditing(null); setForm(empty); };
+  if (isLoading) return <div className="flex justify-center py-10"><Loader2 className="animate-spin text-brand" /></div>;
+  return (
+    <div className="space-y-4">
+      <div className="bg-panel border border-hairline rounded-lg p-5">
+        <div className="flex items-center justify-between mb-3">
+          <Section><Flag size={14} className="text-brand" /> תחרויות ופורמטים (Competition Configuration Engine)</Section>
+          <button onClick={() => sel(null)} className="bg-brand text-brand-ink font-bold text-xs px-3 py-2 rounded hover:brightness-110 flex items-center gap-1"><Plus size={12} /> תחרות חדשה</button>
+        </div>
+        <div className="text-ink-muted text-xs mb-3">{comps.length} תחרויות מוגדרות לשנתון {ageGroup}</div>
+        <div className="space-y-2">
+          {comps.map(c => (
+            <div key={c.id} className="bg-surface border border-hairline rounded-lg p-3 flex items-center justify-between">
+              <div>
+                <div className="text-ink font-bold text-sm">{c.competition_name} {!c.is_active && <span className="text-ink-faint text-[10px]">(לא פעילה)</span>}</div>
+                <div className="text-ink-faint text-[10px] mt-0.5">{c.competition_format} · {c.player_count} · {c.pitch_type} · {c.match_duration_minutes} דק׳ · סגל {c.max_squad_size} · חילופים {c.allowed_substitutions} · ניקוד {c.points_for_win}/{c.points_for_draw}/{c.points_for_loss}</div>
+              </div>
+              <button onClick={() => sel(c)} className="text-brand text-[11px] font-bold">ערוך</button>
+            </div>
+          ))}
+          {comps.length === 0 && <div className="text-ink-faint text-sm text-center py-4">אין תחרויות מוגדרות. צור תחרות כדי להגדיר פורמט, כמות שחקנים, מגרש וניקוד.</div>}
+        </div>
+      </div>
+
+      {editing !== null && (
+        <div className="bg-panel border border-hairline rounded-lg p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <Section><Flag size={14} className="text-brand" /> {editing?.id ? 'עריכת תחרות' : 'תחרות חדשה'}</Section>
+            <button onClick={cancel}><X size={14} className="text-ink-faint" /></button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <Field label="שם תחרות"><input value={form.competition_name} onChange={e => setF('competition_name', e.target.value)} className={inp} placeholder="ליגת נוער א׳" /></Field>
+            <Field label="פורמט"><select value={form.competition_format} onChange={e => setF('competition_format', e.target.value)} className={inp}>
+              {['SINGLE_ROUND_ROBIN','DOUBLE_ROUND_ROBIN','GROUP_STAGE_KNOCKOUT','FESTIVAL_TOURNAMENT'].map(o => <option key={o} value={o}>{o}</option>)}
+            </select></Field>
+            <Field label="כמות שחקנים"><select value={form.player_count} onChange={e => setF('player_count', e.target.value)} className={inp}>
+              {['5V5','7V7','9V9','11V11','FUTSAL'].map(o => <option key={o} value={o}>{o}</option>)}
+            </select></Field>
+            <Field label="סוג מגרש"><select value={form.pitch_type} onChange={e => setF('pitch_type', e.target.value)} className={inp}>
+              {['SYNTHETIC_TURF','NATURAL_GRASS','MULTICOURT_ASPHALT','INDOOR_HALL'].map(o => <option key={o} value={o}>{o}</option>)}
+            </select></Field>
+            <Field label="משך משחק (דק׳)"><input type="number" value={form.match_duration_minutes} onChange={e => setF('match_duration_minutes', +e.target.value)} className={inp} /></Field>
+            <Field label="מכסת סגל"><input type="number" value={form.max_squad_size} onChange={e => setF('max_squad_size', +e.target.value)} className={inp} /></Field>
+            <Field label="חילופים מותרים"><input type="number" value={form.allowed_substitutions} onChange={e => setF('allowed_substitutions', +e.target.value)} className={inp} /></Field>
+            <Field label="נק׳ ניצחון"><input type="number" value={form.points_for_win} onChange={e => setF('points_for_win', +e.target.value)} className={inp} /></Field>
+            <Field label="נק׳ תיקו"><input type="number" value={form.points_for_draw} onChange={e => setF('points_for_draw', +e.target.value)} className={inp} /></Field>
+            <Field label="נק׳ הפסד"><input type="number" value={form.points_for_loss} onChange={e => setF('points_for_loss', +e.target.value)} className={inp} /></Field>
+          </div>
+          <button onClick={() => save.mutate()} disabled={!form.competition_name || save.isPending} className="w-full bg-brand text-brand-ink font-bold text-sm py-2.5 rounded hover:brightness-110 disabled:opacity-40 flex items-center justify-center gap-1"><Save size={14} /> שמור תחרות</button>
+        </div>
+      )}
     </div>
   );
 }

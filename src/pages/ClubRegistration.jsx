@@ -18,13 +18,18 @@ export default function ClubRegistration() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     club_name: '', club_tier: TIERS[0].value, business_id: '', league_name: '', contact_name: '', contact_email: '', contact_phone: '', city: '',
+    municipality: '', latitude: '', longitude: '',
     incorporation_certificate_url: '',
   });
 
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async () => {
-    await base44.entities.Club.create({ ...form, subscription_plan: 'FREE', max_allowed_users: 1, is_verified: false, verification_status: 'ממתין לאימות' });
+    await base44.entities.Club.create({
+      ...form, subscription_plan: 'FREE', max_allowed_users: 1, is_verified: false, verification_status: 'ממתין לאימות',
+      geo_verification_status: 'PENDING_VERIFICATION', service_radius_km: 20,
+      latitude: form.latitude ? +form.latitude : null, longitude: form.longitude ? +form.longitude : null,
+    });
     setSubmitted(true);
   };
 
@@ -110,6 +115,23 @@ export default function ClubRegistration() {
             <div>
               <label className="text-[#D4AF37] text-xs font-bold tracking-wide mb-2 block">עיר</label>
               <input name="city" value={form.city} onChange={handleChange} placeholder="תל אביב" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60 transition-colors" />
+            </div>
+          </div>
+
+          {/* Geo-Spatial — מיקום גיאוגרפי ורשות מקומית לאימות אזורי */}
+          <div>
+            <label className="text-[#D4AF37] text-xs font-bold tracking-wide mb-2 block">רשות מקומית (Municipality)</label>
+            <input name="municipality" value={form.municipality} onChange={handleChange} placeholder="נתיבות / קרית גת / באר שבע" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60 transition-colors" />
+            <p className="text-white/30 text-[10px] mt-1">משמשת לקיבוץ אזורי והגרלת ליגה אזורית</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[#D4AF37] text-xs font-bold tracking-wide mb-2 block">קו אורך (Latitude)</label>
+              <input name="latitude" dir="ltr" value={form.latitude} onChange={handleChange} placeholder="31.7921" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60 transition-colors" />
+            </div>
+            <div>
+              <label className="text-[#D4AF37] text-xs font-bold tracking-wide mb-2 block">קו רוחב (Longitude)</label>
+              <input name="longitude" dir="ltr" value={form.longitude} onChange={handleChange} placeholder="34.6589" className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60 transition-colors" />
             </div>
           </div>
 

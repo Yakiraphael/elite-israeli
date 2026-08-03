@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { X, ShieldCheck, FileText, Loader2, CheckCircle2, ExternalLink } from 'lucide-react';
+import { X, ShieldCheck, FileText, Loader2, CheckCircle2, ExternalLink, MapPin, Ruler } from 'lucide-react';
 
 const OPS = ['ממתין להפעלה', 'בבדיקה', 'פעיל', 'מושעה', 'נדחה'];
 const VERIFY = ['ממתין לאימות', 'מאומת', 'נדחה'];
@@ -17,6 +17,27 @@ export default function ClubReviewModal({ club, user, onClose }) {
   const [orgClassification, setOrgClassification] = useState(club.org_classification || 'YOUTH_DEPARTMENT');
   const [rejectionReason, setRejectionReason] = useState(club.rejection_reason || '');
   const [now, setNow] = useState('');
+
+  // Geo-Spatial — מיקום גיאוגרפי + אימות אזורי + חישוב קרבה ליגה אזורית
+  const [municipality, setMunicipality] = useState(club.municipality || '');
+  const [latitude, setLatitude] = useState(club.latitude || '');
+  const [longitude, setLongitude] = useState(club.longitude || '');
+  const [geoStatus, setGeoStatus] = useState(club.geo_verification_status || 'PENDING_VERIFICATION');
+  const [serviceRadius, setServiceRadius] = useState(club.service_radius_km || 20);
+  const [nearby, setNearby] = useState(null);
+  const [geoBusy, setGeoBusy] = useState(false);
+  const [geoErr, setGeoErr] = useState('');
+
+  const computeNearby = async () => {
+    setGeoBusy(true); setGeoErr('');
+    try {
+      const res = await base44.functions.invoke('geo-proximity-engine', { action: 'nearbyClubs', target_club_id: club.id, max_distance_km: +serviceRadius });
+      const d = res.data || res;
+      if (d.error) { setGeoErr(d.error); setNearby(null); }
+      else setNearby(d);
+    } catch (e) { setGeoErr(e.response?.data?.error || e.message); setNearby(null); }
+    setGeoBusy(false);
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -43,6 +64,12 @@ export default function ClubReviewModal({ club, user, onClose }) {
         operational_active_from: operationalStatus === 'פעיל' && !club.operational_active_from
           ? now.slice(0, 10)
           : club.operational_active_from,
+        // Geo-Spatial
+        municipality: municipality || 'לא צוין',
+        latitude: latitude ? +latitude : null,
+        longitude: longitude ? +longitude : null,
+        geo_verification_status: geoStatus,
+        service_radius_km: +serviceRadius || 20,
       };
       return base44.entities.Club.update(club.id, patch);
     },
@@ -137,6 +164,51 @@ export default function ClubReviewModal({ club, user, onClose }) {
               <textarea value={rejectionReason} onChange={e => setRejectionReason(e.target.value)} placeholder="סיבת דחייה / השהיה (חובה)"
                 className="w-full mt-3 bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs placeholder-ink-faint focus:outline-none focus:border-brand-line min-h-[70px]" />
             )}
+          </Section>
+
+          {/* Geo-Spatial — אימות אזורי גיאוגרפי */}
+          <Section title="אימות אזורי גיאוגרפי (Geo-Spatial)" icon={MapPin}>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="רשות מקומית">
+                <input value={municipality} onChange={e => setMunicipality(e.target.value)} placeholder="נתיבות / קרית גת / באר שבע" className="w-full bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line" />
+              </Field>
+              <Field label="סטטוס אימות אזורי">
+                <select value={geoStatus} onChange={e => setGeoStatus(e.target.value)} className="w-full bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line">
+                  {['PENDING_VERIFICATION', 'VERIFIED_REGIONAL', 'REJECTED'].map(o => <option key={o} value={o} className="bg-surface text-ink">{o}</option>)}
+                </select>
+              </Field>
+              <Field label="קו אורך (Latitude)"><input dir="ltr" value={latitude} onChange={e => setLatitude(e.target.value)} placeholder="31.7921" className="w-full bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line" /></Field>
+              <Field label="קו רוחב (Longitude)"><input dir="ltr" value={longitude} onChange={e => setLongitude(e.target.value)} placeholder="34.6589" className="w-full bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line" /></Field>
+              <Field label="רדיוס פעילות (ק״מ)">
+                <div className="flex items-center gap-2">
+                  <Ruler size={13} className="text-brand flex-shrink-0" />
+                  <input type="number" min={1} max={200} value={serviceRadius} onChange={e => setServiceRadius(e.target.value)} className="w-24 bg-panel border border-hairline rounded-sm px-3 py-2 text-ink text-xs focus:outline-none focus:border-brand-line" />
+                  <button onClick={computeNearby} disabled={geoBusy || (!latitude || !longitude)} type="button"
+                    className="text-[11px] font-bold bg-brand text-brand-ink px-3 py-2 rounded hover:brightness-110 disabled:opacity-40 flex items-center gap-1">
+                    {geoBusy ? <Loader2 size={11} className="animate-spin" /> : <MapPin size={11} />} חשב קרבה אזורית
+                  </button>
+                </div>
+              </Field>
+            </div>
+            {geoErr && <div className="text-red-400 text-[11px] mt-2">{geoErr}</div>}
+            {nearby && (
+              <div className="mt-3 bg-panel border border-hairline rounded-md p-3">
+                <div className="text-ink-faint text-[10px] font-bold mb-2">מועדונים מאומתים-אזורית ברדיוס {nearby.target?.service_radius_km || serviceRadius} ק״מ ({nearby.count})</div>
+                {nearby.nearby?.length === 0 ? (
+                  <div className="text-ink-faint text-[11px]">אין מועדונים מאומתים-אזורית בטווח זה עדיין.</div>
+                ) : (
+                  <div className="space-y-1">
+                    {nearby.nearby.map((n, i) => (
+                      <div key={i} className="flex items-center justify-between text-[11px]">
+                        <span className="text-ink">{n.name} <span className="text-ink-faint">· {n.municipality || '—'}</span></span>
+                        <span className="text-brand font-bold">{n.distance_km} ק״מ</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            <p className="text-ink-faint text-[10px] mt-2">אימות אזורי נפרד מאימות מוסדי — מאפשר שיוך לליגה אזורית על בסיס קרבה גיאוגרפית (Haversine).</p>
           </Section>
 
           {/* Save */}

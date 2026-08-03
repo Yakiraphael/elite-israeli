@@ -26,8 +26,13 @@ export default async function(req: Request): Promise<Response> {
     // ---------- generateLeague: Round-Robin מוגבל חוקי צוות מקצועי ----------
     if (action === 'generateLeague') {
       if (!canManage) return Response.json({ error: 'Forbidden — הגרלה מותרת למנהל/אדמין בלבד' }, { status: 403 });
-      const { club_id, club_name, age_group, competition, double_round } = body;
+      const { club_id, club_name, age_group, competition, double_round, competition_id } = body;
       if (!club_id || !age_group) return Response.json({ error: 'נדרשים club_id ו-age_group' }, { status: 400 });
+
+      // 0. הגדרת תחרות אופציונלית — פורמט, כמות שחקנים, סוג מגרש, ניקוד (Competition Configuration Engine)
+      let compConfig: any = null;
+      if (competition_id) { try { compConfig = await base44.entities.Competition.get(competition_id); } catch { compConfig = null; } }
+      const isDouble = double_round ?? (compConfig?.competition_format === 'DOUBLE_ROUND_ROBIN');
 
       // 1. קבוצות רשומות לשנתון
       const all = await base44.entities.LeagueTeam.list('team_name', 200);
@@ -60,7 +65,8 @@ export default async function(req: Request): Promise<Response> {
         if (home === 'BYE' || away === 'BYE') return;
         if (flip) { const t = home; home = away; away = t; }
         fixtures.push({
-          club_id, club_name: club_name || '', competition: competition || 'ליגת הארגון',
+          club_id, club_name: club_name || '', competition: competition || compConfig?.competition_name || 'ליגת הארגון',
+          competition_id: competition_id || '',
           age_group, matchday: round_num, home_team: home, away_team: away,
           status: 'SCHEDULED', referee_status: 'NOT_REQUIRED',
           coordination_status: 'PENDING_COORDINATION', result_status: 'PENDING_REPORT',
@@ -89,7 +95,7 @@ export default async function(req: Request): Promise<Response> {
 
       // שלב ב' — רגל שנייה (כפול) אם נדרש — היפוך ביתיות
       let secondLeg: any[] = [];
-      if (double_round) {
+      if (isDouble) {
         secondLeg = fixtures.map(f => ({ ...f, matchday: f.matchday + totalRounds, home_team: f.away_team, away_team: f.home_team, coordination_status: 'PENDING_COORDINATION', result_status: 'PENDING_REPORT' }));
       }
       const allFixtures = [...fixtures, ...secondLeg];
@@ -171,8 +177,9 @@ export default async function(req: Request): Promise<Response> {
       const existing = await base44.entities.MatchFixture.filter({ club_id: fx.club_id, status: 'SCHEDULED' }, 'match_date', 500);
       const candidate = { ...fx, match_date: fx.home_proposed_date, kickoff_time: fx.home_proposed_time, stadium_name: fx.home_proposed_stadium, id: fx.id };
       const conflicts = validateFixture(candidate, existing, fx.id);
-      const blocking = conflicts.filter(c => c.type === 'stadium' || c.type === 'team');
-      if (blocking.length) return Response.json({ error: 'זוהו התנגשויות חסימת תיאום', conflicts: blocking }, { status: 409 });
+      // תיקון QA: סינון לפי סוגי ההתנגשות האמיתיים (UPPERCASE מ-validateFixture) כולל REST_PERIOD_VIOLATION (48ש׳ מנוחת נוער)
+      const blocking = conflicts.filter(c => ['STADIUM_CONFLICT','TEAM_CONFLICT','REST_PERIOD_VIOLATION'].includes(c.type));
+      if (blocking.length) return Response.json({ error: 'זוהו התנגשויות או הפרת מנוחת נוער (מינימום 48 שעות בין משחקים לקבוצת קטינים) — תיאום חסום', conflicts: blocking }, { status: 409 });
       // בדיקת max games per week
       const rulesList = await base44.entities.OrganizationLeagueRules.filter({ club_id: fx.club_id, age_group: fx.age_group }, '-created_date', 5);
       const maxWeek = rulesList[0]?.max_games_per_week;
@@ -284,6 +291,28 @@ export default async function(req: Request): Promise<Response> {
       return Response.json({ teams: list });
     }
 
+    // ---------- Competition Configuration Engine (CRUD) ----------
+    if (action === 'saveCompetition') {
+      if (!canManage) return Response.json({ error: 'Forbidden' }, { status: 403 });
+      const { id, club_id, club_name, ...rest } = body;
+      if (!club_id || !rest.age_group || !rest.competition_name) return Response.json({ error: 'נדרשים club_id, age_group, competition_name' }, { status: 400 });
+      let saved;
+      if (id) { saved = await base44.entities.Competition.update(id, rest); }
+      else { saved = await base44.entities.Competition.create({ club_id, club_name: club_name || '', ...rest }); }
+      await audit(base44, user, 'status_change', `הגדרת תחרות: ${rest.competition_name} (${rest.competition_format || '?'}/${rest.player_count || '?'})`, club_id);
+      return Response.json({ competition: saved });
+    }
+    if (action === 'getCompetition') {
+      const { id } = body; if (!id) return Response.json({ error: 'נדרש id' }, { status: 400 });
+      const compete = await base44.entities.Competition.get(id);
+      return Response.json({ competition: compete });
+    }
+    if (action === 'listCompetitions') {
+      const { club_id, age_group } = body;
+      const list = await base44.entities.Competition.filter({ club_id, ...(age_group ? { age_group } : {}) }, '-created_date', 100);
+      return Response.json({ competitions: list });
+    }
+
     return Response.json({ error: 'Unknown action' }, { status: 400 });
   } catch (error) {
     console.error('league-engine error', error);
@@ -300,6 +329,11 @@ async function recomputeStandings(base44, club_id, age_group, club_name): Promis
     if (!map[name]) map[name] = { team_name: name, played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, goal_difference: 0, points: 0 };
     return map[name];
   };
+  // שיטת ניקוד — מתוך הגדרת התחרות אם קיימת, אחרת ברירת מחדל 3/1/0
+  let pts = { win: 3, draw: 1, loss: 0 };
+  const compIdForPts = (done.find(f => f.competition_id) || {}).competition_id;
+  if (compIdForPts) { try { const comp = await base44.entities.Competition.get(compIdForPts); if (comp) pts = { win: comp.points_for_win ?? 3, draw: comp.points_for_draw ?? 1, loss: comp.points_for_loss ?? 0 }; } catch { /* ברירת מחדל */ } }
+
   for (const f of done) {
     const hs = f.home_score ?? 0; const as = f.away_score ?? 0;
     const h = ensure(f.home_team); const a = ensure(f.away_team);
@@ -308,9 +342,9 @@ async function recomputeStandings(base44, club_id, age_group, club_name): Promis
     a.goals_for += as; a.goals_against += hs;
     h.goal_difference = h.goals_for - h.goals_against;
     a.goal_difference = a.goals_for - a.goals_against;
-    if (hs > as) { h.won++; a.lost++; h.points += 3; }
-    else if (as > hs) { a.won++; h.lost++; a.points += 3; }
-    else { h.drawn++; a.drawn++; h.points += 1; a.points += 1; }
+    if (hs > as) { h.won++; a.lost++; h.points += pts.win; }
+    else if (as > hs) { a.won++; h.lost++; a.points += pts.win; }
+    else { h.drawn++; a.drawn++; h.points += pts.draw; a.points += pts.draw; }
   }
   const rows = Object.values(map).sort((x: any, y: any) => y.points - x.points || y.goal_difference - x.goal_difference || y.goals_for - x.goals_for || x.team_name.localeCompare(y.team_name));
 

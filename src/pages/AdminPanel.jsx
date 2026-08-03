@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History, FolderOpen, Building2, BarChart3 } from 'lucide-react';
+import { Lock, Plus, Trash2, Edit2, CheckCircle2, X, Loader2, ArrowRight, Users, Calendar, Send, Star, ShieldCheck, History, FolderOpen, Building2, BarChart3, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TransfersManager from '../components/admin/TransfersManager';
 import AdminMissionControl from '../components/admin/AdminMissionControl';
@@ -12,6 +12,7 @@ import PermissionsManager from '../components/admin/PermissionsManager';
 import AuditLogPanel from '../components/admin/AuditLogPanel';
 import StorageSecurityPanel from '../components/admin/StorageSecurityPanel';
 import PlayerDocumentsModal from '../components/admin/PlayerDocumentsModal';
+import PlayerRegistrationFullModal from '../components/admin/PlayerRegistrationFullModal';
 import ClubsManager from '../components/admin/ClubsManager';
 import ClubDocumentsPanel from '../components/admin/ClubDocumentsPanel';
 
@@ -226,10 +227,20 @@ function PlayersViewer() {
   const [editingPlayer, setEditingPlayer] = useState(null);
   const [verifyingPlayer, setVerifyingPlayer] = useState(null);
   const [docsPlayer, setDocsPlayer] = useState(null);
+  const [fullPlayer, setFullPlayer] = useState(null);
+  const [subTab, setSubTab] = useState('all');
   const { data: players = [], isLoading } = useQuery({
     queryKey: ['admin-players'],
     queryFn: () => base44.entities.PlayerRegistration.list('-created_date', 100),
   });
+
+  const SUBTABS = [
+    { id: 'all', label: 'הכל' },
+    { id: 'פעיל', label: 'פעילים' },
+    { id: 'מאושר', label: 'מאושרים' },
+    { id: 'ממתין', label: 'ממתינים' },
+  ];
+  const visiblePlayers = players.filter(p => subTab === 'all' || (p.status || 'ממתין') === subTab);
 
   const queryClient = useQueryClient();
   const logStatusChange = async (playerName, details) => {
@@ -261,9 +272,22 @@ function PlayersViewer() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-white font-black text-xl">שחקנים רשומים</h2>
-        <span className="text-white/40 text-xs">{players.length} שחקנים</span>
+        <span className="text-white/40 text-xs">{players.length} שחקנים · {visiblePlayers.length} מוצגים</span>
+      </div>
+      {/* סימניות משנה — פעילים / מאושרים / ממתינים */}
+      <div className="flex gap-1.5 mb-5 bg-[#1B263B] border border-white/10 rounded-lg p-1.5 w-fit">
+        {SUBTABS.map(st => {
+          const count = st.id === 'all' ? players.length : players.filter(p => (p.status || 'ממתין') === st.id).length;
+          return (
+            <button key={st.id} onClick={() => setSubTab(st.id)}
+              className={`text-xs font-bold px-3.5 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${subTab === st.id ? 'bg-[#D4AF37] text-[#0D1B2A]' : 'text-white/50 hover:text-white'}`}>
+              {st.label}
+              <span className={`text-[10px] font-black px-1.5 rounded-full ${subTab === st.id ? 'bg-[#0D1B2A]/20' : 'bg-white/10'}`}>{count}</span>
+            </button>
+          );
+        })}
       </div>
       {isLoading ? (
         <div className="text-center py-10"><Loader2 className="animate-spin text-[#D4AF37] mx-auto" /></div>
@@ -271,7 +295,7 @@ function PlayersViewer() {
         <div className="text-center py-16 text-white/30 text-sm">אין שחקנים רשומים עדיין</div>
       ) : (
         <div className="space-y-3">
-          {players.map(p => (
+        {visiblePlayers.map(p => (
             <div key={p.id} className="bg-[#1B263B] border border-white/10 rounded-lg p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
@@ -280,6 +304,10 @@ function PlayersViewer() {
                   {p.event_name && <div className="text-[#D4AF37] text-xs mt-0.5">אירוע: {p.event_name}</div>}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
+                  <button onClick={() => setFullPlayer(p)} title="תיק רישום מלא"
+                    className="w-8 h-8 rounded bg-white/5 hover:bg-purple-500/20 flex items-center justify-center transition-colors">
+                    <Eye size={13} className="text-purple-400" />
+                  </button>
                   <button onClick={() => setVerifyingPlayer(p)} title="בדיקה מקיפה"
                     className="w-8 h-8 rounded bg-white/5 hover:bg-blue-500/20 flex items-center justify-center transition-colors">
                     <ShieldCheck size={13} className="text-blue-400" />
@@ -328,6 +356,7 @@ function PlayersViewer() {
       {editingPlayer && <EliteIdEditorModal player={editingPlayer} onClose={() => setEditingPlayer(null)} />}
       {verifyingPlayer && <PlayerVerificationModal player={verifyingPlayer} onClose={() => setVerifyingPlayer(null)} />}
       {docsPlayer && <PlayerDocumentsModal player={docsPlayer} onClose={() => setDocsPlayer(null)} />}
+      {fullPlayer && <PlayerRegistrationFullModal player={fullPlayer} onClose={() => setFullPlayer(null)} />}
     </div>
   );
 }
