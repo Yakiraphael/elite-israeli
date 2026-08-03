@@ -80,6 +80,7 @@ function usePlayers() {
 
 // ---------------- Pipeline ----------------
 function PipelineTab({ club, onDataChange }) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [creating, setCreating] = useState(false);
   const { data: transfers = [], isLoading } = useQuery({
@@ -93,12 +94,12 @@ function PipelineTab({ club, onDataChange }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-ink-faint text-[10px]">{transfers.length} צינורות · {pending} ממתינים</span>
-          {[{ v: '', l: 'הכל' }, { v: 'PENDING_REVIEW', l: 'ממתינים' }, { v: 'APPROVED', l: 'אושרו' }, { v: 'REJECTED', l: 'נדחו' }].map(f => (
+          <span className="text-ink-faint text-[10px]">{t('bridge.pipelineCount', { total: transfers.length, pending })}</span>
+          {[{ v: '', l: t('bridge.filterAll') }, { v: 'PENDING_REVIEW', l: t('bridge.filterPending') }, { v: 'APPROVED', l: t('bridge.filterApproved') }, { v: 'REJECTED', l: t('bridge.filterRejected') }].map(f => (
             <button key={f.v} onClick={() => setFilter(f.v)} className={`text-[11px] font-bold px-2.5 py-1 rounded-md border transition-colors ${filter === f.v ? 'bg-brand text-brand-ink border-brand' : 'text-ink-muted border-hairline hover:text-ink'}`}>{f.l}</button>
           ))}
         </div>
-        <button onClick={() => setCreating(true)} className="flex items-center gap-1 text-xs font-bold bg-brand text-brand-ink rounded-md px-3 py-1.5"><GitMerge size={13} /> צור צינור מעבר</button>
+        <button onClick={() => setCreating(true)} className="flex items-center gap-1 text-xs font-bold bg-brand text-brand-ink rounded-md px-3 py-1.5"><GitMerge size={13} /> {t('bridge.createTransfer')}</button>
       </div>
       {isLoading ? <div className="text-center py-10"><Loader2 className="animate-spin text-brand mx-auto" /></div> :
         !list.length ? <div className="text-center py-12 text-ink-faint text-sm">אין צינורות להצגה.</div> :
@@ -115,10 +116,11 @@ const STATUS_COLOR = {
   COMPLETED: 'text-blue-400 bg-blue-400/10 border-blue-400/30',
   CANCELLED: 'text-ink-faint bg-white/5 border-hairline',
 };
-const STATUS_LABEL = { PENDING_REVIEW: 'ממתין לאישור', APPROVED: 'אושר', REJECTED: 'נדחה', COMPLETED: 'הושלם', CANCELLED: 'בוטל' };
+const STATUS_LABEL = { PENDING_REVIEW: 'statusPendingReview', APPROVED: 'statusApprovedShort', REJECTED: 'statusRejectedShort', COMPLETED: 'statusCompletedShort', CANCELLED: 'statusCancelledShort' };
 const CLASSIFICATION_LABELS = { IFA_VERIFIED: 'מאומת התאחדות', YOUTH_DEPARTMENT: 'מחלקת נוער', AMATEUR_LEAGUE: 'ליגה חובבנית', ASSOCIATION: 'עמותה/איגוד' };
 
-function TransferRow({ t, onDataChange }) {
+function TransferRow({ t: tr, onDataChange }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const act = async (action, extra = {}) => {
     setBusy(true);
@@ -131,24 +133,24 @@ function TransferRow({ t, onDataChange }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-ink font-bold text-sm">{t.player_name}</span>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLOR[t.status] || STATUS_COLOR.PENDING_REVIEW}`}>{STATUS_LABEL[t.status] || t.status}</span>
-            {t.source_org_classification && <span className="text-[10px] text-ink-muted">{CLASSIFICATION_LABELS[t.source_org_classification] || t.source_org_classification}</span>}
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLOR[tr.status] || STATUS_COLOR.PENDING_REVIEW}`}>{t(`bridge.${STATUS_LABEL[tr.status] || 'statusPendingReview'}`)}</span>
+            {tr.source_org_classification && <span className="text-[10px] text-ink-muted">{t(`bridge.classifications.${tr.source_org_classification}`)}</span>}
           </div>
           <div className="text-ink-muted text-xs mt-1 flex items-center gap-1.5 flex-wrap">
-            <span>{t.source_org_name || '—'}</span> <ArrowRight size={10} /> <span className="text-ink">{t.target_club_name || '—'}</span> · {t.age_group || '—'}
+             <span>{tr.source_org_name || '—'}</span> <ArrowRight size={10} /> <span className="text-ink">{tr.target_club_name || '—'}</span> · {tr.age_group || '—'}
           </div>
         </div>
         {t.status === 'PENDING_REVIEW' && (
           <div className="flex gap-2">
-            <button onClick={() => act('approve', { director_notes: 'אושר מהגשר' })} disabled={busy} className="flex items-center gap-1 text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/30 rounded-md px-2.5 py-1.5 disabled:opacity-40"><CheckCircle2 size={12} /> אשר מעבר</button>
-            <button onClick={() => act('reject', { director_notes: 'נדחה מהגשר' })} disabled={busy} className="flex items-center gap-1 text-xs font-bold text-red-400 bg-red-400/10 border border-red-400/30 rounded-md px-2.5 py-1.5 disabled:opacity-40"><XCircle size={12} /> דחה</button>
+            <button onClick={() => act('approve', { director_notes: t('bridge.approveFromBridge') })} disabled={busy} className="flex items-center gap-1 text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/30 rounded-md px-2.5 py-1.5 disabled:opacity-40"><CheckCircle2 size={12} /> {t('bridge.approveBtn')}</button>
+            <button onClick={() => act('reject', { director_notes: t('bridge.rejectFromBridge') })} disabled={busy} className="flex items-center gap-1 text-xs font-bold text-red-400 bg-red-400/10 border border-red-400/30 rounded-md px-2.5 py-1.5 disabled:opacity-40"><XCircle size={12} /> {t('bridge.rejectBtn')}</button>
           </div>
         )}
       </div>
-      {t.development_snapshot && (
+      {tr.development_snapshot && (
         <details className="mt-2 text-[11px] text-ink-muted">
-          <summary className="cursor-pointer hover:text-ink">תמונת מצב התפתחותית (סנאפשוט)</summary>
-          <pre className="text-ink-faint text-[10px] mt-1 max-h-32 overflow-auto whitespace-pre-wrap">{t.development_snapshot}</pre>
+          <summary className="cursor-pointer hover:text-ink">{t('bridge.devSnapshot')}</summary>
+          <pre className="text-ink-faint text-[10px] mt-1 max-h-32 overflow-auto whitespace-pre-wrap">{tr.development_snapshot}</pre>
         </details>
       )}
     </div>
@@ -156,6 +158,7 @@ function TransferRow({ t, onDataChange }) {
 }
 
 function CreateTransferModal({ club, onClose, onDone }) {
+  const { t } = useTranslation();
   const players = usePlayers();
   const [form, setForm] = useState({ player_id: '', target_club_id: club?.id || '', target_club_name: club?.club_name || '', source_org_name: '', source_org_classification: 'AMATEUR_LEAGUE', bridge_fee: 0, sell_on_clause: '' });
   const [busy, setBusy] = useState(false);
@@ -169,28 +172,28 @@ function CreateTransferModal({ club, onClose, onDone }) {
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-panel border border-hairline rounded-xl w-full max-w-lg p-5" dir="rtl">
-        <h2 className="text-ink font-black text-sm mb-4 flex items-center gap-2"><GitMerge size={15} className="text-brand" /> צור צינור מעבר לאקדמיה</h2>
+        <h2 className="text-ink font-black text-sm mb-4 flex items-center gap-2"><GitMerge size={15} className="text-brand" /> {t('bridge.createTransferAcademy')}</h2>
         <div className="space-y-3">
-          <Lbl text="שחקן">
+          <Lbl text={t('bridge.playerLbl')}>
             <select value={form.player_id} onChange={e => set('player_id', e.target.value)} className={inp}>
-              <option value="">— בחר שחקן —</option>
+              <option value="">{t('bridge.selectPlayer')}</option>
               {players.map(p => <option key={p.id} value={p.id}>{p.full_name} · {p.team_name || p.position}</option>)}
             </select>
           </Lbl>
           <div className="grid grid-cols-2 gap-3">
-            <Lbl text="מסגרת מקור"><input value={form.source_org_name} onChange={e => set('source_org_name', e.target.value)} className={inp} placeholder="עמותה / ליגת שכונה" /></Lbl>
-            <Lbl text="סיווג מקור">
+            <Lbl text={t('bridge.sourceOrg')}><input value={form.source_org_name} onChange={e => set('source_org_name', e.target.value)} className={inp} placeholder={t('bridge.sourcePlaceholder')} /></Lbl>
+            <Lbl text={t('bridge.sourceClass')}>
               <select value={form.source_org_classification} onChange={e => set('source_org_classification', e.target.value)} className={inp}>
-                {['AMATEUR_LEAGUE', 'ASSOCIATION', 'YOUTH_DEPARTMENT', 'IFA_VERIFIED'].map(c => <option key={c} value={c}>{CLASSIFICATION_LABELS[c] || c}</option>)}
+                {['AMATEUR_LEAGUE', 'ASSOCIATION', 'YOUTH_DEPARTMENT', 'IFA_VERIFIED'].map(c => <option key={c} value={c}>{t(`bridge.classifications.${c}`)}</option>)}
               </select>
             </Lbl>
           </div>
-          <Lbl text="מועדון יעד (אקדמיה/התאחדות)"><input value={form.target_club_name} onChange={e => set('target_club_name', e.target.value)} className={inp} /></Lbl>
+          <Lbl text={t('bridge.targetClub')}><input value={form.target_club_name} onChange={e => set('target_club_name', e.target.value)} className={inp} /></Lbl>
           <div className="grid grid-cols-2 gap-3">
-            <Lbl text="דמי מעבר (₪)"><input type="number" value={form.bridge_fee} onChange={e => set('bridge_fee', Number(e.target.value))} className={inp} /></Lbl>
-            <Lbl text="סעיף השבחה (Sell-On)"><input value={form.sell_on_clause} onChange={e => set('sell_on_clause', e.target.value)} className={inp} /></Lbl>
+            <Lbl text={t('bridge.bridgeFee')}><input type="number" value={form.bridge_fee} onChange={e => set('bridge_fee', Number(e.target.value))} className={inp} /></Lbl>
+            <Lbl text={t('bridge.sellOn')}><input value={form.sell_on_clause} onChange={e => set('sell_on_clause', e.target.value)} className={inp} /></Lbl>
           </div>
-          <button onClick={submit} disabled={busy || !form.player_id} className="w-full bg-brand text-brand-ink font-bold text-sm py-2.5 rounded-md flex items-center justify-center gap-1.5 disabled:opacity-40">{busy ? <Loader2 size={14} className="animate-spin" /> : <GitMerge size={14} />} פתח צינור</button>
+          <button onClick={submit} disabled={busy || !form.player_id} className="w-full bg-brand text-brand-ink font-bold text-sm py-2.5 rounded-md flex items-center justify-center gap-1.5 disabled:opacity-40">{busy ? <Loader2 size={14} className="animate-spin" /> : <GitMerge size={14} />} {t('bridge.openBtn')}</button>
         </div>
       </div>
     </div>
