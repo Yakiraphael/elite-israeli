@@ -62,6 +62,9 @@ module.exports = {
   			ink: { DEFAULT: 'var(--ink)', muted: 'var(--ink-muted)', faint: 'var(--ink-faint)' },
   			hairline: { DEFAULT: 'var(--hairline)', strong: 'var(--hairline-strong)' },
   			brand: { DEFAULT: 'var(--brand)', ink: 'var(--brand-ink)', soft: 'var(--brand-soft)', line: 'var(--brand-line)' },
+  			live: { DEFAULT: 'var(--live)', soft: 'var(--live-soft)', line: 'var(--live-line)' },
+  			pending: { DEFAULT: 'var(--pending)', soft: 'var(--pending-soft)', line: 'var(--pending-line)' },
+  			disputed: { DEFAULT: 'var(--disputed)', soft: 'var(--disputed-soft)', line: 'var(--disputed-line)' },
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',
@@ -72,7 +75,7 @@ module.exports = {
   		},
       fontFamily: {
         display: ['Playfair Display', 'serif'],
-        body: ['Inter', 'sans-serif'],
+        body: ['Assistant', 'sans-serif'],
       },
   		keyframes: {
   			'accordion-down': {

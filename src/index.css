@@ -145,19 +145,29 @@
    שמירת ניגודיות WCAG: ביום — טקסט כהה על בהיר, זהב מוכה לניגוד טקסט.
    ============================================================ */
 :root {
-  --surface: #0D1B2A;
-  --surface-alt: #0A1626;
-  --panel: #1B263B;
-  --panel-alt: #14213B;
+  --surface: #0B0F1A;
+  --surface-alt: #070A12;
+  --panel: #121829;
+  --panel-alt: #1A2138;
   --ink: #FFFFFF;
-  --ink-muted: rgba(255, 255, 255, 0.55);
-  --ink-faint: rgba(255, 255, 255, 0.35);
+  --ink-muted: rgba(255, 255, 255, 0.58);
+  --ink-faint: rgba(255, 255, 255, 0.38);
   --hairline: rgba(255, 255, 255, 0.10);
   --hairline-strong: rgba(255, 255, 255, 0.18);
   --brand: #D4AF37;
-  --brand-ink: #0D1B2A;
+  --brand-ink: #0B0F1A;
   --brand-soft: rgba(212, 175, 55, 0.10);
   --brand-line: rgba(212, 175, 55, 0.30);
+  /* Match-state live accents (sports-tech status system) */
+  --live: #10B981;
+  --live-soft: rgba(16, 185, 129, 0.12);
+  --live-line: rgba(16, 185, 129, 0.34);
+  --pending: #F59E0B;
+  --pending-soft: rgba(245, 158, 11, 0.12);
+  --pending-line: rgba(245, 158, 11, 0.34);
+  --disputed: #F43F5E;
+  --disputed-soft: rgba(244, 63, 94, 0.12);
+  --disputed-line: rgba(244, 63, 94, 0.34);
   color-scheme: dark;
 }
 
@@ -196,3 +206,28 @@ html.light .navy-gradient {
 
 /* תגובת ריחוף כפתור זהב ראשי — שמירה על עומק בשתי הערכות */
 .bg-brand:hover { filter: brightness(1.08); }
+
+/* ============================================================
+   ELITE ISRAELI · Premium Sports-Tech UI Kit
+   שפת עיצוב: פחם עמוק + זהב מוקפד + מערכת סטטוס חיה.
+   ============================================================ */
+.tabnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.glass-nav { background: rgba(11,15,26,0.70); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: blur(14px); }
+.glass-light { background: rgba(255,255,255,0.72); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: blur(14px); }
+.ring-focus:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 2px; }
+
+/* מד מסך-בכניסה (navbar): קו זהב דק שזורם מתחת לגבול העליון */
+.nav-edge { background: linear-gradient(90deg, transparent 0%, var(--brand) 50%, transparent 100%); height: 1px; opacity: 0.5; }
+
+/* כרטיס ראשי שקוף-למחצה (זכוכית כהה) לפורטלים ולוחות בקרה */
+.glass-panel {
+  background: linear-gradient(180deg, rgba(18,24,41,0.72) 0%, rgba(11,15,26,0.72) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--hairline);
+}
+
+/* נקודת סטטוס חיה — למצבי תיאום/אימות */
+.live-dot { position: relative; display: inline-flex; height: 0.5rem; width: 0.5rem; }
+.live-dot::before { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: var(--live); opacity: 0.6; animation: live-ping 1.6s cubic-bezier(0,0,0.2,1) infinite; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: var(--live); }
+@keyframes live-ping { 75%,100% { transform: scale(2.2); opacity: 0; } }
