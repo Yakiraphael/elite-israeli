@@ -36,6 +36,7 @@ function calcDaysLeft(d) {
 }
 
 export default function DirectorDashboard() {
+  const { t } = useTranslation();
   const [unlocked, setUnlocked] = useState(false);
   const [pw, setPw] = useState('');
   const [pwErr, setPwErr] = useState(false);
@@ -53,15 +54,15 @@ export default function DirectorDashboard() {
         <div className="w-14 h-14 rounded-full bg-brand-soft border border-brand-line flex items-center justify-center mx-auto mb-4">
           <Lock size={22} className="text-brand" />
         </div>
-        <h1 className="text-ink font-black text-xl mb-1">דשבורד מנהל מקצועי</h1>
-        <p className="text-ink-muted text-sm mb-6">ממשק מנהל מקצועי</p>
+        <h1 className="text-ink font-black text-xl mb-1">{t('director.lockTitle')}</h1>
+        <p className="text-ink-muted text-sm mb-6">{t('director.lockSubtitle')}</p>
         <form onSubmit={tryLogin} className="space-y-3">
-          <input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder="סיסמה"
+          <input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder={t('director.passwordPlaceholder')}
             className={`w-full bg-panel border rounded-sm px-4 py-3 text-ink text-sm text-center tracking-widest placeholder-ink-faint focus:outline-none transition-colors ${pwErr ? 'border-red-500' : 'border-hairline focus:border-brand-line'}`} />
-          {pwErr && <p className="text-red-400 text-xs">סיסמה שגויה</p>}
-          <button type="submit" className="w-full bg-brand text-brand-ink font-black text-sm py-3 rounded-sm hover:bg-amber-400">כניסה</button>
+          {pwErr && <p className="text-red-400 text-xs">{t('director.passwordError')}</p>}
+          <button type="submit" className="w-full bg-brand text-brand-ink font-black text-sm py-3 rounded-sm hover:bg-amber-400">{t('director.loginBtn')}</button>
         </form>
-        <Link to="/" className="text-ink-faint text-xs mt-4 inline-block hover:text-ink-muted">חזרה לאתר</Link>
+        <Link to="/" className="text-ink-faint text-xs mt-4 inline-block hover:text-ink-muted">{t('director.backToSite')}</Link>
       </motion.div>
     </div>
   );
@@ -149,17 +150,17 @@ function DashboardContent({ onLogout }) {
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('owner.directorSearchHint')}
                 className="bg-surface border border-hairline rounded-lg pr-9 pl-4 py-2 text-ink text-xs placeholder-ink-faint focus:outline-none w-56 focus:border-brand-line" />
             </div>
-            <Link to="/schedule" title="לוח זמנים — ניהול משחקים"
+            <Link to="/schedule" title={t('director.scheduleLink')}
               className="w-9 h-9 rounded-lg bg-surface border border-hairline flex items-center justify-center text-ink-muted hover:text-brand hover:border-brand-line transition-colors">
               <CalendarDays size={16} />
             </Link>
-            <Link to="/league" title="ליגה והגרלה"
+            <Link to="/league" title={t('director.leagueLink')}
               className="w-9 h-9 rounded-lg bg-surface border border-hairline flex items-center justify-center text-ink-muted hover:text-brand hover:border-brand-line transition-colors">
               <Trophy size={16} />
             </Link>
             <NotificationBell audience="director" onNavigate={setTab} />
-            <Link to="/" className="text-ink-muted hover:text-ink text-xs flex items-center gap-1"><ArrowRight size={12} /> אתר</Link>
-            <button onClick={onLogout} className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> יציאה</button>
+            <Link to="/" className="text-ink-muted hover:text-ink text-xs flex items-center gap-1"><ArrowRight size={12} /> {t('director.siteLink')}</Link>
+            <button onClick={onLogout} className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> {t('director.exitBtn')}</button>
           </div>
         </div>
       </div>
@@ -213,13 +214,13 @@ function DashboardContent({ onLogout }) {
           <div className="space-y-5">
             <div className="flex gap-1.5 bg-panel border border-hairline rounded-lg p-1.5 justify-center items-center">
               <button onClick={() => setSubCF('contracts')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'contracts' ? 'bg-brand text-brand-ink' : 'text-ink-muted hover:text-ink'}`}>
-                <FileText size={14} /> ניהול חוזים קיימים
+                <FileText size={14} /> {t('director.contractsSubTab')}
               </button>
               <button onClick={() => setSubCF('templates')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'templates' ? 'bg-brand text-brand-ink' : 'text-ink-muted hover:text-ink'}`}>
-                <Crown size={14} /> בנק התבניות הרשמיות
+                <Crown size={14} /> {t('director.templatesSubTab')}
               </button>
               <button onClick={() => setSubCF('packages')} className={`flex items-center gap-2 flex-1 py-2.5 rounded-md text-sm font-bold transition-colors ${subCF === 'packages' ? 'bg-brand text-brand-ink' : 'text-ink-muted hover:text-ink'}`}>
-                <Package size={14} /> חבילות מסמכים משפטיים
+                <Package size={14} /> {t('director.packagesSubTab')}
               </button>
             </div>
             {subCF === 'contracts' && <ContractsPanel />}
@@ -273,6 +274,7 @@ function DashboardContent({ onLogout }) {
 
 // ---- OVERVIEW ----
 function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, contractsAlerts, pendingReqs, ifaReady, transfers, requests }) {
+  const { t } = useTranslation();
   const scoreColor = complianceScore >= 90 ? '#10b981' : complianceScore >= 70 ? '#f59e0b' : '#ef4444';
   const radialData = [{ name: 'compliance', value: complianceScore, fill: scoreColor }];
 
@@ -290,32 +292,32 @@ function OverviewTab({ players, complianceScore, medicalExpired, medicalSoon, co
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="font-black text-2xl" style={{ color: scoreColor }}>{complianceScore}%</span>
-              <span className="text-ink-faint text-[9px] font-bold uppercase tracking-wide">תאימות רגולטורית</span>
+              <span className="text-ink-faint text-[9px] font-bold uppercase tracking-wide">{t('director.regulatoryScore')}</span>
             </div>
           </div>
           <div className="flex-1 text-center md:text-right">
-            <span className="text-brand text-xs font-bold tracking-widest uppercase">חדר בקרה — עילית ישראלית</span>
-            <h2 className="text-ink text-2xl font-black mt-1">מבט כללי על מצב הליגה</h2>
-            <p className="text-ink-muted text-sm mt-1">{players.length} שחקנים רשומים · {ifaReady} מוכנים IFA · {transfers.length} העברות במעקב</p>
+            <span className="text-brand text-xs font-bold tracking-widest uppercase">{t('director.heroBadge')}</span>
+            <h2 className="text-ink text-2xl font-black mt-1">{t('director.heroTitle')}</h2>
+            <p className="text-ink-muted text-sm mt-1">{t('director.heroDesc', { players: players.length, ifaReady, transfers: transfers.length })}</p>
           </div>
         </div>
       </div>
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <DirKpi label="בעיות רפואיות" value={medicalExpired} sub={`${medicalSoon} בסכנה`} color={medicalExpired > 0 ? 'red' : 'green'} icon={Activity} urgent={medicalExpired > 0} />
-        <DirKpi label="חוזים להחלטה" value={contractsAlerts} sub="חוזה ממתין" color={contractsAlerts > 0 ? 'amber' : 'green'} icon={FileText} />
-        <DirKpi label="בקשות פתוחות" value={pendingReqs} sub="תור פעולות" color={pendingReqs > 0 ? 'amber' : 'green'} icon={ClipboardList} urgent={pendingReqs > 0} />
-        <DirKpi label="שחקנים חופשיים" value={players.filter(p => p.is_free_agent).length} sub="שחקנים חופשיים" color="blue" icon={Users} />
+        <DirKpi label={t('director.medicalExpiredShort')} value={medicalExpired} sub={`${medicalSoon} בסכנה`} color={medicalExpired > 0 ? 'red' : 'green'} icon={Activity} urgent={medicalExpired > 0} />
+        <DirKpi label={t('director.contractsPendingShort')} value={contractsAlerts} sub="חוזה ממתין" color={contractsAlerts > 0 ? 'amber' : 'green'} icon={FileText} />
+        <DirKpi label={t('director.pendingReqsShort')} value={pendingReqs} sub="תור פעולות" color={pendingReqs > 0 ? 'amber' : 'green'} icon={ClipboardList} urgent={pendingReqs > 0} />
+        <DirKpi label={t('director.freeAgentsShort')} value={players.filter(p => p.is_free_agent).length} sub="שחקנים חופשיים" color="blue" icon={Users} />
       </div>
 
       {/* Action Queue preview */}
       {pendingReqs > 0 && (
         <div className="bg-panel border border-amber-500/20 rounded-lg p-5">
           <h3 className="text-amber-400 font-black text-sm mb-3 flex items-center gap-2">
-            <ClipboardList size={14} /> תור הפעולות — {pendingReqs} ממתינות
+            <ClipboardList size={14} /> {t('director.awaitingActions', { count: pendingReqs })}
           </h3>
-          <p className="text-ink-muted text-xs">לחץ על לשונית "תור פעולות" לטיפול מהיר</p>
+          <p className="text-ink-muted text-xs">{t('director.clickActionQueue')}</p>
         </div>
       )}
 
@@ -353,6 +355,7 @@ function DirKpi({ label, value, sub, color, icon: Icon, urgent }) {
 
 // ---- SQUAD TAB ----
 function SquadTab({ players, loading, onSelect }) {
+  const { t } = useTranslation();
   const [posFilter, setPosFilter] = useState('');
   const POSITIONS = ['שוער', 'בלם', 'מגן צד', 'קשר מגן', 'קשר', 'קשר התקפי', 'חלוץ צד', 'חלוץ'];
 
@@ -365,7 +368,7 @@ function SquadTab({ players, loading, onSelect }) {
       <div className="flex items-center gap-3 mb-5">
         <select value={posFilter} onChange={e => setPosFilter(e.target.value)}
           className="bg-panel border border-hairline rounded-lg px-3 py-2 text-ink text-xs focus:outline-none">
-          <option value="">כל העמדות</option>
+          <option value="">{t('director.allPositions')}</option>
           {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
         <span className="text-ink-faint text-xs">{filtered2.length} שחקנים</span>
@@ -508,11 +511,12 @@ function RequestsTab({ requests, players = [] }) {
 
 // ---- COMPLIANCE TAB ----
 function ComplianceTab({ players, contracts = [], onTriggerPackage, onMovePlayer }) {
+  const { t } = useTranslation();
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-ink font-black text-base">מטריצת תאימות רגולטורית — תאימות מול ההתאחדות הרשמית</h3>
-        <span className="text-ink-faint text-[10px]">מטריצה מלאה · רפואי · רישום · חוזה · משמעת · משפטי · פציעה · זמינות · כרטיסים</span>
+        <h3 className="text-ink font-black text-base">{t('director.complianceTitle')}</h3>
+        <span className="text-ink-faint text-[10px]">{t('director.complianceSub')}</span>
       </div>
       <DirectorComplianceMatrix
         players={players}

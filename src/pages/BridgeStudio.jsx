@@ -202,6 +202,7 @@ function CreateTransferModal({ club, onClose, onDone }) {
 
 // ---------------- Compliance ----------------
 function ComplianceTab() {
+  const { t } = useTranslation();
   const players = usePlayers();
   const [playerId, setPlayerId] = useState('');
   const [docs, setDocs] = useState([]);
@@ -215,25 +216,25 @@ function ComplianceTab() {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <select value={playerId} onChange={e => setPlayerId(e.target.value)} className={inp + ' max-w-xs'}>
-          <option value="">— בחר שחקן לתיק תאימות —</option>
+          <option value="">{t('bridge.selectPlayerCompliance')}</option>
           {players.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
         </select>
-        <button onClick={load} disabled={!playerId} className="text-xs font-bold text-brand border border-brand-line rounded-md px-3 py-1.5 disabled:opacity-40"><Search size={12} className="inline ml-1" /> שלוף תיק</button>
+        <button onClick={load} disabled={!playerId} className="text-xs font-bold text-brand border border-brand-line rounded-md px-3 py-1.5 disabled:opacity-40"><Search size={12} className="inline ml-1" /> {t('bridge.fetchFile')}</button>
       </div>
-      {loading ? <Loader2 className="animate-spin text-brand" /> : !playerId ? <div className="text-ink-faint text-sm py-8 text-center">בחר שחקן לצפייה במסמכי תאימות — כל פתיחה מתועדת ביומן ביקורת.</div> :
+      {loading ? <Loader2 className="animate-spin text-brand" /> : !playerId ? <div className="text-ink-faint text-sm py-8 text-center">{t('bridge.noDocsPlayer')}</div> :
         <div className="space-y-2">
-          {docs.length === 0 && <div className="text-ink-faint text-sm">אין מסמכים.</div>}
+          {docs.length === 0 && <div className="text-ink-faint text-sm">{t('bridge.noDocs')}</div>}
           {docs.map(d => (
             <div key={d.id} className="bg-panel border border-hairline rounded-lg p-3 flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <div className="text-ink font-bold text-sm flex items-center gap-2"><FileCheck2 size={13} className="text-brand" /> {docLabel(d.doc_type)} {d.is_verified ? <span className="text-[9px] text-green-400 bg-green-400/10 border-green-400/30 border px-1.5 py-0.5 rounded-full">מאומת</span> : <span className="text-[9px] text-amber-400 bg-amber-400/10 border-amber-400/30 border px-1.5 py-0.5 rounded-full">ממתין</span>}</div>
-                <div className="text-ink-muted text-[11px] mt-0.5">הועלה ע״י {d.uploaded_by_name || '—'}{d.verified_at ? ` · אומת ע״י ${d.verified_by_name}` : ''}</div>
-                {d.rejection_reason && <div className="text-red-400 text-[11px] mt-0.5">דחייה: {d.rejection_reason}</div>}
+                <div className="text-ink font-bold text-sm flex items-center gap-2"><FileCheck2 size={13} className="text-brand" /> {t(`bridge.docTypes.${d.doc_type}`)} {d.is_verified ? <span className="text-[9px] text-green-400 bg-green-400/10 border-green-400/30 border px-1.5 py-0.5 rounded-full">{t('bridge.verified')}</span> : <span className="text-[9px] text-amber-400 bg-amber-400/10 border-amber-400/30 border px-1.5 py-0.5 rounded-full">{t('bridge.awaiting')}</span>}</div>
+                <div className="text-ink-muted text-[11px] mt-0.5">{t('bridge.uploadedBy', { name: d.uploaded_by_name || '—' })}{d.verified_at ? ` · ${t('bridge.verifiedBy', { name: d.verified_by_name })}` : ''}</div>
+                {d.rejection_reason && <div className="text-red-400 text-[11px] mt-0.5">{t('bridge.rejectionReason', { reason: d.rejection_reason })}</div>}
               </div>
               <div className="flex gap-2 flex-shrink-0">
-                <a href={d.file_url} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-brand hover:underline">צפה</a>
-                {!d.is_verified && <button onClick={() => verify(d, true)} className="text-[11px] font-bold text-green-400 hover:text-green-300">אשר</button>}
-                <button onClick={() => verify(d, false, 'לא עומד בדרישות')} className="text-[11px] font-bold text-red-400 hover:text-red-300">דחה</button>
+                <a href={d.file_url} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-brand hover:underline">{t('bridge.viewBtn')}</a>
+                {!d.is_verified && <button onClick={() => verify(d, true)} className="text-[11px] font-bold text-green-400 hover:text-green-300">{t('bridge.verifyBtn')}</button>}
+                <button onClick={() => verify(d, false, t('bridge.rejectionDefault'))} className="text-[11px] font-bold text-red-400 hover:text-red-300">{t('bridge.rejectDocBtn')}</button>
               </div>
             </div>
           ))}
@@ -247,6 +248,7 @@ function docLabel(t) { return { MEDICAL_CERTIFICATE: 'אישור רפואי', PA
 
 // ---------------- Growth ----------------
 function GrowthTab() {
+  const { t } = useTranslation();
   const players = usePlayers();
   const [playerId, setPlayerId] = useState('');
   const [records, setRecords] = useState([]);
@@ -258,16 +260,16 @@ function GrowthTab() {
   return (
     <div className="space-y-4">
       <select value={playerId} onChange={e => setPlayerId(e.target.value)} className={inp + ' max-w-xs'}>
-        <option value="">— בחר שחקן למעקב התפתחות —</option>
+        <option value="">{t('bridge.selectPlayerGrowth')}</option>
         {players.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
       </select>
-      {!playerId ? <div className="text-ink-faint text-sm py-8 text-center">בחר שחקן לצפייה במדידות התפתחות אורך-שנתונים.</div> :
-        !trends.length ? <div className="text-ink-faint text-sm py-8 text-center">אין מדידות עדיין.</div> :
+      {!playerId ? <div className="text-ink-faint text-sm py-8 text-center">{t('bridge.selectGrowthIntro')}</div> :
+        !trends.length ? <div className="text-ink-faint text-sm py-8 text-center">{t('bridge.noGrowth')}</div> :
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead className="text-ink-muted text-[10px]">
               <tr className="border-b border-hairline">
-                <th className="text-right py-2 px-2">תאריך</th><th>שנתון</th><th>גובה</th><th>משקל</th><th>30מ</th><th>טכני</th><th>טקטי</th><th>מנטלי</th><th>פיזי</th><th>הערות</th>
+                <th className="text-right py-2 px-2">{t('bridge.growthTable.date')}</th><th>{t('bridge.growthTable.ageGroup')}</th><th>{t('bridge.growthTable.height')}</th><th>{t('bridge.growthTable.weight')}</th><th>{t('bridge.growthTable.sprint')}</th><th>{t('bridge.growthTable.technical')}</th><th>{t('bridge.growthTable.tactical')}</th><th>{t('bridge.growthTable.mental')}</th><th>{t('bridge.growthTable.physical')}</th><th>{t('bridge.growthTable.notes')}</th>
               </tr>
             </thead>
             <tbody>

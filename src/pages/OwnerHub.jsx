@@ -186,20 +186,21 @@ function SectionTitle({ icon: Icon, title, sub }) {
 }
 
 function UnifiedSchedule({ fixtures }) {
-  if (!fixtures.length) return <div className="bg-panel border border-hairline rounded-lg p-8 text-center text-ink-faint text-sm">אין משחקים מתוכננים בקרוב.</div>;
+  const { t } = useTranslation();
+  if (!fixtures.length) return <div className="bg-panel border border-hairline rounded-lg p-8 text-center text-ink-faint text-sm">{t('owner.noGames')}</div>;
   return (
     <div className="bg-panel border border-hairline rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead className="text-ink-muted text-[10px] bg-panel-alt">
             <tr className="border-b border-hairline">
-              <th className="text-right py-2.5 px-3">תאריך</th>
-              <th className="text-center">שעה</th>
-              <th className="text-right">מועדון/ליגה</th>
-              <th className="text-right">מפגש</th>
-              <th className="text-right">מגרש</th>
-              <th className="text-right">שנתון</th>
-              <th className="text-center">שופט</th>
+            <th className="text-right py-2.5 px-3">{t('owner.tableDate')}</th>
+            <th className="text-center">{t('owner.tableTime')}</th>
+            <th className="text-right">{t('owner.tableOrg')}</th>
+            <th className="text-right">{t('owner.tableMatch')}</th>
+            <th className="text-right">{t('owner.tableStadium')}</th>
+            <th className="text-right">{t('owner.tableAge')}</th>
+            <th className="text-center">{t('owner.tableReferee')}</th>
             </tr>
           </thead>
           <tbody>
@@ -208,48 +209,49 @@ function UnifiedSchedule({ fixtures }) {
                 <td className="py-2.5 px-3 text-ink-muted whitespace-nowrap">{new Date(f.match_date).toLocaleDateString('he-IL', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                 <td className="text-center font-bold text-brand">{f.kickoff_time || '—'}</td>
                 <td className="text-right text-ink-muted">{f.club_name || '—'}</td>
-                <td className="text-right font-bold whitespace-nowrap">{f.home_team} <span className="text-ink-faint mx-1">נגד</span> {f.away_team}</td>
+                <td className="text-right font-bold whitespace-nowrap">{f.home_team} <span className="text-ink-faint mx-1">{t('common.vs')}</span> {f.away_team}</td>
                 <td className="text-right text-ink-muted"><MapPin size={10} className="inline ml-1" />{f.stadium_name || '—'}</td>
                 <td className="text-right text-ink-muted">{f.age_group || '—'}</td>
                 <td className="text-center">
                   {f.referee_status === 'CONFIRMED'
-                    ? <span className="text-[9px] font-bold text-green-400 bg-green-400/10 border border-green-400/30 px-1.5 py-0.5 rounded-full">אושר</span>
-                    : <span className="text-[9px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full">ממתין</span>}
+                    ? <span className="text-[9px] font-bold text-green-400 bg-green-400/10 border border-green-400/30 px-1.5 py-0.5 rounded-full">{t('owner.refApproved')}</span>
+                    : <span className="text-[9px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full">{t('owner.refPendingShort')}</span>}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {fixtures.length > 40 && <div className="px-3 py-2 text-ink-faint text-[10px] border-t border-hairline">מציג 40 מתוך {fixtures.length} משחקים מתוכננים.</div>}
+      {fixtures.length > 40 && <div className="px-3 py-2 text-ink-faint text-[10px] border-t border-hairline">{t('owner.showingOf', { shown: 40, total: fixtures.length })}</div>}
     </div>
   );
 }
 
 function BridgeSummary({ pending, approved }) {
+  const { t } = useTranslation();
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <div className="bg-panel border border-hairline rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2"><AlertTriangle size={14} className="text-amber-400" /><span className="text-ink font-bold text-sm">ממתינים לאישור ({pending.length})</span></div>
-          <Link to="/bridge" className="text-brand text-[11px] font-bold hover:underline">ניהול מלא ←</Link>
+          <div className="flex items-center gap-2"><AlertTriangle size={14} className="text-amber-400" /><span className="text-ink font-bold text-sm">{t('owner.pendingCount', { count: pending.length })}</span></div>
+          <Link to="/bridge" className="text-brand text-[11px] font-bold hover:underline">{t('owner.fullManagement')} ←</Link>
         </div>
-        {pending.length === 0 ? <div className="text-ink-faint text-xs py-4 text-center">אין צינורות ממתינים.</div> : pending.map(t => (
+        {pending.length === 0 ? <div className="text-ink-faint text-xs py-4 text-center">{t('owner.noPending')}</div> : pending.map(t => (
           <div key={t.id} className="flex items-center justify-between py-2 border-b border-hairline last:border-0 text-xs">
             <div><span className="text-ink font-bold">{t.player_name}</span> <span className="text-ink-faint mx-1">→</span> <span className="text-ink-muted">{t.target_club_name || '—'}</span></div>
-            <span className="text-ink-faint text-[10px]">{CLASSIFICATION_LABELS[t.source_org_classification] || t.source_org_classification}</span>
+            <span className="text-ink-faint text-[10px]">{t(`owner.classifications.${t.source_org_classification}`) || t.source_org_classification}</span>
           </div>
         ))}
       </div>
       <div className="bg-panel border border-hairline rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-green-400" /><span className="text-ink font-bold text-sm">אושרו לאחרונה ({approved.length})</span></div>
-          <Link to="/bridge" className="text-brand text-[11px] font-bold hover:underline">כל הצינורות ←</Link>
+          <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-green-400" /><span className="text-ink font-bold text-sm">{t('owner.approvedCount', { count: approved.length })}</span></div>
+          <Link to="/bridge" className="text-brand text-[11px] font-bold hover:underline">{t('owner.allTransfers')} ←</Link>
         </div>
-        {approved.length === 0 ? <div className="text-ink-faint text-xs py-4 text-center">אין מעברים שאושרו עדיין.</div> : approved.map(t => (
+        {approved.length === 0 ? <div className="text-ink-faint text-xs py-4 text-center">{t('owner.noApproved')}</div> : approved.map(t => (
           <div key={t.id} className="flex items-center justify-between py-2 border-b border-hairline last:border-0 text-xs">
             <div><span className="text-ink font-bold">{t.player_name}</span> <span className="text-ink-faint mx-1">←</span> <span className="text-ink-muted">{t.source_org_name || '—'}</span></div>
-            <span className="text-green-400 text-[10px]">מוכן להתאחדות</span>
+            <span className="text-green-400 text-[10px]">{t('owner.readyForIfa')}</span>
           </div>
         ))}
       </div>
