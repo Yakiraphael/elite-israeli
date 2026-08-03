@@ -4,8 +4,7 @@
   "properties": {
     "club_id": {
       "type": "string",
-      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id)",
-      "description": "\u05d1\u05d9\u05d3\u05d5\u05d3 \u05e8\u05d1-\u05de\u05d5\u05e2\u05d3\u05d5\u05e0\u05d9 \u2014 \u05db\u05dc \u05de\u05e9\u05d7\u05e7 \u05e9\u05d9\u05d9\u05da \u05dc\u05de\u05d5\u05e2\u05d3\u05d5\u05df/\u05dc\u05d9\u05d2\u05d4 \u05d0\u05d7\u05ea. RLS \u05d7\u05d5\u05e1\u05dd \u05e7\u05e8\u05d9\u05d0\u05d4/\u05db\u05ea\u05d9\u05d1\u05d4 \u05d7\u05d5\u05e6\u05ea-\u05de\u05d5\u05e2\u05d3\u05d5\u05e0\u05d9\u05dd."
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id)"
     },
     "club_name": {
       "type": "string",
@@ -13,17 +12,20 @@
     },
     "competition": {
       "type": "string",
-      "title": "\u05de\u05e1\u05d2\u05e8\u05ea / \u05dc\u05d9\u05d2\u05d4 / \u05d8\u05d5\u05e8\u05e0\u05d9\u05e8",
-      "description": "\u05dc\u05d3\u05d5\u05d2\u05de\u05d4: \u05dc\u05d9\u05d2\u05ea \u05e0\u05e2\u05e8\u05d9\u05dd \u05d0\u05f3 \u05de\u05d7\u05d5\u05d6\u05d9\u05ea, \u05d8\u05d5\u05e8\u05e0\u05d9\u05e8 \u05e2\u05d9\u05dc\u05d9\u05ea \u05e0\u05d5\u05e2\u05e8, \u05d2\u05d1\u05d9\u05e2 \u05d4\u05de\u05d3\u05d9\u05e0\u05d4 \u05dc\u05e0\u05d5\u05e2\u05e8."
+      "title": "\u05de\u05e1\u05d2\u05e8\u05ea / \u05dc\u05d9\u05d2\u05d4 / \u05d8\u05d5\u05e8\u05e0\u05d9\u05e8"
     },
     "round": {
       "type": "string",
       "title": "\u05de\u05d7\u05d6\u05d5\u05e8 / \u05e9\u05dc\u05d1"
     },
+    "matchday": {
+      "type": "number",
+      "title": "\u05de\u05e1\u05e4\u05e8 \u05de\u05d7\u05d6\u05d5\u05e8 (Matchday)",
+      "description": "\u05de\u05d9\u05e1\u05e4\u05d5\u05e8 \u05e8\u05e6\u05d9\u05e3 \u05de-1 \u05e9\u05e0\u05d5\u05e6\u05e8 \u05e2\u05dc \u05d9\u05d3\u05d9 \u05de\u05e0\u05d5\u05e2 \u05d4\u05d4\u05d2\u05e8\u05dc\u05d4"
+    },
     "age_group": {
       "type": "string",
-      "title": "\u05e9\u05e0\u05ea\u05d5\u05df / \u05e7\u05d1\u05d5\u05e6\u05ea \u05d2\u05d9\u05dc",
-      "description": "\u05dc\u05d3\u05d5\u05d2\u05de\u05d4: \u05e0\u05e2\u05e8\u05d9\u05dd \u05d0\u05f3, \u05d8\u05e8\u05d5\u05dd-\u05d9\u05dc\u05d3\u05d9\u05dd \u05d1\u05f3, \u05d1\u05d5\u05d2\u05e8\u05d9\u05dd. \u05de\u05e9\u05de\u05e9 \u05d0\u05ea \u05de\u05e0\u05d5\u05e2 \u05de\u05e0\u05d5\u05d7\u05ea \u05d4\u05e7\u05d8\u05d9\u05e0\u05d9\u05dd \u05d5\u05d0\u05ea \u05e1\u05d9\u05e0\u05d5\u05df \u05d4\u05ea\u05e6\u05d5\u05d2\u05d4 \u05e9\u05dc \u05d4\u05de\u05d0\u05de\u05df."
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df / \u05e7\u05d1\u05d5\u05e6\u05ea \u05d2\u05d9\u05dc"
     },
     "home_team": {
       "type": "string",
@@ -36,17 +38,88 @@
     "match_date": {
       "type": "string",
       "format": "date",
-      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05de\u05e9\u05d7\u05e7"
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05de\u05e9\u05d7\u05e7",
+      "description": "\u05d0\u05d5\u05e4\u05e6\u05d9\u05d5\u05e0\u05dc\u05d9 \u2014 \u05de\u05e9\u05d7\u05e7\u05d9\u05dd \u05de\u05d5\u05d2\u05e8\u05dc\u05d9\u05dd \u05e0\u05d5\u05e6\u05e8\u05d9\u05dd \u05dc\u05dc\u05d0 \u05ea\u05d0\u05e8\u05d9\u05da \u05e2\u05d3 \u05ea\u05d9\u05d0\u05d5\u05dd \u05d3\u05d5-\u05e6\u05d3\u05d3\u05d9"
     },
     "kickoff_time": {
       "type": "string",
-      "title": "\u05e9\u05e2\u05ea \u05e4\u05ea\u05d9\u05d7\u05d4 (HH:MM)",
-      "description": "\u05e4\u05d5\u05e8\u05de\u05d8 24 \u05e9\u05e2\u05d5\u05ea, \u05dc\u05d3\u05d5\u05d2\u05de\u05d4 16:00. \u05de\u05e0\u05d5\u05e2 \u05d4\u05d4\u05ea\u05e0\u05d2\u05e9\u05d5\u05d9\u05d5\u05ea \u05de\u05d7\u05e9\u05d1 \u05d0\u05ea \u05d4\u05d7\u05dc\u05d5\u05df \u05d4\u05de\u05d5\u05d2\u05df \u05dc\u05e4\u05d9 \u05ea\u05d0\u05e8\u05d9\u05da + \u05e9\u05e2\u05d4."
+      "title": "\u05e9\u05e2\u05ea \u05e4\u05ea\u05d9\u05d7\u05d4 (HH:MM)"
     },
     "stadium_name": {
       "type": "string",
-      "title": "\u05de\u05d2\u05e8\u05e9 / \u05d0\u05e6\u05d8\u05d3\u05d9\u05d5\u05df",
-      "description": "\u05e9\u05d3\u05d4 \u05d7\u05d5\u05e4\u05e9\u05d9 \u05d0\u05d5 \u05de\u05ea\u05d5\u05da \u05e8\u05e9\u05d9\u05de\u05ea \u05de\u05d2\u05e8\u05e9\u05d9\u05dd \u05de\u05d0\u05d5\u05e9\u05e8\u05d9\u05dd \u05e9\u05dc \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df."
+      "title": "\u05de\u05d2\u05e8\u05e9 / \u05d0\u05e6\u05d8\u05d3\u05d9\u05d5\u05df"
+    },
+    "home_score": {
+      "type": "number",
+      "title": "\u05ea\u05d5\u05e6\u05d0\u05d4 \u2014 \u05e9\u05e2\u05e8\u05d9 \u05d1\u05d9\u05ea (\u05de\u05d0\u05d5\u05de\u05ea)"
+    },
+    "away_score": {
+      "type": "number",
+      "title": "\u05ea\u05d5\u05e6\u05d0\u05d4 \u2014 \u05e9\u05e2\u05e8\u05d9 \u05d7\u05d5\u05e5 (\u05de\u05d0\u05d5\u05de\u05ea)"
+    },
+    "home_reported_score": {
+      "type": "number",
+      "title": "\u05d3\u05d9\u05d5\u05d5\u05d7 \u05ea\u05d5\u05e6\u05d0\u05d4 \u05de\u05e6\u05d3 \u05d4\u05d1\u05d9\u05ea"
+    },
+    "away_reported_score": {
+      "type": "number",
+      "title": "\u05d3\u05d9\u05d5\u05d5\u05d7 \u05ea\u05d5\u05e6\u05d0\u05d4 \u05de\u05e6\u05d3 \u05d4\u05d7\u05d5\u05e5"
+    },
+    "home_scorers": {
+      "type": "array",
+      "title": "\u05de\u05d1\u05e7\u05d9\u05e2\u05d9\u05dd \u2014 \u05e7\u05d1\u05d5\u05e6\u05ea \u05d1\u05d9\u05ea",
+      "items": {
+        "type": "string"
+      }
+    },
+    "away_scorers": {
+      "type": "array",
+      "title": "\u05de\u05d1\u05e7\u05d9\u05e2\u05d9\u05dd \u2014 \u05e7\u05d1\u05d5\u05e6\u05ea \u05d7\u05d5\u05e5",
+      "items": {
+        "type": "string"
+      }
+    },
+    "home_proposed_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05d4\u05e6\u05e2\u05ea \u05de\u05d5\u05e2\u05d3 \u05de\u05e6\u05d3 \u05d4\u05d1\u05d9\u05ea"
+    },
+    "home_proposed_time": {
+      "type": "string",
+      "title": "\u05d4\u05e6\u05e2\u05ea \u05e9\u05e2\u05d4 \u05de\u05e6\u05d3 \u05d4\u05d1\u05d9\u05ea"
+    },
+    "home_proposed_stadium": {
+      "type": "string",
+      "title": "\u05d4\u05e6\u05e2\u05ea \u05de\u05d2\u05e8\u05e9 \u05de\u05e6\u05d3 \u05d4\u05d1\u05d9\u05ea"
+    },
+    "coordination_status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05ea\u05d9\u05d0\u05d5\u05dd",
+      "default": "PENDING_COORDINATION",
+      "enum": [
+        "PENDING_COORDINATION",
+        "HOME_APPROVED",
+        "AWAY_APPROVED",
+        "FULLY_COORDINATED"
+      ],
+      "description": "PENDING_COORDINATION = \u05de\u05de\u05ea\u05d9\u05df \u05dc\u05ea\u05d9\u05d0\u05d5\u05dd, HOME_APPROVED = \u05d4\u05d1\u05d9\u05ea \u05d4\u05e6\u05d9\u05e2 \u05de\u05d5\u05e2\u05d3, AWAY_APPROVED = \u05d4\u05d7\u05d5\u05e5 \u05d0\u05d9\u05e9\u05e8, FULLY_COORDINATED = \u05de\u05ea\u05d5\u05d0\u05dd \u05d5\u05de\u05d0\u05d5\u05e9\u05e8"
+    },
+    "result_status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05ea\u05d5\u05e6\u05d0\u05d4",
+      "default": "PENDING_REPORT",
+      "enum": [
+        "PENDING_REPORT",
+        "HOME_REPORTED",
+        "AWAY_REPORTED",
+        "VERIFIED_AND_APPROVED",
+        "DISPUTED"
+      ],
+      "description": "\u05d0\u05d9\u05de\u05d5\u05ea \u05e6\u05d5\u05dc\u05d1 \u05e9\u05dc \u05d3\u05d9\u05d5\u05d5\u05d7\u05d9 \u05d1\u05d9\u05ea/\u05d7\u05d5\u05e5 \u2014 \u05ea\u05d0\u05d9\u05de\u05d5\u05ea \u05de\u05d0\u05e9\u05e8 \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9\u05ea; \u05d0\u05d9-\u05ea\u05d0\u05d9\u05de\u05d5\u05ea \u05e0\u05d5\u05e2\u05dc \u05dc\u05d8\u05d9\u05e4\u05d5\u05dc \u05d4\u05e0\u05d4\u05dc\u05ea \u05d4\u05d0\u05e8\u05d2\u05d5\u05df"
+    },
+    "disputed_reason": {
+      "type": "string",
+      "title": "\u05e1\u05d9\u05d1\u05ea \u05de\u05d7\u05dc\u05d5\u05e7\u05ea \u05ea\u05d5\u05e6\u05d0\u05d4"
     },
     "referee_assigned_id": {
       "type": "string",
@@ -65,12 +138,11 @@
         "DECLINED",
         "NOT_REQUIRED"
       ],
-      "default": "PENDING",
-      "description": "PENDING = \u05d6\u05d5\u05de\u05df \u05d5\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8, CONFIRMED = \u05d0\u05d9\u05e9\u05e8, DECLINED = \u05d3\u05d7\u05d4, NOT_REQUIRED = \u05dc\u05d0 \u05e0\u05d3\u05e8\u05e9 \u05e9\u05d5\u05e4\u05d8."
+      "default": "PENDING"
     },
     "referee_invited_at": {
       "type": "string",
-      "title": "\u05de\u05d5\u05e2\u05d3 \u05e9\u05dc\u05d9\u05d7\u05ea \u05d6\u05d9\u05de\u05d5\u05df \u05d4\u05e9\u05d5\u05e4\u05d8"
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05e9\u05dc\u05d9\u05d7\u05ea \u05d6\u05d9\u05de\u05d5\u05df \u05e9\u05d5\u05e4\u05d8"
     },
     "status": {
       "type": "string",
@@ -81,13 +153,11 @@
         "CANCELLED",
         "COMPLETED"
       ],
-      "default": "SCHEDULED",
-      "description": "SCHEDULED = \u05de\u05ea\u05d5\u05db\u05e0\u05df, POSTPONED = \u05e0\u05d3\u05d7\u05d4, CANCELLED = \u05d1\u05d5\u05d8\u05dc, COMPLETED = \u05e9\u05d5\u05d7\u05e7."
+      "default": "SCHEDULED"
     },
     "import_source": {
       "type": "string",
-      "title": "\u05de\u05e7\u05d5\u05e8 \u05d9\u05d9\u05d1\u05d5\u05d0",
-      "description": "\u05dc\u05d3\u05d5\u05d2\u05de\u05d4: Excel/IFA/Manual. \u05de\u05d0\u05e4\u05e9\u05e8 \u05de\u05e2\u05e7\u05d1 \u05d0\u05d9\u05dc\u05d5 \u05de\u05e9\u05d7\u05e7\u05d9\u05dd \u05e0\u05db\u05e0\u05e1\u05d5 \u05de\u05e7\u05d5\u05d1\u05e5 \u05d7\u05d9\u05e6\u05d5\u05e0\u05d9 \u05d5\u05d0\u05d9\u05dc\u05d5 \u05d4\u05d5\u05d6\u05e0\u05d5 \u05d9\u05d3\u05e0\u05d9\u05ea."
+      "title": "\u05de\u05e7\u05d5\u05e8 \u05d9\u05d9\u05d1\u05d5\u05d0 / \u05d9\u05e6\u05d9\u05e8\u05d4"
     },
     "last_conflict_check": {
       "type": "string",
@@ -102,10 +172,7 @@
     "club_id",
     "age_group",
     "home_team",
-    "away_team",
-    "match_date",
-    "kickoff_time",
-    "stadium_name"
+    "away_team"
   ],
   "rls": {
     "read": {
@@ -116,6 +183,16 @@
         {
           "user_condition": {
             "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
           }
         }
       ]
@@ -151,6 +228,18 @@
             {
               "user_condition": {
                 "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "coach"
               }
             }
           ]
