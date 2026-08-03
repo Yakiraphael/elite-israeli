@@ -90,7 +90,7 @@ export default function HeroSection() {
       {/* "עונה חיה" — מיקרו-אינטראקציה בפינה */}
       <div className="absolute top-20 right-6 md:right-8 flex items-center gap-1.5 z-20">
         <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping hidden" />
+          
           
         </span>
         
