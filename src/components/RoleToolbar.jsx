@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import StaffProfileSettingsModal from './staff/StaffProfileSettingsModal';
 import ThemeSwitcher from './theme/ThemeSwitcher';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from '@/lib/i18n/LanguagesContext';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -13,6 +14,7 @@ const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5
 export default function RoleToolbar({ activeLabel, activeIcon: ActiveIcon }) {
   const [showSettings, setShowSettings] = useState(false);
   const [user, setUser] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     let alive = true;
@@ -28,7 +30,7 @@ export default function RoleToolbar({ activeLabel, activeIcon: ActiveIcon }) {
   }, []);
 
   return (
-    <div className="sticky top-0 z-30 bg-surface backdrop-blur border-b border-hairline" dir="rtl">
+    <div className="sticky top-0 z-30 bg-surface backdrop-blur border-b border-hairline">
       <div className="max-w-7xl mx-auto h-14 px-5 flex items-center justify-between gap-3">
         {/* ימין — מותג + תג תפקיד */}
         <div className="flex items-center gap-2.5 min-w-0">
@@ -48,7 +50,7 @@ export default function RoleToolbar({ activeLabel, activeIcon: ActiveIcon }) {
               <UserCircle size={14} className="text-ink-muted" />
             </div>
             <div className="min-w-0 text-right leading-tight">
-              <div className="text-xs font-bold text-ink truncate max-w-[180px]">{user.full_name || 'משתמש'}</div>
+              <div className="text-xs font-bold text-ink truncate max-w-[180px]">{user.full_name || t('dashboard.user')}</div>
               <div className="text-[10px] text-ink-faint truncate max-w-[180px]">{user.email}</div>
             </div>
           </div>
@@ -58,15 +60,15 @@ export default function RoleToolbar({ activeLabel, activeIcon: ActiveIcon }) {
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <ThemeSwitcher />
           <LanguageSwitcher />
-          <Link to="/transfer-portal" title="חזרה לפרופיל שלי"
+          <Link to="/transfer-portal" title={t('common.myProfile')}
             className="flex items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-brand transition-colors px-2.5 py-1.5 rounded hover:bg-panel-alt">
-            <ArrowRight size={12} /> <span className="hidden sm:inline">הפרופיל שלי</span>
+            <ArrowRight size={12} /> <span className="hidden sm:inline">{t('common.myProfile')}</span>
           </Link>
-          <button onClick={() => setShowSettings(true)} title="הגדרות פרופיל"
+          <button onClick={() => setShowSettings(true)} title={t('common.settingsProfile')}
             className="flex items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-ink transition-colors px-2.5 py-1.5 rounded hover:bg-panel-alt">
-            <Settings size={12} /> <span className="hidden sm:inline">הגדרות</span>
+            <Settings size={12} /> <span className="hidden sm:inline">{t('common.settings')}</span>
           </button>
-          <button onClick={() => base44.auth.logout('/transfer-portal')} title="יציאה"
+          <button onClick={() => base44.auth.logout('/transfer-portal')} title={t('common.logout')}
             className="flex items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-red-400 transition-colors px-2.5 py-1.5 rounded hover:bg-panel-alt">
             <LogOut size={12} />
           </button>
