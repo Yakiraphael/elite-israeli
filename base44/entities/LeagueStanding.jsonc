@@ -1,0 +1,110 @@
+{
+  "name": "LeagueStanding",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d0\u05e8\u05d2\u05d5\u05df (Club.id)"
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d4\u05d0\u05e8\u05d2\u05d5\u05df"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df"
+    },
+    "team_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e7\u05d1\u05d5\u05e6\u05d4"
+    },
+    "played": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05de\u05e9\u05d7\u05e7\u05d9\u05dd"
+    },
+    "won": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05e0\u05e6\u05d7\u05d5\u05e0\u05d5\u05ea"
+    },
+    "drawn": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05ea\u05d9\u05e7\u05d5"
+    },
+    "lost": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05d4\u05e4\u05e1\u05d3\u05d9\u05dd"
+    },
+    "goals_for": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05e9\u05e2\u05e8\u05d9\u05dd \u05dc\u05d8\u05d5\u05d1\u05d4"
+    },
+    "goals_against": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05e9\u05e2\u05e8\u05d9\u05dd \u05dc\u05d7\u05d5\u05d1\u05d4"
+    },
+    "goal_difference": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05d4\u05e4\u05e8\u05e9 \u05e9\u05e2\u05e8\u05d9\u05dd"
+    },
+    "points": {
+      "type": "number",
+      "default": 0,
+      "title": "\u05e0\u05e7\u05d5\u05d3\u05d5\u05ea"
+    },
+    "updated_at": {
+      "type": "string",
+      "title": "\u05e2\u05d3\u05db\u05d5\u05df \u05d0\u05d7\u05e8\u05d5\u05df"
+    }
+  },
+  "required": [
+    "club_id",
+    "age_group",
+    "team_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

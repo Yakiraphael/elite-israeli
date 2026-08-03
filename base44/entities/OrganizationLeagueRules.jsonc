@@ -1,0 +1,152 @@
+{
+  "name": "OrganizationLeagueRules",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d0\u05e8\u05d2\u05d5\u05df (Club.id)"
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d4\u05d0\u05e8\u05d2\u05d5\u05df"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df"
+    },
+    "max_games_per_week": {
+      "type": "number",
+      "title": "\u05de\u05e7\u05e1\u05d9\u05de\u05d5\u05dd \u05de\u05e9\u05d7\u05e7\u05d9\u05dd \u05dc\u05e7\u05d1\u05d5\u05e6\u05d4 \u05d1\u05e9\u05d1\u05d5\u05e2",
+      "default": 1
+    },
+    "allowed_match_days": {
+      "type": "array",
+      "title": "\u05d9\u05de\u05d9 \u05de\u05e9\u05d7\u05e7 \u05de\u05d5\u05ea\u05e8\u05d9\u05dd \u05d1\u05e9\u05d1\u05d5\u05e2 (0=\u05e8\u05d0\u05e9\u05d5\u05df \u2026 6=\u05e9\u05d1\u05ea)",
+      "items": {
+        "type": "number"
+      },
+      "default": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "avoid_consecutive_home_games": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u05de\u05e0\u05d9\u05e2\u05ea \u05de\u05e9\u05d7\u05e7\u05d9 \u05d1\u05d9\u05ea \u05e8\u05e6\u05d5\u05e4\u05d9\u05dd"
+    },
+    "seeding_mode": {
+      "type": "string",
+      "title": "\u05de\u05e6\u05d1 \u05d6\u05e8\u05d9\u05e2\u05d4",
+      "default": "BALANCED_RANDOM",
+      "enum": [
+        "BALANCED_RANDOM",
+        "TIERED",
+        "MANUAL_SEED"
+      ]
+    },
+    "double_round": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u05e1\u05d1\u05d1 \u05d1\u05d9\u05ea-\u05d7\u05d5\u05e5 \u05db\u05e4\u05d5\u05dc (Double Round-Robin)"
+    },
+    "updated_at": {
+      "type": "string",
+      "title": "\u05e2\u05d3\u05db\u05d5\u05df \u05d0\u05d7\u05e8\u05d5\u05df"
+    }
+  },
+  "required": [
+    "club_id",
+    "age_group"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
