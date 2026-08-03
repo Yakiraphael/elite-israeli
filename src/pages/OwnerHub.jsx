@@ -8,6 +8,7 @@ import {
   TrendingUp, AlertTriangle, CheckCircle2, Building2, Trophy,
 } from 'lucide-react';
 import RoleToolbar from '../components/RoleToolbar';
+import { useTranslation } from '@/lib/i18n/LanguagesContext';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -31,11 +32,12 @@ export default function OwnerHub() {
 }
 
 function Gate() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-3">
       <Shield size={28} className="text-ink-faint" />
-      <div className="text-ink font-bold">מרכז הבעלים</div>
-      <div className="text-ink-muted text-xs">גישה מוגבלת לבעלים (מנהל) בלבד.</div>
+      <div className="text-ink font-bold">{t('owner.hub')}</div>
+      <div className="text-ink-muted text-xs">{t('owner.gateMsg')}</div>
     </div>
   );
 }
@@ -43,26 +45,27 @@ function Gate() {
 const CLASSIFICATION_LABELS = { IFA_VERIFIED: 'מאומת התאחדות', YOUTH_DEPARTMENT: 'מחלקת נוער', AMATEUR_LEAGUE: 'ליגה חובבנית', ASSOCIATION: 'עמותה/איגוד' };
 
 const SYSTEMS = [
-  { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025', cat: 'professional' },
-  { label: 'דשבורד מאמן', path: '/coach', icon: LayoutDashboard, color: '#10B981', note: 'סגל · דיווח שטח · זימון', cat: 'professional' },
-  { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גילוי והשוואת כשרונות', cat: 'professional' },
-  { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי', cat: 'professional' },
-  { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא', cat: 'technical' },
-  { label: 'ליגה והגרלה — מעגל ליגה', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה', cat: 'technical' },
-  { label: 'מנהל על — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים · איפוס נתונים', cat: 'bureaucratic' },
-  { label: 'פורטל אפוטרופוס', path: '/guardian-portal', icon: Users, color: '#F59E0B', note: 'מעקב הורה/אפוטרופוס · תאימות', cat: 'bureaucratic' },
-  { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות של המערכת', cat: 'software' },
-  { label: 'פאנל ניהול — אירועים/שחקנים', path: '/admin', icon: Settings, color: '#3B82F6', note: 'סיסמה: elite2025 · הרשאות/ביקורת/אבטחה', cat: 'software' },
+  { label: 'owner.directorDash', path: '/director', icon: Crown, color: '#EF4444', cat: 'professional' },
+  { label: 'owner.coachDash', path: '/coach', icon: LayoutDashboard, color: '#10B981', cat: 'professional' },
+  { label: 'owner.scouting', path: '/scouting', icon: Search, color: '#8B5CF6', cat: 'professional' },
+  { label: 'owner.bridge', path: '/bridge', icon: GitMerge, color: '#22C55E', cat: 'professional' },
+  { label: 'owner.schedule', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', cat: 'technical' },
+  { label: 'owner.league', path: '/league', icon: Trophy, color: '#F59E0B', cat: 'technical' },
+  { label: 'owner.superAdmin', path: '/super-admin', icon: Building2, color: '#A855F7', cat: 'bureaucratic' },
+  { label: 'owner.guardian', path: '/guardian-portal', icon: Users, color: '#F59E0B', cat: 'bureaucratic' },
+  { label: 'owner.qa', path: '/qa-engine', icon: Flag, color: '#F97316', cat: 'software' },
+  { label: 'owner.admin', path: '/admin', icon: Settings, color: '#3B82F6', cat: 'software' },
 ];
 
 const CATEGORIES = [
-  { id: 'professional', title: 'מקצועית', icon: Crown, color: '#EF4444', sub: 'ניהול ספורטיבי · מאמן · סקאוטינג · גשר נוער' },
-  { id: 'technical', title: 'טכנית', icon: CalendarDays, color: '#0EA5E9', sub: 'לוח זמנים · ליגה והגרלה · תיאום משחקים' },
-  { id: 'bureaucratic', title: 'בירוקרטית', icon: Shield, color: '#A855F7', sub: 'אישור מועדונים · אפוטרופוס · תאימות רגולטורית' },
-  { id: 'software', title: 'תוכנה', icon: Flag, color: '#F97316', sub: 'QA רגולטורי · ניהול מערכת · יומן ביקורת' },
+  { id: 'professional', title: 'owner.catProfessional', icon: Crown, color: '#EF4444', sub: 'owner.catProfessionalSub' },
+  { id: 'technical', title: 'owner.catTechnical', icon: CalendarDays, color: '#0EA5E9', sub: 'owner.catTechnicalSub' },
+  { id: 'bureaucratic', title: 'owner.catBureaucratic', icon: Shield, color: '#A855F7', sub: 'owner.catBureaucraticSub' },
+  { id: 'software', title: 'owner.catSoftware', icon: Flag, color: '#F97316', sub: 'owner.catSoftwareSub' },
 ];
 
 function OwnerContent({ me }) {
+  const { t } = useTranslation();
   const { data: clubs = [] } = useQuery({
     queryKey: ['owner-clubs'],
     queryFn: () => base44.entities.Club.list('-created_date', 50),
@@ -89,8 +92,8 @@ function OwnerContent({ me }) {
   const approved = transfers.filter(t => t.status === 'APPROVED');
 
   return (
-    <div className="min-h-screen bg-surface" dir="rtl">
-      <RoleToolbar activeLabel="מרכז הבעלים" activeIcon={KeyRound} />
+    <div className="min-h-screen bg-surface">
+      <RoleToolbar activeLabel={t('owner.hub')} activeIcon={KeyRound} />
 
       {/* Header */}
       <div className="bg-panel border-b border-hairline py-5 px-6">
@@ -98,14 +101,14 @@ function OwnerContent({ me }) {
           <div className="flex items-center gap-3">
             <img src={LOGO_URL} alt="" className="h-8 w-auto" />
             <div>
-              <h1 className="text-ink font-black text-xl flex items-center gap-2"><KeyRound size={16} className="text-brand" /> מרכז הבעלים</h1>
-              <p className="text-ink-muted text-xs">{myClub?.club_name ? `${myClub.club_name} · ` : ''}גישה מרוכזת לכלל המערכות · לו״ז מאוחד · גשר נוער מקצועני</p>
+              <h1 className="text-ink font-black text-xl flex items-center gap-2"><KeyRound size={16} className="text-brand" /> {t('owner.hub')}</h1>
+              <p className="text-ink-muted text-xs">{myClub?.club_name ? `${myClub.club_name} · ` : ''}{t('owner.subtitle')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <Stat icon={CalendarDays} label="משחקים מתוכננים" value={upcoming.length} color="text-sky-400" />
-            <Stat icon={GitMerge} label="צינורות מעבר ממתינים" value={pending.length} color="text-amber-400" />
-            <Stat icon={CheckCircle2} label="מעברים שאושרו" value={approved.length} color="text-green-400" />
+            <Stat icon={CalendarDays} label={t('owner.upcomingGames')} value={upcoming.length} color="text-sky-400" />
+            <Stat icon={GitMerge} label={t('owner.pendingTransfers')} value={pending.length} color="text-amber-400" />
+            <Stat icon={CheckCircle2} label={t('owner.approvedTransfers')} value={approved.length} color="text-green-400" />
           </div>
         </div>
       </div>
@@ -120,8 +123,8 @@ function OwnerContent({ me }) {
               <div className="flex items-center gap-2 mb-4">
                 <cat.icon size={16} style={{ color: cat.color }} />
                 <div>
-                  <h2 className="text-ink font-black text-base">{cat.title}</h2>
-                  <p className="text-ink-muted text-[11px]">{cat.sub}</p>
+                  <h2 className="text-ink font-black text-base">{t(cat.title)}</h2>
+                  <p className="text-ink-muted text-[11px]">{t(cat.sub)}</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -132,8 +135,7 @@ function OwnerContent({ me }) {
                       <s.icon size={18} style={{ color: s.color }} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-ink font-bold text-sm">{s.label}</div>
-                      <div className="text-ink-faint text-[10px]">{s.note}</div>
+                      <div className="text-ink font-bold text-sm">{t(s.label)}</div>
                     </div>
                     <ArrowRight size={14} className="text-ink-faint group-hover:text-brand transition-colors flex-shrink-0" />
                   </Link>
@@ -145,13 +147,13 @@ function OwnerContent({ me }) {
 
         {/* לו״ז מאוחד */}
         <section>
-          <SectionTitle icon={CalendarDays} title="לו״ז מאוחד — כלל הארגון/מועדון" sub="משחקים מתוכננים בכל המועדונים והקבוצות שבניהולך" />
+          <SectionTitle icon={CalendarDays} title={t('owner.unifiedSchedule')} sub={t('owner.unifiedScheduleSub')} />
           {loadingFx ? <div className="flex justify-center py-10"><Loader2 className="animate-spin text-brand" /></div> : <UnifiedSchedule fixtures={upcoming} />}
         </section>
 
         {/* גשר נוער מקצועני */}
         <section>
-          <SectionTitle icon={GitMerge} title="ניהול גשר — מחלקות נוער מקצועניות" sub="מעבר מבוקר ממסגרות עממיות/בלתי-פורמליות לאקדמיות התאחדות" />
+          <SectionTitle icon={GitMerge} title={t('owner.bridgeManagement')} sub={t('owner.bridgeManagementSub')} />
           <BridgeSummary pending={pending.slice(0, 5)} approved={approved.slice(0, 5)} />
         </section>
       </div>

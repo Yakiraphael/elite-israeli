@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import RoleToolbar from '../components/RoleToolbar';
+import { useTranslation } from '@/lib/i18n/LanguagesContext';
 import NotificationBell from '../components/NotificationBell';
 import CaseNotesPanel from '../components/player/CaseNotesPanel';
 import CoachTransferApprovals from '../components/coach/CoachTransferApprovals';
@@ -52,6 +53,7 @@ const STATUS_BADGE = {
 };
 
 export default function CoachWorkspace() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState('squad');
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -114,28 +116,28 @@ export default function CoachWorkspace() {
 
   // סדר עבודה זרימה: דיווח שטח (קלט) → בריאות סגל → זימון למשחק → תקינות IFA → בקשות → אישורי העברה → חוזים → גיוס
   const tabs = [
-    { id: 'training', label: 'דיווח שטח', icon: Calendar },
-    { id: 'squad', label: 'בריאות הסגל', icon: Shield },
-    { id: 'schedule', label: 'לוז הקבוצה', icon: CalendarDays },
-    { id: 'callup', label: 'זימון סגל', icon: ListChecks },
-    { id: 'compliance', label: 'תקינות מול ההתאחדות הרשמית', icon: AlertTriangle },
-    { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
-    { id: 'standings', label: 'טבלת ליגה', icon: Trophy },
-    { id: 'approvals', label: 'אישורי העברה', icon: CheckCircle2, badge: pendingApprovals.length },
-    { id: 'roster', label: 'סגל — חוזים', icon: FileText },
-    ...(isApprovedCoach ? [{ id: 'invite', label: 'גיוס שחקנים', icon: UserPlus }] : []),
+    { id: 'training', label: t('coach.training'), icon: Calendar },
+    { id: 'squad', label: t('coach.squad'), icon: Shield },
+    { id: 'schedule', label: t('coach.schedule'), icon: CalendarDays },
+    { id: 'callup', label: t('coach.callup'), icon: ListChecks },
+    { id: 'compliance', label: t('coach.compliance'), icon: AlertTriangle },
+    { id: 'requests', label: t('coach.requests'), icon: ClipboardList, badge: pendingRequests },
+    { id: 'standings', label: t('coach.standings'), icon: Trophy },
+    { id: 'approvals', label: t('coach.approvals'), icon: CheckCircle2, badge: pendingApprovals.length },
+    { id: 'roster', label: t('coach.roster'), icon: FileText },
+    ...(isApprovedCoach ? [{ id: 'invite', label: t('coach.invite'), icon: UserPlus }] : []),
   ];
 
   return (
-    <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
-      <RoleToolbar activeLabel="דשבורד מאמן" activeIcon={Briefcase} />
+    <div className="min-h-screen bg-[#0D1B2A]">
+      <RoleToolbar activeLabel={t('coach.workspace')} activeIcon={Briefcase} />
 
       {/* Header */}
       <div className="pt-20 pb-0 border-b border-white/10 bg-[#1B263B]">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex items-center gap-3 mb-6 justify-between">
             <div>
-              <h1 className="text-white font-black text-xl">מרחב עבודה למאמן</h1>
+              <h1 className="text-white font-black text-xl">{t('coach.workspace')}</h1>
               <p className="text-white/40 text-xs">
                 {activeAssignment
                   ? `${activeAssignment.team_label || 'קבוצה פעילה'} · ${filtered.length} שחקנים בסגל`
@@ -155,16 +157,16 @@ export default function CoachWorkspace() {
 
           {/* KPI Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            <KpiCard label="שחקנים פעילים" value={filtered.length} color="blue" icon={Users} />
-            <KpiCard label="בעיות רפואיות" value={medicalIssues} color="red" icon={AlertTriangle} urgent={medicalIssues > 0} />
-            <KpiCard label="בקשות פתוחות" value={pendingRequests} color="amber" icon={ClipboardList} urgent={pendingRequests > 0} />
-            <KpiCard label="מוכנים להתאחדות (IFA)" value={`${ifaReady}/${filtered.length}`} color="green" icon={CheckCircle2} />
+            <KpiCard label={t('coach.activePlayers')} value={filtered.length} color="blue" icon={Users} />
+            <KpiCard label={t('coach.medicalIssues')} value={medicalIssues} color="red" icon={AlertTriangle} urgent={medicalIssues > 0} />
+            <KpiCard label={t('coach.openRequests')} value={pendingRequests} color="amber" icon={ClipboardList} urgent={pendingRequests > 0} />
+            <KpiCard label={t('coach.ifaReady')} value={`${ifaReady}/${filtered.length}`} color="green" icon={CheckCircle2} />
           </div>
 
           {/* Search */}
           <div className="relative pb-1">
             <Search size={15} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חפש שחקן..."
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('dashboard.search')}
               className="w-full bg-[#0D1B2A] border border-white/15 rounded-lg pr-10 pl-4 py-2.5 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#D4AF37]/60" />
           </div>
 
@@ -197,7 +199,7 @@ export default function CoachWorkspace() {
             )}
             <label className="flex items-center gap-2 text-white/50 text-xs mb-4 cursor-pointer w-fit">
               <input type="checkbox" checked={onlyEligible} onChange={e => setOnlyEligible(e.target.checked)} className="accent-[#D4AF37]" />
-              הצג רק שחקנים כשירים (Only Eligible Players)
+              {t('coach.onlyEligible')}
             </label>
             <SquadView players={activeSquad} loading={loadingPlayers} onSelect={setSelectedPlayer} onlyEligible={onlyEligible} />
           </>

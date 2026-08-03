@@ -6,8 +6,10 @@ import {
   Search, FileCheck2, TrendingUp, ArrowRight,
 } from 'lucide-react';
 import RoleToolbar from '../components/RoleToolbar';
+import { useTranslation } from '@/lib/i18n/LanguagesContext';
 
 export default function BridgeStudio() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [me, setMe] = useState(null);
   const [tab, setTab] = useState('pipeline');
@@ -28,18 +30,18 @@ export default function BridgeStudio() {
   if (!canManage) return <Gate />;
 
   const tabs = [
-    { id: 'pipeline', label: 'צינור מעבר', icon: GitMerge },
-    { id: 'compliance', label: 'תיק תאימות קטינים', icon: FileCheck2 },
-    { id: 'growth', label: 'התפתחות נוער', icon: TrendingUp },
+    { id: 'pipeline', label: t('bridge.pipeline'), icon: GitMerge },
+    { id: 'compliance', label: t('bridge.compliance'), icon: FileCheck2 },
+    { id: 'growth', label: t('bridge.growth'), icon: TrendingUp },
   ];
 
   return (
-    <div className="min-h-screen bg-surface" dir="rtl">
-      <RoleToolbar activeLabel="גשר חובבני → מקצועי" activeIcon={GitMerge} />
+    <div className="min-h-screen bg-surface">
+      <RoleToolbar activeLabel={t('bridge.title')} activeIcon={GitMerge} />
       <div className="bg-panel border-b border-hairline py-4 px-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-ink font-black text-xl flex items-center gap-2"><GitMerge size={18} className="text-brand" /> גשר חובבני → מקצועי</h1>
-          <p className="text-ink-muted text-xs mt-0.5">מעבר מבוקר ממסגרות עממיות/בלתי-פורמליות למועדוני נוער רשמיים בהתאחדות · אימות תאימות קטינים · מעקב התפתחות אורך-שנתונים</p>
+          <h1 className="text-ink font-black text-xl flex items-center gap-2"><GitMerge size={18} className="text-brand" /> {t('bridge.title')}</h1>
+          <p className="text-ink-muted text-xs mt-0.5">{t('owner.bridgeSub')}</p>
         </div>
       </div>
       <div className="bg-panel border-b border-hairline">
@@ -62,10 +64,11 @@ export default function BridgeStudio() {
 }
 
 function Gate() {
+  const { t } = useTranslation();
   return <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-3">
     <Shield size={28} className="text-ink-faint" />
-    <div className="text-ink font-bold">גשר חובבני → מקצועי</div>
-    <div className="text-ink-muted text-xs">גישה מוגבלת למנהל מקצועי / אדמין.</div>
+    <div className="text-ink font-bold">{t('bridge.title')}</div>
+    <div className="text-ink-muted text-xs">{t('owner.bridgeGateMsg')}</div>
   </div>;
 }
 

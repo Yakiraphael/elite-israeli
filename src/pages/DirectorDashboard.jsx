@@ -25,6 +25,7 @@ import DocumentPackagesPanel from '@/components/director/DocumentPackagesPanel';
 import PlayerGapModal from '@/components/director/PlayerGapModal';
 import MovePlayerBetweenTeamsModal from '@/components/director/MovePlayerBetweenTeamsModal';
 import FieldReportsStudio from '@/components/fieldreports/FieldReportsStudio';
+import { useTranslation } from '@/lib/i18n/LanguagesContext';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -69,6 +70,7 @@ export default function DirectorDashboard() {
 }
 
 function DashboardContent({ onLogout }) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState('overview');
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -118,33 +120,33 @@ function DashboardContent({ onLogout }) {
 
   // סדר יעדים: סקירה → תהליכי העברה → סגל ותאימות IFA → חוזים ומסמכים → תור פעולות → כספים → ניתוח → גיוס
   const tabs = [
-    { id: 'overview', label: 'סקירה', icon: BarChart3 },
-    { id: 'transfers', label: 'תהליכי העברה', icon: Send },
-    { id: 'squad_compliance', label: 'סגל ותאימות מול ההתאחדות הרשמית', icon: Shield },
-    { id: 'field_reports', label: 'דיווח מהשטח', icon: Activity },
-    { id: 'contracts_forms', label: 'חוזים ומסמכים', icon: FileText },
-    { id: 'requests', label: 'תור פעולות', icon: ClipboardList, badge: pendingReqs },
-    { id: 'finance', label: 'כספים', icon: Wallet },
-    { id: 'analytics', label: 'ניתוח נתונים', icon: BarChart3 },
-    { id: 'invite', label: 'גיוס שחקנים', icon: UserPlus },
+    { id: 'overview', label: t('director.overview'), icon: BarChart3 },
+    { id: 'transfers', label: t('director.transfers'), icon: Send },
+    { id: 'squad_compliance', label: t('director.squadCompliance'), icon: Shield },
+    { id: 'field_reports', label: t('director.fieldReports'), icon: Activity },
+    { id: 'contracts_forms', label: t('director.contractsForms'), icon: FileText },
+    { id: 'requests', label: t('director.requests'), icon: ClipboardList, badge: pendingReqs },
+    { id: 'finance', label: t('director.finance'), icon: Wallet },
+    { id: 'analytics', label: t('director.analytics'), icon: BarChart3 },
+    { id: 'invite', label: t('director.invite'), icon: UserPlus },
   ];
 
   return (
-    <div className="min-h-screen bg-surface" dir="rtl">
-      <RoleToolbar activeLabel="דשבורד מנהל מקצועי" activeIcon={Crown} />
+    <div className="min-h-screen bg-surface">
+      <RoleToolbar activeLabel={t('director.controlRoom')} activeIcon={Crown} />
 
       {/* Header */}
       <div className="bg-panel border-b border-hairline py-4 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-ink font-black text-xl">חדר בקרה מנהל מקצועי</h1>
-            <p className="text-ink-muted text-xs">תהליכי העברה · תיקים משפטיים · תאימות חוקית להרכב מול ההתאחדות הרשמית</p>
+            <h1 className="text-ink font-black text-xl">{t('director.controlRoom')}</h1>
+            <p className="text-ink-muted text-xs">{t('owner.directorSub')}</p>
           </div>
           <div className="flex items-center gap-4">
             {/* Global search */}
             <div className="relative hidden md:block">
               <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חיפוש מהיר — שחקן, עמדה..."
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('owner.directorSearchHint')}
                 className="bg-surface border border-hairline rounded-lg pr-9 pl-4 py-2 text-ink text-xs placeholder-ink-faint focus:outline-none w-56 focus:border-brand-line" />
             </div>
             <Link to="/schedule" title="לוח זמנים — ניהול משחקים"
