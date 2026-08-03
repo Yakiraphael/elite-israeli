@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Crown, Briefcase, Search, Shield, Settings, User, LogOut, ArrowRight, Loader2, KeyRound, Users, GitMerge, CalendarDays, Flag, Building2, LayoutDashboard } from 'lucide-react';
+import { Crown, Briefcase, Search, Shield, Settings, User, LogOut, ArrowRight, Loader2, KeyRound, Users, GitMerge, CalendarDays, Flag, Building2, LayoutDashboard, Trophy } from 'lucide-react';
 
 const NAVY = '#0D1B2A';
 const NAVY_LIGHT = '#1B263B';
@@ -12,6 +12,7 @@ const WHITE = '#FFFFFF';
 const DASHBOARDS = [
   { label: 'מרכז הבעלים — לו״ז מאוחד + גשר נוער', path: '/owner', icon: KeyRound, color: '#D4AF37', note: 'כלל המערכות במקום אחד' },
   { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא' },
+  { label: 'ליגה והגרלה — Round-Robin', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה' },
   { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי' },
   { label: 'Super Admin — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים חדשים' },
   { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות' },

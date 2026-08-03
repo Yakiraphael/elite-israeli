@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import {
   Crown, GitMerge, CalendarDays, Shield, Settings, Search, Users,
   ArrowRight, Loader2, KeyRound, Flag, LayoutDashboard, MapPin,
-  TrendingUp, AlertTriangle, CheckCircle2, Building2,
+  TrendingUp, AlertTriangle, CheckCircle2, Building2, Trophy,
 } from 'lucide-react';
 import RoleToolbar from '../components/RoleToolbar';
 
@@ -43,6 +43,7 @@ function Gate() {
 const SYSTEMS = [
   { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025' },
   { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא' },
+  { label: 'ליגה והגרלה — Round-Robin', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה' },
   { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי' },
   { label: 'Super Admin — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים חדשים' },
   { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות' },

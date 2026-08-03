@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
-  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus, Package, CalendarDays
+  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus, Package, CalendarDays, Trophy
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
@@ -147,6 +147,14 @@ function DashboardContent({ onLogout }) {
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חיפוש מהיר — שחקן, עמדה..."
                 className="bg-surface border border-hairline rounded-lg pr-9 pl-4 py-2 text-ink text-xs placeholder-ink-faint focus:outline-none w-56 focus:border-brand-line" />
             </div>
+            <Link to="/schedule" title="לוח זמנים — ניהול משחקים"
+              className="w-9 h-9 rounded-lg bg-surface border border-hairline flex items-center justify-center text-ink-muted hover:text-brand hover:border-brand-line transition-colors">
+              <CalendarDays size={16} />
+            </Link>
+            <Link to="/league" title="ליגה והגרלה"
+              className="w-9 h-9 rounded-lg bg-surface border border-hairline flex items-center justify-center text-ink-muted hover:text-brand hover:border-brand-line transition-colors">
+              <Trophy size={16} />
+            </Link>
             <NotificationBell audience="director" onNavigate={setTab} />
             <Link to="/" className="text-ink-muted hover:text-ink text-xs flex items-center gap-1"><ArrowRight size={12} /> אתר</Link>
             <button onClick={onLogout} className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> יציאה</button>
@@ -164,10 +172,7 @@ function DashboardContent({ onLogout }) {
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">{t.badge}</span>}
             </button>
           ))}
-          <Link to="/schedule" title="לוח זמנים — ניהול משחקים וזימון שופטים"
-            className="px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap text-ink-muted border-transparent hover:text-brand hover:border-brand">
-            <CalendarDays size={13} /> לוח זמנים
-          </Link>
+
         </div>
       </div>
 
