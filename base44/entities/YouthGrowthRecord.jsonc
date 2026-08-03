@@ -1,0 +1,164 @@
+{
+  "name": "YouthGrowthRecord",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id)",
+      "description": "\u05d1\u05d9\u05d3\u05d5\u05d3 \u05e8\u05d1-\u05de\u05d5\u05e2\u05d3\u05d5\u05e0\u05d9 \u2014 \u05de\u05d3\u05d9\u05d3\u05d5\u05ea \u05d4\u05d4\u05ea\u05e4\u05ea\u05d7\u05d5\u05ea \u05e9\u05d9\u05d9\u05db\u05d5\u05ea \u05dc\u05de\u05d5\u05e2\u05d3\u05d5\u05df/\u05de\u05d7\u05dc\u05e7\u05ea \u05d4\u05e0\u05d5\u05e2\u05e8 \u05e9\u05dc \u05d4\u05e1\u05e7\u05d0\u05d5\u05d8/\u05d4\u05de\u05d0\u05de\u05df."
+    },
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df (PlayerRegistration.id)"
+    },
+    "player_name": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df",
+      "description": "\u05d8\u05e8\u05d5\u05dd-\u05d9\u05dc\u05d3\u05d9\u05dd / \u05d9\u05dc\u05d3\u05d9\u05dd \u05d0\u05f3-\u05d2\u05f3 / \u05e0\u05e2\u05e8\u05d9\u05dd \u05d0\u05f3-\u05d2\u05f3 / \u05e0\u05d5\u05e2\u05e8. \u05de\u05d0\u05e4\u05e9\u05e8 \u05de\u05e2\u05e7\u05d1 \u05d4\u05ea\u05e4\u05ea\u05d7\u05d5\u05ea \u05d0\u05d5\u05e8\u05da-\u05e9\u05e0\u05ea\u05d5\u05e0\u05d9\u05dd."
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05de\u05d3\u05d9\u05d3\u05d4"
+    },
+    "height_cm": {
+      "type": "number",
+      "title": "\u05d2\u05d5\u05d1\u05d4 (\u05e1\u05f4\u05de)"
+    },
+    "weight_kg": {
+      "type": "number",
+      "title": "\u05de\u05e9\u05e7\u05dc (\u05e7\u05f4\u05d2)"
+    },
+    "sprint_30m_sec": {
+      "type": "number",
+      "title": "\u05e1\u05e4\u05e8\u05d9\u05e0\u05d8 30\u05de (\u05e9\u05e0\u05d9\u05d5\u05ea)"
+    },
+    "technical_score": {
+      "type": "number",
+      "title": "\u05d8\u05db\u05e0\u05d9 (1-5)"
+    },
+    "tactical_score": {
+      "type": "number",
+      "title": "\u05d8\u05e7\u05d8\u05d9 (1-5)"
+    },
+    "mental_score": {
+      "type": "number",
+      "title": "\u05de\u05e0\u05d8\u05dc\u05d9 (1-5)"
+    },
+    "physical_score": {
+      "type": "number",
+      "title": "\u05e4\u05d9\u05d6\u05d9 (1-5)"
+    },
+    "coach_notes": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05de\u05d0\u05de\u05df/\u05e1\u05e7\u05d0\u05d5\u05d8"
+    },
+    "recorded_by_name": {
+      "type": "string",
+      "title": "\u05e0\u05de\u05d3\u05d3 \u05e2\u05f4\u05d9"
+    }
+  },
+  "required": [
+    "club_id",
+    "player_id",
+    "age_group",
+    "recorded_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "coach"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

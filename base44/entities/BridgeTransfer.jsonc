@@ -1,0 +1,233 @@
+{
+  "name": "BridgeTransfer",
+  "type": "object",
+  "properties": {
+    "source_org_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05e1\u05d2\u05e8\u05ea \u05de\u05e7\u05d5\u05e8",
+      "description": "Club.id \u05e9\u05dc \u05d4\u05d0\u05e8\u05d2\u05d5\u05df \u05d4\u05d1\u05dc\u05ea\u05d9-\u05e4\u05d5\u05e8\u05de\u05dc\u05d9/\u05d7\u05d5\u05d1\u05d1\u05e0\u05d9 \u05de\u05de\u05e0\u05d5 \u05de\u05d2\u05d9\u05e2 \u05d4\u05e9\u05d7\u05e7\u05df. \u05d9\u05db\u05d5\u05dc \u05dc\u05d4\u05d9\u05d5\u05ea \u05e2\u05de\u05d5\u05ea\u05d4/\u05dc\u05d9\u05d2\u05ea \u05e9\u05db\u05d5\u05e0\u05d4/\u05de\u05ea\u05e0\u05f4\u05e1."
+    },
+    "source_org_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05de\u05e1\u05d2\u05e8\u05ea \u05de\u05e7\u05d5\u05e8"
+    },
+    "source_org_classification": {
+      "type": "string",
+      "title": "\u05e1\u05d9\u05d5\u05d5\u05d2 \u05de\u05e1\u05d2\u05e8\u05ea \u05de\u05e7\u05d5\u05e8",
+      "enum": [
+        "IFA_VERIFIED",
+        "YOUTH_DEPARTMENT",
+        "AMATEUR_LEAGUE",
+        "ASSOCIATION"
+      ],
+      "default": "AMATEUR_LEAGUE"
+    },
+    "target_club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05d9\u05e2\u05d3 (\u05d0\u05e7\u05d3\u05de\u05d9\u05d4/\u05d4\u05ea\u05d0\u05d7\u05d3\u05d5\u05ea)",
+      "description": "Club.id \u05e9\u05dc \u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05d4-IFA_VERIFIED \u05d4\u05e7\u05d5\u05dc\u05d8 \u05d0\u05ea \u05d4\u05e9\u05d7\u05e7\u05df."
+    },
+    "target_club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05d9\u05e2\u05d3"
+    },
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
+    },
+    "player_name": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df \u05d1\u05de\u05e7\u05d5\u05e8"
+    },
+    "birth_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05dc\u05d9\u05d3\u05d4"
+    },
+    "proposed_by_name": {
+      "type": "string",
+      "title": "\u05d9\u05d5\u05d6\u05dd \u05d4\u05de\u05e2\u05d1\u05e8"
+    },
+    "proposed_by_role": {
+      "type": "string",
+      "title": "\u05ea\u05e4\u05e7\u05d9\u05d3 \u05d4\u05d9\u05d5\u05d6\u05dd"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05e6\u05d9\u05e0\u05d5\u05e8 \u05de\u05e2\u05d1\u05e8",
+      "enum": [
+        "PENDING_REVIEW",
+        "APPROVED",
+        "REJECTED",
+        "COMPLETED",
+        "CANCELLED"
+      ],
+      "default": "PENDING_REVIEW",
+      "description": "PENDING_REVIEW = \u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8 \u05de\u05e0\u05d4\u05dc \u05de\u05e7\u05e6\u05d5\u05e2\u05d9 \u05d1\u05d9\u05e2\u05d3, APPROVED = \u05d0\u05d5\u05e9\u05e8 \u05d5\u05e9\u05d7\u05e7\u05df \u05d4\u05d5\u05e2\u05d1\u05e8 \u05dc\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05d4\u05d9\u05e2\u05d3, REJECTED = \u05e0\u05d3\u05d7\u05d4, COMPLETED = \u05e8\u05d9\u05e9\u05d5\u05dd \u05d4\u05ea\u05d0\u05d7\u05d3\u05d5\u05ea \u05d4\u05d5\u05e9\u05dc\u05dd, CANCELLED = \u05d1\u05d5\u05d8\u05dc."
+    },
+    "development_snapshot": {
+      "type": "string",
+      "title": "\u05ea\u05de\u05d5\u05e0\u05ea \u05de\u05e6\u05d1 \u05d4\u05ea\u05e4\u05ea\u05d7\u05d5\u05ea (JSON)",
+      "description": "\u05ea\u05e6\u05dc\u05d5\u05dd \u05e9\u05dc \u05e8\u05e9\u05d5\u05de\u05d5\u05ea YouthGrowthRecord + \u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u05d1\u05e2\u05ea \u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05e6\u05d9\u05e0\u05d5\u05e8 \u2014 \u05de\u05d5\u05e7\u05e4\u05d0 \u05dc\u05e6\u05d5\u05e8\u05da \u05d4\u05e9\u05d5\u05d5\u05d0\u05ea \u05d4\u05ea\u05e4\u05ea\u05d7\u05d5\u05ea \u05e2\u05ea\u05d9\u05d3\u05d9\u05ea."
+    },
+    "bridge_fee": {
+      "type": "number",
+      "title": "\u05d3\u05de\u05d9 \u05de\u05e2\u05d1\u05e8/\u05e4\u05d9\u05ea\u05d5\u05d7 (\u20aa)"
+    },
+    "sell_on_clause": {
+      "type": "string",
+      "title": "\u05e1\u05e2\u05d9\u05e3 Sell-On / \u05d4\u05e9\u05d1\u05d7\u05d4"
+    },
+    "requires_ifa_registration": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u05e0\u05d3\u05e8\u05e9 \u05e8\u05d9\u05e9\u05d5\u05dd \u05d4\u05ea\u05d0\u05d7\u05d3\u05d5\u05ea"
+    },
+    "ifa_registration_status": {
+      "type": "string",
+      "enum": [
+        "Awaiting",
+        "Submitted",
+        "Verified",
+        "N/A"
+      ],
+      "default": "Awaiting"
+    },
+    "parent_consent_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05d5\u05e8\u05d4 \u05d7\u05d5\u05ea\u05dd"
+    },
+    "parent_consent_at": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05d5\u05e8\u05d4"
+    },
+    "parent_consent_ip": {
+      "type": "string",
+      "title": "IP \u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05d5\u05e8\u05d4"
+    },
+    "director_decision_by": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d7\u05dc\u05d9\u05d8 (User.id)"
+    },
+    "director_decision_at": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05d4\u05d7\u05dc\u05d8\u05d4"
+    },
+    "director_notes": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_org_id",
+    "target_club_id",
+    "player_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "data.target_club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "$and": [
+            {
+              "data.source_org_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "data.target_club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "data.target_club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "data.target_club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
