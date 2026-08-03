@@ -30,6 +30,21 @@ export default function LeagueStudio() {
     },
   });
 
+  // שנתונים זמינים — נאספים מקבוצות ותחרויות קיימות + ברירות מחדל נפוצות
+  const AGE_DEFAULTS = ['נערים א׳', 'נערים ב׳', 'נוער', 'ילדים א׳', 'ילדים ב׳', 'ילדים ג׳', 'טרום-ילדים', 'בוגרים'];
+  const { data: ageGroups = AGE_DEFAULTS } = useQuery({
+    queryKey: ['league-agegroups', club?.id],
+    queryFn: async () => {
+      const [teams, comps] = await Promise.all([
+        base44.entities.LeagueTeam.filter({ club_id: club.id }, 'age_group', 200),
+        base44.entities.Competition.filter({ club_id: club.id }, '-created_date', 100),
+      ]);
+      const fromData = [...new Set([...teams.map(t => t.age_group), ...comps.map(c => c.age_group)])].filter(Boolean);
+      return [...new Set([...AGE_DEFAULTS, ...fromData])];
+    },
+    enabled: !!club?.id,
+  });
+
   if (!club) return <div className="min-h-screen bg-surface flex items-center justify-center"><Loader2 className="animate-spin text-brand" /></div>;
 
   return (
@@ -42,8 +57,10 @@ export default function LeagueStudio() {
             <p className="text-ink-muted text-xs">{club.name} · הגרלה שוויונית · חוקי צוות מקצועי · תיאום דו-צדדי · אימות תוצאות · טבלה חיה</p>
           </div>
           <div className="flex items-center gap-2">
-            <input value={ageGroup} onChange={e => setAgeGroup(e.target.value)} placeholder="שנתון"
-              className="bg-surface border border-hairline rounded-lg px-3 py-2 text-ink text-xs w-40 focus:outline-none focus:border-brand-line" />
+            <select value={ageGroup} onChange={e => setAgeGroup(e.target.value)}
+              className="bg-surface border border-hairline rounded-lg px-3 py-2 text-ink text-xs w-44 focus:outline-none focus:border-brand-line">
+              {ageGroups.map(ag => <option key={ag} value={ag}>{ag}</option>)}
+            </select>
           </div>
         </div>
       </div>
@@ -224,7 +241,34 @@ function GenerateTab({ club, ageGroup }) {
           <button onClick={() => gen.mutate()} disabled={teams.length < 2} className="bg-brand text-brand-ink font-bold text-sm px-4 py-2.5 rounded hover:brightness-110 disabled:opacity-40 flex items-center gap-1"><GitMerge size={14} /> הגרל מחדש</button>
           {gen.isPending && <Loader2 size={16} className="animate-spin text-brand self-center" />}
         </div>
-        {res && <div className="mt-3 text-green-400 text-sm font-bold">✅ {res.created} משחקים נוצרו · {res.rounds} מחזורים</div>}
+        {res && (
+          <div className="mt-4 space-y-3">
+            <div className="text-green-400 text-sm font-bold flex items-center gap-2"><CheckCircle2 size={14} /> {res.created} משחקים נוצרו · {res.rounds} מחזורים</div>
+            {res.matches?.length > 0 && (
+              <div className="space-y-2 max-h-[460px] overflow-y-auto pr-1">
+                {[...new Set(res.matches.map(m => m.matchday))].sort((a, b) => a - b).map(md => {
+                  const isSecondLeg = md > res.rounds;
+                  return (
+                    <div key={md} className="bg-surface border border-hairline rounded-lg p-3">
+                      <div className={`font-black text-xs mb-2 pb-1 border-b ${isSecondLeg ? 'text-sky-400 border-sky-400/30' : 'text-brand border-brand-line/40'}`}>
+                        מחזור {md}{isSecondLeg ? ' (סבב שני)' : ''}
+                      </div>
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {res.matches.filter(m => m.matchday === md).map((m, i) => (
+                          <div key={i} className="flex items-center gap-2 text-xs">
+                            <span className="text-ink font-bold flex-1 text-right truncate">{m.home_team}</span>
+                            <span className="text-ink-faint text-[10px] flex-shrink-0">נגד</span>
+                            <span className="text-ink font-bold flex-1 truncate">{m.away_team}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
         {teams.length < 2 && <div className="mt-2 text-amber-400 text-xs">נדרשות לפחות 2 קבוצות רשומות לשנתון זה.</div>}
         <div className="text-ink-faint text-[10px] mt-3">⚠️ הגרלה מחודשת מוחקת משחקים קודמים שטרם שוחקו. משחקים שנערכו ואומתו נשמרים.</div>
       </div>
@@ -251,7 +295,7 @@ function CompetitionsTab({ club, ageGroup }) {
       <div className="bg-panel border border-hairline rounded-lg p-5">
         <div className="flex items-center justify-between mb-3">
           <Section><Flag size={14} className="text-brand" /> תחרויות ופורמטים (Competition Configuration Engine)</Section>
-          <button onClick={() => sel(null)} className="bg-brand text-brand-ink font-bold text-xs px-3 py-2 rounded hover:brightness-110 flex items-center gap-1"><Plus size={12} /> תחרות חדשה</button>
+          <button onClick={() => sel({})} className="bg-brand text-brand-ink font-bold text-xs px-3 py-2 rounded hover:brightness-110 flex items-center gap-1"><Plus size={12} /> תחרות חדשה</button>
         </div>
         <div className="text-ink-muted text-xs mb-3">{comps.length} תחרויות מוגדרות לשנתון {ageGroup}</div>
         <div className="space-y-2">
