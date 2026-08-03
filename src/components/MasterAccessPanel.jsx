@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Crown, Briefcase, Search, Shield, Settings, User, LogOut, ArrowRight, Loader2, KeyRound, Users } from 'lucide-react';
+import { Crown, Briefcase, Search, Shield, Settings, User, LogOut, ArrowRight, Loader2, KeyRound, Users, GitMerge, CalendarDays, Flag, Building2, LayoutDashboard } from 'lucide-react';
 
 const NAVY = '#0D1B2A';
 const NAVY_LIGHT = '#1B263B';
@@ -10,9 +10,14 @@ const GOLD = '#D4AF37';
 const WHITE = '#FFFFFF';
 
 const DASHBOARDS = [
-  { label: 'דשבורד מאמן', path: '/coach', icon: Briefcase, color: '#10B981', note: 'גישה חופשית' },
-  { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גישה חופשית' },
+  { label: 'מרכז הבעלים — לו״ז מאוחד + גשר נוער', path: '/owner', icon: KeyRound, color: '#D4AF37', note: 'כלל המערכות במקום אחד' },
+  { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא' },
+  { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי' },
+  { label: 'Super Admin — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים חדשים' },
+  { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות' },
   { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025' },
+  { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גישה חופשית' },
+  { label: 'דשבורד מאמן', path: '/coach', icon: LayoutDashboard, color: '#10B981', note: 'גישה חופשית' },
   { label: 'פאנל ניהול (אירועים/שחקנים)', path: '/admin', icon: Settings, color: '#3B82F6', note: 'סיסמה: elite2025' },
   { label: 'פורטל אפוטרופוס', path: '/guardian-portal', icon: Users, color: '#F59E0B', note: 'גישת בדיקה — הורה/אפוטרופוס' },
 ];

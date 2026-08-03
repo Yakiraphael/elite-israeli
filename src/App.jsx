@@ -23,6 +23,7 @@ import GuardianPortal from './pages/GuardianPortal';
 import SuperAdminPanel from './pages/SuperAdminPanel';
 import ScheduleStudio from './pages/ScheduleStudio';
 import BridgeStudio from './pages/BridgeStudio';
+import OwnerHub from './pages/OwnerHub';
 import QaEnginePanel from './components/admin/QaEnginePanel';
 
 const AuthenticatedApp = () => {
@@ -69,6 +70,7 @@ const AuthenticatedApp = () => {
       <Route path="/super-admin" element={<SuperAdminPanel />} />
       <Route path="/schedule" element={<ScheduleStudio />} />
       <Route path="/bridge" element={<BridgeStudio />} />
+      <Route path="/owner" element={<OwnerHub />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
