@@ -6,6 +6,7 @@ import {
   Trophy, Plus, X, Loader2, CalendarDays, GitMerge, Shield, ListChecks,
   CheckCircle2, AlertTriangle, RotateCcw, Save, ChevronLeft, Settings2, Flag,
 } from 'lucide-react';
+import MobileSelect from '@/components/mobile/MobileSelect';
 
 const call = (action, payload = {}) => base44.functions.invoke('league-engine', { action, ...payload }).then(r => r.data);
 
@@ -63,10 +64,10 @@ export default function LeagueStudio() {
             <p className="text-ink-muted text-xs">{club.name} · הגרלה שוויונית · חוקי צוות מקצועי · תיאום דו-צדדי · אימות תוצאות · טבלה חיה</p>
           </div>
           <div className="flex items-center gap-2">
-            <select value={ageGroup} onChange={e => setAgeGroup(e.target.value)}
-              className="bg-surface border border-hairline rounded-lg px-3 py-2 text-ink text-xs w-44 focus:outline-none focus:border-brand-line">
-              {ageGroups.map(ag => <option key={ag} value={ag}>{ag}</option>)}
-            </select>
+            <MobileSelect value={ageGroup} onChange={setAgeGroup}
+              options={ageGroups.map(ag => ({ value: ag, label: ag }))}
+              className="bg-surface border border-hairline rounded-lg px-3 py-2 text-ink text-xs w-44 focus:outline-none focus:border-brand-line"
+            />
           </div>
         </div>
       </div>
@@ -143,7 +144,7 @@ function TeamsTab({ club, ageGroup }) {
           {teams.map(t => (
             <div key={t.id} className="bg-panel border border-hairline rounded-lg p-3 flex items-center justify-between">
               <div><span className="text-ink font-bold text-sm">{t.team_name}</span> <span className="text-ink-faint text-[10px] mr-2">דרג {t.seed_tier || '—'}</span></div>
-              <button onClick={() => remove.mutate(t.id)} className="text-ink-faint hover:text-red-400"><X size={14} /></button>
+              <button onClick={() => remove.mutate(t.id)} className="text-ink-faint hover:text-red-400 touch-44"><X size={14} /></button>
             </div>
           ))}
           {teams.length === 0 && <div className="text-ink-faint text-sm col-span-2 text-center py-8">אין קבוצות רשומות לשנתון זה.</div>}
@@ -226,10 +227,10 @@ function GenerateTab({ club, ageGroup }) {
         {/* בחירת תחרות מוגדרת — קובעת פורמט/כמות שחקנים/מגרש/ניקוד */}
         <div className="mt-3">
           <label className="text-ink-faint text-[10px]">תחרות (אופציונלי — מהגדרות מתקדמות)</label>
-          <select value={compId} onChange={e => setCompId(e.target.value)} className="w-full bg-surface border border-hairline rounded px-3 py-2 text-ink text-sm focus:outline-none focus:border-brand-line">
-            <option value="">— ללא — (שם מסגרת חופשי)</option>
-            {comps.map(c => <option key={c.id} value={c.id}>{c.competition_name} · {c.competition_format} · {c.player_count}</option>)}
-          </select>
+          <MobileSelect value={compId} onChange={setCompId}
+            options={[{ value: '', label: '— ללא — (שם מסגרת חופשי)' }, ...comps.map(c => ({ value: c.id, label: `${c.competition_name} · ${c.competition_format} · ${c.player_count}` }))]}
+            className="w-full bg-surface border border-hairline rounded px-3 py-2 text-ink text-sm focus:outline-none focus:border-brand-line"
+          />
         </div>
         {!compId && (
           <input value={competition} onChange={e => setCompetition(e.target.value)} placeholder="שם מסגרת" className="mt-3 w-full bg-surface border border-hairline rounded px-3 py-2 text-ink text-sm focus:outline-none focus:border-brand-line" />
@@ -326,15 +327,15 @@ function CompetitionsTab({ club, ageGroup }) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <Field label="שם תחרות"><input value={form.competition_name} onChange={e => setF('competition_name', e.target.value)} className={inp} placeholder="ליגת נוער א׳" /></Field>
-            <Field label="פורמט"><select value={form.competition_format} onChange={e => setF('competition_format', e.target.value)} className={inp}>
-              {['SINGLE_ROUND_ROBIN','DOUBLE_ROUND_ROBIN','GROUP_STAGE_KNOCKOUT','FESTIVAL_TOURNAMENT'].map(o => <option key={o} value={o}>{FORMAT_LABELS[o]}</option>)}
-            </select></Field>
-            <Field label="כמות שחקנים"><select value={form.player_count} onChange={e => setF('player_count', e.target.value)} className={inp}>
-              {['5V5','7V7','9V9','11V11','FUTSAL'].map(o => <option key={o} value={o}>{PLAYERS_LABELS[o]}</option>)}
-            </select></Field>
-            <Field label="סוג מגרש"><select value={form.pitch_type} onChange={e => setF('pitch_type', e.target.value)} className={inp}>
-              {['SYNTHETIC_TURF','NATURAL_GRASS','MULTICOURT_ASPHALT','INDOOR_HALL'].map(o => <option key={o} value={o}>{PITCH_LABELS[o]}</option>)}
-            </select></Field>
+            <Field label="פורמט"><MobileSelect value={form.competition_format} onChange={(v) => setF('competition_format', v)} className={inp}
+              options={['SINGLE_ROUND_ROBIN','DOUBLE_ROUND_ROBIN','GROUP_STAGE_KNOCKOUT','FESTIVAL_TOURNAMENT'].map(o => ({ value: o, label: FORMAT_LABELS[o] }))}
+            /></Field>
+            <Field label="כמות שחקנים"><MobileSelect value={form.player_count} onChange={(v) => setF('player_count', v)} className={inp}
+              options={['5V5','7V7','9V9','11V11','FUTSAL'].map(o => ({ value: o, label: PLAYERS_LABELS[o] }))}
+            /></Field>
+            <Field label="סוג מגרש"><MobileSelect value={form.pitch_type} onChange={(v) => setF('pitch_type', v)} className={inp}
+              options={['SYNTHETIC_TURF','NATURAL_GRASS','MULTICOURT_ASPHALT','INDOOR_HALL'].map(o => ({ value: o, label: PITCH_LABELS[o] }))}
+            /></Field>
             <Field label="משך משחק (דק׳)"><input type="number" value={form.match_duration_minutes} onChange={e => setF('match_duration_minutes', +e.target.value)} className={inp} /></Field>
             <Field label="מכסת סגל"><input type="number" value={form.max_squad_size} onChange={e => setF('max_squad_size', +e.target.value)} className={inp} /></Field>
             <Field label="חילופים מותרים"><input type="number" value={form.allowed_substitutions} onChange={e => setF('allowed_substitutions', +e.target.value)} className={inp} /></Field>
@@ -446,7 +447,9 @@ function ResultModal({ fx, onClose, onDone }) {
     <Modal onClose={onClose} title="דיווח תוצאת משחק">
       <div className="space-y-3 text-sm">
         <div className="text-ink-muted text-xs">{fx.home_team} (בית) vs {fx.away_team} (חוץ) · {fx.match_date}</div>
-        <Field label="דיווח מטעם"><select value={side} onChange={e => setSide(e.target.value)} className={inp}><option value="home">{fx.home_team} — בית</option><option value="away">{fx.away_team} — חוץ</option></select></Field>
+        <Field label="דיווח מטעם"><MobileSelect value={side} onChange={setSide} className={inp}
+          options={[{ value: 'home', label: `${fx.home_team} — בית` }, { value: 'away', label: `${fx.away_team} — חוץ` }]}
+        /></Field>
         <Field label={`סך שערים (${side === 'home' ? fx.home_team : fx.away_team})`}><input type="number" min={0} value={score} onChange={e => setScore(e.target.value)} className={inp} /></Field>
         <Field label="מבקיעים (מופרדים בפסיק)"><input value={scorers} onChange={e => setScorers(e.target.value)} className={inp} placeholder="יוסי כהן, דני לוי" /></Field>
         <div className="text-ink-faint text-[10px]">התוצאה מאומתת אוטומטית רק כאשר דיווחי הבית והחוץ תואמים. אי-תאימות נועלת להכרעת הנהלת הארגון.</div>
@@ -491,8 +494,8 @@ function StandingsTab({ club, ageGroup }) {
 
 export function StandingsTable({ rows, compact, highlightTeam }) {
   return (
-    <div className="bg-panel border border-hairline rounded-lg overflow-hidden">
-      <table className="w-full text-xs">
+    <div className="bg-panel border border-hairline rounded-lg overflow-x-auto">
+      <table className="w-full text-xs min-w-[440px]">
         <thead className="text-ink-muted text-[10px] bg-panel-alt border-b border-hairline">
           <tr>
             <th className="text-right py-2.5 px-3">#</th>
@@ -501,9 +504,9 @@ export function StandingsTable({ rows, compact, highlightTeam }) {
             <th className="text-center">נ</th>
             <th className="text-center">ת</th>
             <th className="text-center">ה</th>
-            <th className="text-center">זכ</th>
-            <th className="text-center">חס</th>
-            <th className="text-center">הפרש</th>
+            <th className="text-center hidden sm:table-cell">זכ</th>
+            <th className="text-center hidden sm:table-cell">חס</th>
+            <th className="text-center hidden md:table-cell">הפרש</th>
             <th className="text-center text-brand">נק׳</th>
           </tr>
         </thead>
@@ -516,9 +519,9 @@ export function StandingsTable({ rows, compact, highlightTeam }) {
               <td className="text-center text-green-400">{r.won}</td>
               <td className="text-center text-amber-400">{r.drawn}</td>
               <td className="text-center text-red-400">{r.lost}</td>
-              <td className="text-center text-ink-muted">{r.goals_for}</td>
-              <td className="text-center text-ink-muted">{r.goals_against}</td>
-              <td className="text-center text-ink">{r.goal_difference > 0 ? `+${r.goal_difference}` : r.goal_difference}</td>
+              <td className="text-center text-ink-muted hidden sm:table-cell">{r.goals_for}</td>
+              <td className="text-center text-ink-muted hidden sm:table-cell">{r.goals_against}</td>
+              <td className="text-center text-ink hidden md:table-cell">{r.goal_difference > 0 ? `+${r.goal_difference}` : r.goal_difference}</td>
               <td className="text-center text-brand font-black">{r.points}</td>
             </tr>
           ))}
@@ -538,7 +541,7 @@ function Modal({ title, onClose, children }) {
       <div className="w-full max-w-md bg-panel border border-hairline rounded-xl p-5" onClick={e => e.stopPropagation()} dir="rtl">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-ink font-black text-base">{title}</h3>
-          <button onClick={onClose} className="text-ink-faint hover:text-ink"><X size={16} /></button>
+          <button onClick={onClose} className="text-ink-faint hover:text-ink touch-44"><X size={16} /></button>
         </div>
         {children}
       </div>

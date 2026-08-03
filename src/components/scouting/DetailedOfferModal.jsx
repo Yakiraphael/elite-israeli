@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Loader2, Send, Upload, X, Info, Baby, User, Calendar, Repeat } from 'lucide-react';
 import { TRANSFER_CATEGORIES } from '@/lib/transferDocumentRequirements';
+import MobileSelect from '@/components/mobile/MobileSelect';
 
 const CURRENCY_SYMBOLS = { ILS: '₪', EUR: '€', USD: '$', GBP: '£' };
 
@@ -137,13 +138,12 @@ export default function DetailedOfferModal({ player, onClose }) {
             <label className="text-[#D4AF37] text-xs font-bold mb-2 block flex items-center gap-1.5">
               <Repeat size={12} /> סוג פעולה · קובע שרשרת אישורים + דרישות מסמכים
             </label>
-            <select
+            <MobileSelect
               value={form.transfer_category}
-              onChange={set('transfer_category')}
+              onChange={(v) => setForm(p => ({ ...p, transfer_category: v }))}
+              options={TRANSFER_CATEGORIES.map(c => ({ value: c, label: c }))}
               className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#D4AF37]/60"
-            >
-              {TRANSFER_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            />
             {!isAdult && (form.transfer_category.includes('בוגרים')) && (
               <p className="text-amber-400 text-[10px] mt-1.5 flex items-center gap-1">
                 <Info size={10} /> שחקן קטין — מומלץ לבחור קטגוריית נוער
@@ -159,11 +159,10 @@ export default function DetailedOfferModal({ player, onClose }) {
               {isAdult && (
                 <div className="grid grid-cols-3 gap-2.5">
                   <input type="number" value={form.salary} onChange={set('salary')} placeholder="שכר חודשי" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
-                  <select value={form.currency} onChange={set('currency')} className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm focus:outline-none">
-                    <option value="ILS">₪ ILS</option>
-                    <option value="EUR">€ EUR</option>
-                    <option value="USD">$ USD</option>
-                  </select>
+                  <MobileSelect value={form.currency} onChange={(v) => setForm(p => ({ ...p, currency: v }))}
+                    options={[{ value: 'ILS', label: '₪ ILS' }, { value: 'EUR', label: '€ EUR' }, { value: 'USD', label: '$ USD' }]}
+                    className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm focus:outline-none"
+                  />
                   <input type="number" value={form.contract_years} onChange={set('contract_years')} placeholder="שנות חוזה" className="bg-[#0D1B2A] border border-white/15 rounded-sm px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-[#D4AF37]/60" />
                 </div>
               )}

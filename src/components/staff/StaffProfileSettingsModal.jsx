@@ -100,7 +100,7 @@ export default function StaffProfileSettingsModal({ onClose }) {
         onClick={e => e.stopPropagation()} dir="rtl">
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-white font-black text-base">הגדרות פרופיל</h3>
-          <button onClick={onClose}><X size={18} className="text-white/40 hover:text-white" /></button>
+          <button onClick={onClose} className="touch-44"><X size={18} className="text-white/40 hover:text-white" /></button>
         </div>
 
         {loading ? (
@@ -139,7 +139,7 @@ export default function StaffProfileSettingsModal({ onClose }) {
                 {(record.certificates || []).map((c, i) => (
                   <div key={i} className="flex items-center justify-between bg-[#0D1B2A] border border-white/10 rounded-sm px-3 py-2">
                     <a href={c.file_url} target="_blank" rel="noopener noreferrer" className="text-white text-xs hover:text-[#D4AF37] truncate">{c.title}</a>
-                    <button onClick={() => removeCert(i)}><Trash2 size={13} className="text-red-400 hover:text-red-300 flex-shrink-0" /></button>
+                    <button onClick={() => removeCert(i)} className="touch-44"><Trash2 size={13} className="text-red-400 hover:text-red-300 flex-shrink-0" /></button>
                   </div>
                 ))}
                 {(!record.certificates || record.certificates.length === 0) && (

@@ -10,6 +10,7 @@ import LegalTerms from './LegalTerms';
 import HealthDeclarationForm from './HealthDeclarationForm';
 import EquipmentSizeForm from './EquipmentSizeForm';
 import SecurityBadge from '../SecurityBadge';
+import MobileSelect from '../mobile/MobileSelect';
 
 const POSITIONS = ['שוער', 'בלם', 'מגן צד', 'קשר מגן', 'קשר', 'קשר התקפי', 'חלוץ צד', 'חלוץ'];
 
@@ -343,10 +344,13 @@ function SelectField({ label, name, value, onChange, options }) {
   return (
     <div>
       <label className="text-[#D4AF37] text-xs font-bold tracking-wide mb-2 block">{label}</label>
-      <select name={name} value={value} onChange={onChange} className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]/60 transition-colors">
-        <option value="">בחר...</option>
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
+      <MobileSelect
+        value={value}
+        onChange={(val) => onChange({ target: { name, value: val } })}
+        options={[{ value: '', label: 'בחר...' }, ...options.map(o => ({ value: o, label: o }))]}
+        className="w-full bg-[#0D1B2A] border border-white/15 rounded-sm px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]/60 transition-colors"
+        placeholder="בחר..."
+      />
     </div>
   );
 }

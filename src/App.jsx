@@ -3,31 +3,32 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import PageNotFound from './lib/PageNotFound';
+import { lazy, Suspense } from 'react';
+const PageNotFound = lazy(() => import('./lib/PageNotFound'));
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { LanguageProvider } from '@/lib/i18n/LanguagesContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
-import Home from './pages/Home';
-import PlayerProfile from './pages/PlayerProfile';
-import AdminPanel from './pages/AdminPanel';
-import TransferPortal from './pages/TransferPortal';
-import Pricing from './pages/Pricing';
-import FAQ from './pages/FAQ';
-import ClubRegistration from './pages/ClubRegistration';
-import ScoutingArena from './pages/ScoutingArena';
-import OnboardingFlow from './pages/OnboardingFlow';
-import CoachWorkspace from './pages/CoachWorkspace';
-import CoachRoster from './pages/CoachRoster';
-import DirectorDashboard from './pages/DirectorDashboard';
-import SignContract from './pages/SignContract';
-import GuardianPortal from './pages/GuardianPortal';
-import SuperAdminPanel from './pages/SuperAdminPanel';
-import ScheduleStudio from './pages/ScheduleStudio';
-import BridgeStudio from './pages/BridgeStudio';
-import OwnerHub from './pages/OwnerHub';
-import LeagueStudio from './pages/LeagueStudio';
-import QaEnginePanel from './components/admin/QaEnginePanel';
+// Add page imports here — code-split for bundle optimization
+const Home = lazy(() => import('./pages/Home'));
+const PlayerProfile = lazy(() => import('./pages/PlayerProfile'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel'));
+const TransferPortal = lazy(() => import('./pages/TransferPortal'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const ClubRegistration = lazy(() => import('./pages/ClubRegistration'));
+const ScoutingArena = lazy(() => import('./pages/ScoutingArena'));
+const OnboardingFlow = lazy(() => import('./pages/OnboardingFlow'));
+const CoachWorkspace = lazy(() => import('./pages/CoachWorkspace'));
+const CoachRoster = lazy(() => import('./pages/CoachRoster'));
+const DirectorDashboard = lazy(() => import('./pages/DirectorDashboard'));
+const SignContract = lazy(() => import('./pages/SignContract'));
+const GuardianPortal = lazy(() => import('./pages/GuardianPortal'));
+const SuperAdminPanel = lazy(() => import('./pages/SuperAdminPanel'));
+const ScheduleStudio = lazy(() => import('./pages/ScheduleStudio'));
+const BridgeStudio = lazy(() => import('./pages/BridgeStudio'));
+const OwnerHub = lazy(() => import('./pages/OwnerHub'));
+const LeagueStudio = lazy(() => import('./pages/LeagueStudio'));
+const QaEnginePanel = lazy(() => import('./components/admin/QaEnginePanel'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -64,6 +65,7 @@ const AuthenticatedApp = () => {
         transition={{ duration: 0.18, ease: "easeInOut" }}
         className="overflow-x-hidden"
       >
+      <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div></div>}>
       <Routes location={location}>
       <Route path="/" element={<Home />} />
       <Route path="/player-profile" element={<PlayerProfile />} />
@@ -87,6 +89,7 @@ const AuthenticatedApp = () => {
       <Route path="/league" element={<LeagueStudio />} />
       <Route path="*" element={<PageNotFound />} />
         </Routes>
+      </Suspense>
       </motion.div>
     </AnimatePresence>
   );

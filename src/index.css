@@ -261,3 +261,15 @@ button, nav, [role="navigation"], [role="button"], a {
 }
 .safe-area-top { padding-top: env(safe-area-inset-top); }
 .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Enlarge small touch targets to 44px minimum on mobile/touch devices */
+@media (max-width: 768px) {
+  .touch-44 {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px !important;
+  }
+}

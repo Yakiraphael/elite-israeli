@@ -178,10 +178,10 @@ function DashboardContent({ onLogout }) {
 
       {/* Tabs */}
       <div className="bg-panel border-b border-hairline">
-        <div className="max-w-7xl mx-auto px-6 flex gap-0 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-6 hidden md:flex overflow-x-auto">
           {tabs.map(t => (
             <button key={t.id} onClick={() => handleTabChange(t.id)}
-              className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap ${tab === t.id ? 'text-brand border-brand' : 'text-ink-muted border-transparent hover:text-ink'}`}>
+              className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'text-brand border-brand' : 'text-ink-muted border-transparent hover:text-ink'}`}>
               <t.icon size={13} /> {t.label}
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">{t.badge}</span>}
             </button>

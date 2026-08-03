@@ -8,6 +8,7 @@ import {
 import RoleToolbar from '../components/RoleToolbar';
 import FixtureFormModal from '../components/schedule/FixtureFormModal';
 import ImportFixturesModal from '../components/schedule/ImportFixturesModal';
+import MobileSelect from '@/components/mobile/MobileSelect';
 
 export default function ScheduleStudio() {
   const queryClient = useQueryClient();
@@ -104,10 +105,10 @@ export default function ScheduleStudio() {
               <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חיפוש…" className="bg-surface border border-hairline rounded-md pr-9 pl-3 py-1.5 text-ink text-xs focus:outline-none focus:border-brand-line" />
             </div>
-            <select value={ageFilter} onChange={e => setAgeFilter(e.target.value)} className="bg-surface border border-hairline rounded-md px-2 py-1.5 text-ink text-xs focus:outline-none">
-              <option value="">כל השנתונים</option>
-              {ageGroups.map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
+            <MobileSelect value={ageFilter} onChange={setAgeFilter}
+              options={[{ value: '', label: 'כל השנתונים' }, ...ageGroups.map(a => ({ value: a, label: a }))]}
+              className="bg-surface border border-hairline rounded-md px-2 py-1.5 text-ink text-xs focus:outline-none"
+            />
             <button onClick={exportCsv} className="flex items-center gap-1 text-xs font-bold text-ink-muted hover:text-ink border border-hairline rounded-md px-3 py-1.5"><Download size={13} /> ייצוא CSV</button>
             {canManage && <>
               <button onClick={() => { setEditing(null); setFormOpen(true); }} className="flex items-center gap-1 text-xs font-bold bg-brand text-brand-ink rounded-md px-3 py-1.5"><Plus size={13} /> משחק חדש</button>

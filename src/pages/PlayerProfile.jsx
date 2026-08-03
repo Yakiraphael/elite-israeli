@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import BackButton from '../components/BackButton';
 import PlayerRegistrationForm from '../components/registration/PlayerRegistrationForm';
 import PlayerProfileView from '../components/player/PlayerProfileView';
 
@@ -42,9 +41,7 @@ export default function PlayerProfile() {
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
       <div className="border-b border-white/10 py-4 px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link to="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold">
-            <ArrowRight size={16} /> חזרה לכניסה
-          </Link>
+          <BackButton label="חזרה לכניסה" fallback="/transfer-portal" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-300 transition-colors text-sm font-bold touch-44" />
           <img src={LOGO_URL} alt="עילית ישראלית" className="h-10" />
         </div>
       </div>

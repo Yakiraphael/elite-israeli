@@ -7,6 +7,7 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Search, Loader2, FileSignature, Clock, AlertCircle, CheckCircle2, Baby, User, ShieldCheck } from 'lucide-react';
+import MobileSelect from '@/components/mobile/MobileSelect';
 
 function daysLeft(d) {
   if (!d) return null;
@@ -119,10 +120,10 @@ export default function CoachRosterContractsView({ players, onSelect }) {
             </button>
           ))}
         </div>
-        <select value={leagueFilter} onChange={e => setLeagueFilter(e.target.value)}
-          className="bg-[#1B263B] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none">
-          {LEAGUE_FILTERS.map(f => <option key={f.id} value={f.id} className="bg-[#1B263B]">{f.label}</option>)}
-        </select>
+        <MobileSelect value={leagueFilter} onChange={setLeagueFilter}
+          options={LEAGUE_FILTERS.map(f => ({ value: f.id, label: f.label }))}
+          className="bg-[#1B263B] border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none"
+        />
       </div>
 
       {isLoading ? (

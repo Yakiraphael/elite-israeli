@@ -15,6 +15,7 @@ import CoachTeamSchedule from '../components/coach/CoachTeamSchedule';
 import LeagueStandingsCard from '../components/coach/LeagueStandingsCard';
 import InjuryLogModal from '../components/coach/InjuryLogModal';
 import CoachRosterContractsView from '../components/coach/CoachRosterContractsView';
+import CoachContractsApprovalsTab from '../components/coach/CoachContractsApprovalsTab';
 import CoachAlertsStream from '../components/coach/CoachAlertsStream';
 import CoachTrainingReportPanel from '../components/coach/CoachTrainingReportPanel';
 import IfaComplianceMatrix from '@/components/shared/IfaComplianceMatrix';
@@ -133,8 +134,7 @@ export default function CoachWorkspace() {
     { id: 'compliance', label: t('coach.compliance'), icon: AlertTriangle },
     { id: 'requests', label: t('coach.requests'), icon: ClipboardList, badge: pendingRequests },
     { id: 'standings', label: t('coach.standings'), icon: Trophy },
-    { id: 'approvals', label: t('coach.approvals'), icon: CheckCircle2, badge: pendingApprovals.length },
-    { id: 'roster', label: t('coach.roster'), icon: FileText },
+    { id: 'contracts_approvals', label: 'חוזים ואישורים', icon: FileText, badge: pendingApprovals.length },
     ...(isApprovedCoach ? [{ id: 'invite', label: t('coach.invite'), icon: UserPlus }] : []),
   ];
 
@@ -183,10 +183,10 @@ export default function CoachWorkspace() {
         </div>
 
         {/* Tabs */}
-        <div className="max-w-6xl mx-auto px-6 flex gap-0 border-t border-white/10 overflow-x-auto overflow-y-hidden">
+        <div className="max-w-6xl mx-auto px-6 hidden md:flex border-t border-white/10 overflow-x-auto overflow-y-hidden">
           {tabs.map(t => (
             <button key={t.id} onClick={() => handleTabChange(t.id)}
-              className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
+              className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={13} /> {t.label}
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[16px] text-center">{t.badge}</span>}
             </button>
@@ -216,12 +216,11 @@ export default function CoachWorkspace() {
           </>
         )}
         {tab === 'requests' && <RequestsView />}
-        {tab === 'roster' && <CoachRosterContractsView players={filtered} onSelect={setSelectedPlayer} />}
         {tab === 'callup' && <SquadCallupPanel players={filtered} />}
         {tab === 'schedule' && <CoachTeamSchedule teamLabel={activeAssignment?.team_label} />}
         {tab === 'standings' && <LeagueStandingsCard teamId={activeTeamId} />}
         {tab === 'training' && <CoachTrainingReportPanel region={activeAssignment?.team_label} team={{ id: activeTeamId, name: activeAssignment?.team_label || (filtered[0]?.team_name) }} teamPlayers={filtered} />}
-        {tab === 'approvals' && <CoachTransferApprovals />}
+        {tab === 'contracts_approvals' && <CoachContractsApprovalsTab players={filtered} onSelect={setSelectedPlayer} />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
         {tab === 'invite' && isApprovedCoach && <InvitePlayerPanel />}
       </div>
