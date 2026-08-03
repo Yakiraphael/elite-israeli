@@ -4,6 +4,7 @@ import { ArrowRight, Settings, LogOut, UserCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StaffProfileSettingsModal from './staff/StaffProfileSettingsModal';
 import ThemeSwitcher from './theme/ThemeSwitcher';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -56,6 +57,7 @@ export default function RoleToolbar({ activeLabel, activeIcon: ActiveIcon }) {
         {/* שמאל — ניווט מהיר + בורר ערכת נושא */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <ThemeSwitcher />
+          <LanguageSwitcher />
           <Link to="/transfer-portal" title="חזרה לפרופיל שלי"
             className="flex items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-brand transition-colors px-2.5 py-1.5 rounded hover:bg-panel-alt">
             <ArrowRight size={12} /> <span className="hidden sm:inline">הפרופיל שלי</span>
