@@ -24,6 +24,7 @@ import useActiveTeam from '@/components/coach/useActiveTeam';
 import TeamContextSwitcher from '@/components/coach/TeamContextSwitcher';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { useTabScrollMemory } from '@/hooks/useTabScrollMemory';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -57,6 +58,7 @@ const STATUS_BADGE = {
 export default function CoachWorkspace() {
   const { t } = useTranslation();
   const [tab, setTab] = useState('squad');
+  const handleTabChange = useTabScrollMemory(tab, setTab);
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [onlyEligible, setOnlyEligible] = useState(false);
@@ -159,7 +161,7 @@ export default function CoachWorkspace() {
                 onSelect={setActiveTeam}
                 loading={loadingTeam}
               />
-              <NotificationBell audience="coach" onNavigate={setTab} />
+              <NotificationBell audience="coach" onNavigate={handleTabChange} />
             </div>
           </div>
 
@@ -183,7 +185,7 @@ export default function CoachWorkspace() {
         {/* Tabs */}
         <div className="max-w-6xl mx-auto px-6 flex gap-0 border-t border-white/10 overflow-x-auto overflow-y-hidden">
           {tabs.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
+            <button key={t.id} onClick={() => handleTabChange(t.id)}
               className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
               <t.icon size={13} /> {t.label}
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[16px] text-center">{t.badge}</span>}
@@ -225,7 +227,7 @@ export default function CoachWorkspace() {
       </div>
       </PullToRefresh>
 
-      <MobileBottomNav tabs={tabs} activeTab={tab} onTabChange={setTab} />
+      <MobileBottomNav tabs={tabs} activeTab={tab} onTabChange={handleTabChange} />
       {selectedPlayer && (
         <CoachPlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
       )}
@@ -255,7 +257,18 @@ function SquadView({ players, loading, onSelect, onlyEligible }) {
 
   const toggleAvailability = useMutation({
     mutationFn: (p) => base44.entities.PlayerRegistration.update(p.id, { is_available_next_match: !p.is_available_next_match }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['coach-players'] }),
+    onMutate: async (p) => {
+      await queryClient.cancelQueries({ queryKey: ['coach-players'] });
+      const previousData = queryClient.getQueriesData({ queryKey: ['coach-players'] });
+      queryClient.setQueriesData({ queryKey: ['coach-players'] }, (old) =>
+        Array.isArray(old) ? old.map(item => item.id === p.id ? { ...item, is_available_next_match: !p.is_available_next_match } : item) : old
+      );
+      return { previousData };
+    },
+    onError: (_err, _p, context) => {
+      context.previousData?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['coach-players'] }),
   });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 size={24} className="animate-spin text-[#D4AF37]" /></div>;
@@ -350,7 +363,23 @@ function RequestsView() {
 
   const update = useMutation({
     mutationFn: ({ id, status, manager_notes }) => base44.entities.PlayerRequest.update(id, { status, manager_notes }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['all-requests', 'coach-requests'] }),
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ['all-requests'] });
+      await queryClient.cancelQueries({ queryKey: ['coach-requests'] });
+      const prevAll = queryClient.getQueryData(['all-requests']);
+      const prevCoach = queryClient.getQueryData(['coach-requests']);
+      queryClient.setQueryData(['all-requests'], (old) => Array.isArray(old) ? old.map(r => r.id === id ? { ...r, status } : r) : old);
+      queryClient.setQueryData(['coach-requests'], (old) => Array.isArray(old) ? old.map(r => r.id === id ? { ...r, status } : r) : old);
+      return { prevAll, prevCoach };
+    },
+    onError: (_e, _v, context) => {
+      queryClient.setQueryData(['all-requests'], context.prevAll);
+      queryClient.setQueryData(['coach-requests'], context.prevCoach);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['coach-requests'] });
+    },
   });
 
   const STATUS_COLORS = {

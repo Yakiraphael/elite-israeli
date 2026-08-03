@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { LanguageProvider } from '@/lib/i18n/LanguagesContext';
@@ -30,6 +31,7 @@ import QaEnginePanel from './components/admin/QaEnginePanel';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const location = useLocation();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -53,7 +55,16 @@ const AuthenticatedApp = () => {
 
   // Render the main app
   return (
-    <Routes>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -30 }}
+        transition={{ duration: 0.18, ease: "easeInOut" }}
+        className="overflow-x-hidden"
+      >
+      <Routes location={location}>
       <Route path="/" element={<Home />} />
       <Route path="/player-profile" element={<PlayerProfile />} />
       <Route path="/admin" element={<AdminPanel />} />
@@ -75,7 +86,9 @@ const AuthenticatedApp = () => {
       <Route path="/owner" element={<OwnerHub />} />
       <Route path="/league" element={<LeagueStudio />} />
       <Route path="*" element={<PageNotFound />} />
-    </Routes>
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

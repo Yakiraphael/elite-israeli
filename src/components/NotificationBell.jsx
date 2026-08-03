@@ -18,7 +18,14 @@ export default function NotificationBell({ audience, onNavigate }) {
 
   const markRead = useMutation({
     mutationFn: (id) => base44.entities.Notification.update(id, { is_read: true }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', audience] }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['notifications', audience] });
+      const previous = queryClient.getQueryData(['notifications', audience]);
+      queryClient.setQueryData(['notifications', audience], (old) => Array.isArray(old) ? old.filter(n => n.id !== id) : old);
+      return { previous };
+    },
+    onError: (_e, _id, context) => queryClient.setQueryData(['notifications', audience], context.previous),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['notifications', audience] }),
   });
 
   const handleClick = (n) => {

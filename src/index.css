@@ -55,12 +55,14 @@
   }
   html {
     direction: rtl;
+    overscroll-behavior: none;
   }
   body {
     background-color: var(--surface);
     color: var(--ink);
     font-family: 'Assistant', sans-serif;
     transition: background-color .3s ease, color .3s ease;
+    overscroll-behavior: none;
   }
   html[lang="ar"] body { font-family: 'Cairo', 'Assistant', sans-serif; }
   h1, h2, h3, h4 {

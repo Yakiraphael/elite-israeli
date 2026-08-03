@@ -28,6 +28,7 @@ import FieldReportsStudio from '@/components/fieldreports/FieldReportsStudio';
 import { useTranslation } from '@/lib/i18n/LanguagesContext';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { useTabScrollMemory } from '@/hooks/useTabScrollMemory';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -75,6 +76,7 @@ export default function DirectorDashboard() {
 function DashboardContent({ onLogout }) {
   const { t } = useTranslation();
   const [tab, setTab] = useState('overview');
+  const handleTabChange = useTabScrollMemory(tab, setTab);
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [openFormKey, setOpenFormKey] = useState(null);
@@ -167,7 +169,7 @@ function DashboardContent({ onLogout }) {
               className="w-9 h-9 rounded-lg bg-surface border border-hairline flex items-center justify-center text-ink-muted hover:text-brand hover:border-brand-line transition-colors">
               <Trophy size={16} />
             </Link>
-            <NotificationBell audience="director" onNavigate={setTab} />
+            <NotificationBell audience="director" onNavigate={handleTabChange} />
             <Link to="/" className="text-ink-muted hover:text-ink text-xs flex items-center gap-1"><ArrowRight size={12} /> {t('director.siteLink')}</Link>
             <button onClick={onLogout} className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> {t('director.exitBtn')}</button>
           </div>
@@ -178,7 +180,7 @@ function DashboardContent({ onLogout }) {
       <div className="bg-panel border-b border-hairline">
         <div className="max-w-7xl mx-auto px-6 flex gap-0 overflow-x-auto">
           {tabs.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
+            <button key={t.id} onClick={() => handleTabChange(t.id)}
               className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap ${tab === t.id ? 'text-brand border-brand' : 'text-ink-muted border-transparent hover:text-ink'}`}>
               <t.icon size={13} /> {t.label}
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">{t.badge}</span>}
@@ -258,7 +260,7 @@ function DashboardContent({ onLogout }) {
 
       </PullToRefresh>
 
-      <MobileBottomNav tabs={tabs} activeTab={tab} onTabChange={setTab} />
+      <MobileBottomNav tabs={tabs} activeTab={tab} onTabChange={handleTabChange} />
       {selectedPlayer && <DirectorPlayerProfileModal player={selectedPlayer} allPlayers={players} onClose={() => setSelectedPlayer(null)} />}
       {gapPlayer && (
         <PlayerGapModal
@@ -419,7 +421,14 @@ function RequestsTab({ requests, players = [] }) {
   const queryClient = useQueryClient();
   const update = useMutation({
     mutationFn: ({ id, status }) => base44.entities.PlayerRequest.update(id, { status }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['dir-requests'] }),
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ['dir-requests'] });
+      const previous = queryClient.getQueryData(['dir-requests']);
+      queryClient.setQueryData(['dir-requests'], (old) => Array.isArray(old) ? old.map(r => r.id === id ? { ...r, status } : r) : old);
+      return { previous };
+    },
+    onError: (_e, _v, context) => queryClient.setQueryData(['dir-requests'], context.previous),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['dir-requests'] }),
   });
 
   const pending = requests.filter(r => r.status === 'נשלח' || r.status === 'בטיפול');
