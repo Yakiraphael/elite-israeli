@@ -1,0 +1,110 @@
+{
+  "name": "RefereeInvitationTemplate",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id)"
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "template_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05ea\u05d1\u05e0\u05d9\u05ea"
+    },
+    "message_body": {
+      "type": "string",
+      "title": "\u05e0\u05d5\u05e1\u05d7 \u05d4\u05d5\u05d3\u05e2\u05ea \u05d4\u05d6\u05d9\u05de\u05d5\u05df",
+      "description": "\u05db\u05d5\u05dc\u05dc \u05de\u05e9\u05ea\u05e0\u05d9\u05dd \u05d3\u05d9\u05e0\u05de\u05d9\u05d9\u05dd: {home_team}, {away_team}, {match_date}, {kickoff_time}, {stadium_name}, {competition}, {age_group}. \u05de\u05de\u05d5\u05dc\u05d0 \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9\u05ea \u05d1\u05e2\u05ea \u05e9\u05dc\u05d9\u05d7\u05ea \u05d4\u05d6\u05d9\u05de\u05d5\u05df \u05dc\u05e9\u05d5\u05e4\u05d8."
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "\u05ea\u05d1\u05e0\u05d9\u05ea \u05e4\u05e2\u05d9\u05dc\u05d4",
+      "default": true
+    }
+  },
+  "required": [
+    "club_id",
+    "template_name",
+    "message_body"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

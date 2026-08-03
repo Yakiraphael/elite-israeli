@@ -1,0 +1,187 @@
+{
+  "name": "MatchFixture",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id)",
+      "description": "\u05d1\u05d9\u05d3\u05d5\u05d3 \u05e8\u05d1-\u05de\u05d5\u05e2\u05d3\u05d5\u05e0\u05d9 \u2014 \u05db\u05dc \u05de\u05e9\u05d7\u05e7 \u05e9\u05d9\u05d9\u05da \u05dc\u05de\u05d5\u05e2\u05d3\u05d5\u05df/\u05dc\u05d9\u05d2\u05d4 \u05d0\u05d7\u05ea. RLS \u05d7\u05d5\u05e1\u05dd \u05e7\u05e8\u05d9\u05d0\u05d4/\u05db\u05ea\u05d9\u05d1\u05d4 \u05d7\u05d5\u05e6\u05ea-\u05de\u05d5\u05e2\u05d3\u05d5\u05e0\u05d9\u05dd."
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df / \u05d4\u05dc\u05d9\u05d2\u05d4"
+    },
+    "competition": {
+      "type": "string",
+      "title": "\u05de\u05e1\u05d2\u05e8\u05ea / \u05dc\u05d9\u05d2\u05d4 / \u05d8\u05d5\u05e8\u05e0\u05d9\u05e8",
+      "description": "\u05dc\u05d3\u05d5\u05d2\u05de\u05d4: \u05dc\u05d9\u05d2\u05ea \u05e0\u05e2\u05e8\u05d9\u05dd \u05d0\u05f3 \u05de\u05d7\u05d5\u05d6\u05d9\u05ea, \u05d8\u05d5\u05e8\u05e0\u05d9\u05e8 \u05e2\u05d9\u05dc\u05d9\u05ea \u05e0\u05d5\u05e2\u05e8, \u05d2\u05d1\u05d9\u05e2 \u05d4\u05de\u05d3\u05d9\u05e0\u05d4 \u05dc\u05e0\u05d5\u05e2\u05e8."
+    },
+    "round": {
+      "type": "string",
+      "title": "\u05de\u05d7\u05d6\u05d5\u05e8 / \u05e9\u05dc\u05d1"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df / \u05e7\u05d1\u05d5\u05e6\u05ea \u05d2\u05d9\u05dc",
+      "description": "\u05dc\u05d3\u05d5\u05d2\u05de\u05d4: \u05e0\u05e2\u05e8\u05d9\u05dd \u05d0\u05f3, \u05d8\u05e8\u05d5\u05dd-\u05d9\u05dc\u05d3\u05d9\u05dd \u05d1\u05f3, \u05d1\u05d5\u05d2\u05e8\u05d9\u05dd. \u05de\u05e9\u05de\u05e9 \u05d0\u05ea \u05de\u05e0\u05d5\u05e2 \u05de\u05e0\u05d5\u05d7\u05ea \u05d4\u05e7\u05d8\u05d9\u05e0\u05d9\u05dd \u05d5\u05d0\u05ea \u05e1\u05d9\u05e0\u05d5\u05df \u05d4\u05ea\u05e6\u05d5\u05d2\u05d4 \u05e9\u05dc \u05d4\u05de\u05d0\u05de\u05df."
+    },
+    "home_team": {
+      "type": "string",
+      "title": "\u05e7\u05d1\u05d5\u05e6\u05ea \u05d1\u05d9\u05ea"
+    },
+    "away_team": {
+      "type": "string",
+      "title": "\u05e7\u05d1\u05d5\u05e6\u05ea \u05d7\u05d5\u05e5"
+    },
+    "match_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05de\u05e9\u05d7\u05e7"
+    },
+    "kickoff_time": {
+      "type": "string",
+      "title": "\u05e9\u05e2\u05ea \u05e4\u05ea\u05d9\u05d7\u05d4 (HH:MM)",
+      "description": "\u05e4\u05d5\u05e8\u05de\u05d8 24 \u05e9\u05e2\u05d5\u05ea, \u05dc\u05d3\u05d5\u05d2\u05de\u05d4 16:00. \u05de\u05e0\u05d5\u05e2 \u05d4\u05d4\u05ea\u05e0\u05d2\u05e9\u05d5\u05d9\u05d5\u05ea \u05de\u05d7\u05e9\u05d1 \u05d0\u05ea \u05d4\u05d7\u05dc\u05d5\u05df \u05d4\u05de\u05d5\u05d2\u05df \u05dc\u05e4\u05d9 \u05ea\u05d0\u05e8\u05d9\u05da + \u05e9\u05e2\u05d4."
+    },
+    "stadium_name": {
+      "type": "string",
+      "title": "\u05de\u05d2\u05e8\u05e9 / \u05d0\u05e6\u05d8\u05d3\u05d9\u05d5\u05df",
+      "description": "\u05e9\u05d3\u05d4 \u05d7\u05d5\u05e4\u05e9\u05d9 \u05d0\u05d5 \u05de\u05ea\u05d5\u05da \u05e8\u05e9\u05d9\u05de\u05ea \u05de\u05d2\u05e8\u05e9\u05d9\u05dd \u05de\u05d0\u05d5\u05e9\u05e8\u05d9\u05dd \u05e9\u05dc \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df."
+    },
+    "referee_assigned_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d5\u05e4\u05d8 \u05de\u05e9\u05d5\u05d1\u05e5 (User.id)"
+    },
+    "referee_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05e9\u05d5\u05e4\u05d8"
+    },
+    "referee_status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05d6\u05d9\u05de\u05d5\u05df \u05e9\u05d5\u05e4\u05d8",
+      "enum": [
+        "PENDING",
+        "CONFIRMED",
+        "DECLINED",
+        "NOT_REQUIRED"
+      ],
+      "default": "PENDING",
+      "description": "PENDING = \u05d6\u05d5\u05de\u05df \u05d5\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8, CONFIRMED = \u05d0\u05d9\u05e9\u05e8, DECLINED = \u05d3\u05d7\u05d4, NOT_REQUIRED = \u05dc\u05d0 \u05e0\u05d3\u05e8\u05e9 \u05e9\u05d5\u05e4\u05d8."
+    },
+    "referee_invited_at": {
+      "type": "string",
+      "title": "\u05de\u05d5\u05e2\u05d3 \u05e9\u05dc\u05d9\u05d7\u05ea \u05d6\u05d9\u05de\u05d5\u05df \u05d4\u05e9\u05d5\u05e4\u05d8"
+    },
+    "status": {
+      "type": "string",
+      "title": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05de\u05e9\u05d7\u05e7",
+      "enum": [
+        "SCHEDULED",
+        "POSTPONED",
+        "CANCELLED",
+        "COMPLETED"
+      ],
+      "default": "SCHEDULED",
+      "description": "SCHEDULED = \u05de\u05ea\u05d5\u05db\u05e0\u05df, POSTPONED = \u05e0\u05d3\u05d7\u05d4, CANCELLED = \u05d1\u05d5\u05d8\u05dc, COMPLETED = \u05e9\u05d5\u05d7\u05e7."
+    },
+    "import_source": {
+      "type": "string",
+      "title": "\u05de\u05e7\u05d5\u05e8 \u05d9\u05d9\u05d1\u05d5\u05d0",
+      "description": "\u05dc\u05d3\u05d5\u05d2\u05de\u05d4: Excel/IFA/Manual. \u05de\u05d0\u05e4\u05e9\u05e8 \u05de\u05e2\u05e7\u05d1 \u05d0\u05d9\u05dc\u05d5 \u05de\u05e9\u05d7\u05e7\u05d9\u05dd \u05e0\u05db\u05e0\u05e1\u05d5 \u05de\u05e7\u05d5\u05d1\u05e5 \u05d7\u05d9\u05e6\u05d5\u05e0\u05d9 \u05d5\u05d0\u05d9\u05dc\u05d5 \u05d4\u05d5\u05d6\u05e0\u05d5 \u05d9\u05d3\u05e0\u05d9\u05ea."
+    },
+    "last_conflict_check": {
+      "type": "string",
+      "title": "\u05ea\u05d5\u05e6\u05d0\u05ea \u05d1\u05d3\u05d9\u05e7\u05ea \u05d4\u05ea\u05e0\u05d2\u05e9\u05d5\u05d9\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d4 (JSON)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d5\u05ea"
+    }
+  },
+  "required": [
+    "club_id",
+    "age_group",
+    "home_team",
+    "away_team",
+    "match_date",
+    "kickoff_time",
+    "stadium_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "$and": [
+            {
+              "data.club_id": "{{user.data.club_id}}"
+            },
+            {
+              "user_condition": {
+                "role": "director"
+              }
+            }
+          ]
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
