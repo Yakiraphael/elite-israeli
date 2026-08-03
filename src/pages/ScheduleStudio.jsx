@@ -131,7 +131,7 @@ function NoClub() {
   return <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-3">
     <Shield size={28} className="text-ink-faint" />
     <div className="text-ink font-bold">לא זוהה מועדון בבעלותך</div>
-    <div className="text-ink-muted text-xs">פנה למנהל העל לשייך אותך למועדון בפורטל ה-Super Admin.</div>
+    <div className="text-ink-muted text-xs">פנה למנהל העל לשייך אותך למועדון.</div>
   </div>;
 }
 

@@ -35,10 +35,12 @@ function Gate() {
     <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-3">
       <Shield size={28} className="text-ink-faint" />
       <div className="text-ink font-bold">מרכז הבעלים</div>
-      <div className="text-ink-muted text-xs">גישה מוגבלת לבעלים (admin) בלבד.</div>
+      <div className="text-ink-muted text-xs">גישה מוגבלת לבעלים (מנהל) בלבד.</div>
     </div>
   );
 }
+
+const CLASSIFICATION_LABELS = { IFA_VERIFIED: 'מאומת התאחדות', YOUTH_DEPARTMENT: 'מחלקת נוער', AMATEUR_LEAGUE: 'ליגה חובבנית', ASSOCIATION: 'עמותה/איגוד' };
 
 const SYSTEMS = [
   { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025', cat: 'professional' },
@@ -46,8 +48,8 @@ const SYSTEMS = [
   { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גילוי והשוואת כשרונות', cat: 'professional' },
   { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי', cat: 'professional' },
   { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא', cat: 'technical' },
-  { label: 'ליגה והגרלה — Round-Robin', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה', cat: 'technical' },
-  { label: 'Super Admin — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים · איפוס נתונים', cat: 'bureaucratic' },
+  { label: 'ליגה והגרלה — מעגל ליגה', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה', cat: 'technical' },
+  { label: 'מנהל על — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים · איפוס נתונים', cat: 'bureaucratic' },
   { label: 'פורטל אפוטרופוס', path: '/guardian-portal', icon: Users, color: '#F59E0B', note: 'מעקב הורה/אפוטרופוס · תאימות', cat: 'bureaucratic' },
   { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות של המערכת', cat: 'software' },
   { label: 'פאנל ניהול — אירועים/שחקנים', path: '/admin', icon: Settings, color: '#3B82F6', note: 'סיסמה: elite2025 · הרשאות/ביקורת/אבטחה', cat: 'software' },
@@ -233,7 +235,7 @@ function BridgeSummary({ pending, approved }) {
         {pending.length === 0 ? <div className="text-ink-faint text-xs py-4 text-center">אין צינורות ממתינים.</div> : pending.map(t => (
           <div key={t.id} className="flex items-center justify-between py-2 border-b border-hairline last:border-0 text-xs">
             <div><span className="text-ink font-bold">{t.player_name}</span> <span className="text-ink-faint mx-1">→</span> <span className="text-ink-muted">{t.target_club_name || '—'}</span></div>
-            <span className="text-ink-faint text-[10px]">{t.source_org_classification}</span>
+            <span className="text-ink-faint text-[10px]">{CLASSIFICATION_LABELS[t.source_org_classification] || t.source_org_classification}</span>
           </div>
         ))}
       </div>
@@ -245,7 +247,7 @@ function BridgeSummary({ pending, approved }) {
         {approved.length === 0 ? <div className="text-ink-faint text-xs py-4 text-center">אין מעברים שאושרו עדיין.</div> : approved.map(t => (
           <div key={t.id} className="flex items-center justify-between py-2 border-b border-hairline last:border-0 text-xs">
             <div><span className="text-ink font-bold">{t.player_name}</span> <span className="text-ink-faint mx-1">←</span> <span className="text-ink-muted">{t.source_org_name || '—'}</span></div>
-            <span className="text-green-400 text-[10px]">IFA Ready</span>
+            <span className="text-green-400 text-[10px]">מוכן להתאחדות</span>
           </div>
         ))}
       </div>

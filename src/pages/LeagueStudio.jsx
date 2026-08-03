@@ -9,6 +9,12 @@ import {
 
 const call = (action, payload = {}) => base44.functions.invoke('league-engine', { action, ...payload }).then(r => r.data);
 
+// מפות תרגום — ערכי enum טכניים מומרים לתוויות עבריות
+const FORMAT_LABELS = { SINGLE_ROUND_ROBIN: 'סבב יחיד', DOUBLE_ROUND_ROBIN: 'סבב בית-חוץ כפול', GROUP_STAGE_KNOCKOUT: 'שלב בתים + נוקאאוט', FESTIVAL_TOURNAMENT: 'פסטיבל/טורניר' };
+const PITCH_LABELS = { SYNTHETIC_TURF: 'דשא סינטטי', NATURAL_GRASS: 'דשא טבעי', MULTICOURT_ASPHALT: 'אספלט משולב', INDOOR_HALL: 'אולם סגור' };
+const PLAYERS_LABELS = { '5V5': '5 נגד 5', '7V7': '7 נגד 7', '9V9': '9 נגד 9', '11V11': '11 נגד 11', FUTSAL: 'קטרגל' };
+const SEEDING_LABELS = { BALANCED_RANDOM: 'הגרלה מאוזנת', TIERED: 'מדורג (לפי דרג)', MANUAL_SEED: 'סדר רישום ידני' };
+
 export default function LeagueStudio() {
   const [tab, setTab] = useState('teams');
   const [ageGroup, setAgeGroup] = useState('נערים א׳');
@@ -215,8 +221,8 @@ function GenerateTab({ club, ageGroup }) {
   return (
     <div className="space-y-4">
       <div className="bg-panel border border-hairline rounded-lg p-5">
-        <Section><GitMerge size={14} className="text-brand" /> הגרלת ליגה — Round-Robin</Section>
-        <div className="text-ink-muted text-xs mt-2">{teams.length} קבוצות רשומות · מצב זריעה: <span className="text-ink font-bold">{rules?.seeding_mode || 'BALANCED_RANDOM'}</span> · {(selectedComp?.competition_format === 'DOUBLE_ROUND_ROBIN' || rules?.double_round) ? 'סבב כפול' : 'סבב יחיד'}</div>
+        <Section><GitMerge size={14} className="text-brand" /> הגרלת ליגה — מעגל ליגה (Round-Robin)</Section>
+        <div className="text-ink-muted text-xs mt-2">{teams.length} קבוצות רשומות · מצב זריעה: <span className="text-ink font-bold">{SEEDING_LABELS[rules?.seeding_mode || 'BALANCED_RANDOM'] || (rules?.seeding_mode || 'BALANCED_RANDOM')}</span> · {(selectedComp?.competition_format === 'DOUBLE_ROUND_ROBIN' || rules?.double_round) ? 'סבב כפול' : 'סבב יחיד'}</div>
         {/* בחירת תחרות מוגדרת — קובעת פורמט/כמות שחקנים/מגרש/ניקוד */}
         <div className="mt-3">
           <label className="text-ink-faint text-[10px]">תחרות (אופציונלי — מהגדרות מתקדמות)</label>
@@ -230,9 +236,9 @@ function GenerateTab({ club, ageGroup }) {
         )}
         {selectedComp && (
           <div className="mt-2 text-ink-faint text-[10px] flex flex-wrap gap-x-3 gap-y-1">
-            <span>פורמט: {selectedComp.competition_format}</span>
-            <span>· שחקנים: {selectedComp.player_count}</span>
-            <span>· מגרש: {selectedComp.pitch_type}</span>
+            <span>פורמט: {FORMAT_LABELS[selectedComp.competition_format] || selectedComp.competition_format}</span>
+            <span>· שחקנים: {PLAYERS_LABELS[selectedComp.player_count] || selectedComp.player_count}</span>
+            <span>· מגרש: {PITCH_LABELS[selectedComp.pitch_type] || selectedComp.pitch_type}</span>
             <span>· משך: {selectedComp.match_duration_minutes} דק׳</span>
             <span>· ניקוד: {selectedComp.points_for_win}/{selectedComp.points_for_draw}/{selectedComp.points_for_loss}</span>
           </div>
@@ -303,7 +309,7 @@ function CompetitionsTab({ club, ageGroup }) {
             <div key={c.id} className="bg-surface border border-hairline rounded-lg p-3 flex items-center justify-between">
               <div>
                 <div className="text-ink font-bold text-sm">{c.competition_name} {!c.is_active && <span className="text-ink-faint text-[10px]">(לא פעילה)</span>}</div>
-                <div className="text-ink-faint text-[10px] mt-0.5">{c.competition_format} · {c.player_count} · {c.pitch_type} · {c.match_duration_minutes} דק׳ · סגל {c.max_squad_size} · חילופים {c.allowed_substitutions} · ניקוד {c.points_for_win}/{c.points_for_draw}/{c.points_for_loss}</div>
+                <div className="text-ink-faint text-[10px] mt-0.5">{FORMAT_LABELS[c.competition_format] || c.competition_format} · {PLAYERS_LABELS[c.player_count] || c.player_count} · {PITCH_LABELS[c.pitch_type] || c.pitch_type} · {c.match_duration_minutes} דק׳ · סגל {c.max_squad_size} · חילופים {c.allowed_substitutions} · ניקוד {c.points_for_win}/{c.points_for_draw}/{c.points_for_loss}</div>
               </div>
               <button onClick={() => sel(c)} className="text-brand text-[11px] font-bold">ערוך</button>
             </div>
@@ -321,13 +327,13 @@ function CompetitionsTab({ club, ageGroup }) {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <Field label="שם תחרות"><input value={form.competition_name} onChange={e => setF('competition_name', e.target.value)} className={inp} placeholder="ליגת נוער א׳" /></Field>
             <Field label="פורמט"><select value={form.competition_format} onChange={e => setF('competition_format', e.target.value)} className={inp}>
-              {['SINGLE_ROUND_ROBIN','DOUBLE_ROUND_ROBIN','GROUP_STAGE_KNOCKOUT','FESTIVAL_TOURNAMENT'].map(o => <option key={o} value={o}>{o}</option>)}
+              {['SINGLE_ROUND_ROBIN','DOUBLE_ROUND_ROBIN','GROUP_STAGE_KNOCKOUT','FESTIVAL_TOURNAMENT'].map(o => <option key={o} value={o}>{FORMAT_LABELS[o]}</option>)}
             </select></Field>
             <Field label="כמות שחקנים"><select value={form.player_count} onChange={e => setF('player_count', e.target.value)} className={inp}>
-              {['5V5','7V7','9V9','11V11','FUTSAL'].map(o => <option key={o} value={o}>{o}</option>)}
+              {['5V5','7V7','9V9','11V11','FUTSAL'].map(o => <option key={o} value={o}>{PLAYERS_LABELS[o]}</option>)}
             </select></Field>
             <Field label="סוג מגרש"><select value={form.pitch_type} onChange={e => setF('pitch_type', e.target.value)} className={inp}>
-              {['SYNTHETIC_TURF','NATURAL_GRASS','MULTICOURT_ASPHALT','INDOOR_HALL'].map(o => <option key={o} value={o}>{o}</option>)}
+              {['SYNTHETIC_TURF','NATURAL_GRASS','MULTICOURT_ASPHALT','INDOOR_HALL'].map(o => <option key={o} value={o}>{PITCH_LABELS[o]}</option>)}
             </select></Field>
             <Field label="משך משחק (דק׳)"><input type="number" value={form.match_duration_minutes} onChange={e => setF('match_duration_minutes', +e.target.value)} className={inp} /></Field>
             <Field label="מכסת סגל"><input type="number" value={form.max_squad_size} onChange={e => setF('max_squad_size', +e.target.value)} className={inp} /></Field>

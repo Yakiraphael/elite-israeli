@@ -113,6 +113,7 @@ const STATUS_COLOR = {
   CANCELLED: 'text-ink-faint bg-white/5 border-hairline',
 };
 const STATUS_LABEL = { PENDING_REVIEW: 'ממתין לאישור', APPROVED: 'אושר', REJECTED: 'נדחה', COMPLETED: 'הושלם', CANCELLED: 'בוטל' };
+const CLASSIFICATION_LABELS = { IFA_VERIFIED: 'מאומת התאחדות', YOUTH_DEPARTMENT: 'מחלקת נוער', AMATEUR_LEAGUE: 'ליגה חובבנית', ASSOCIATION: 'עמותה/איגוד' };
 
 function TransferRow({ t, onDataChange }) {
   const [busy, setBusy] = useState(false);
@@ -128,7 +129,7 @@ function TransferRow({ t, onDataChange }) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-ink font-bold text-sm">{t.player_name}</span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLOR[t.status] || STATUS_COLOR.PENDING_REVIEW}`}>{STATUS_LABEL[t.status] || t.status}</span>
-            {t.source_org_classification && <span className="text-[10px] text-ink-muted">{t.source_org_classification}</span>}
+            {t.source_org_classification && <span className="text-[10px] text-ink-muted">{CLASSIFICATION_LABELS[t.source_org_classification] || t.source_org_classification}</span>}
           </div>
           <div className="text-ink-muted text-xs mt-1 flex items-center gap-1.5 flex-wrap">
             <span>{t.source_org_name || '—'}</span> <ArrowRight size={10} /> <span className="text-ink">{t.target_club_name || '—'}</span> · {t.age_group || '—'}
@@ -177,14 +178,14 @@ function CreateTransferModal({ club, onClose, onDone }) {
             <Lbl text="מסגרת מקור"><input value={form.source_org_name} onChange={e => set('source_org_name', e.target.value)} className={inp} placeholder="עמותה / ליגת שכונה" /></Lbl>
             <Lbl text="סיווג מקור">
               <select value={form.source_org_classification} onChange={e => set('source_org_classification', e.target.value)} className={inp}>
-                {['AMATEUR_LEAGUE', 'ASSOCIATION', 'YOUTH_DEPARTMENT', 'IFA_VERIFIED'].map(c => <option key={c} value={c}>{c}</option>)}
+                {['AMATEUR_LEAGUE', 'ASSOCIATION', 'YOUTH_DEPARTMENT', 'IFA_VERIFIED'].map(c => <option key={c} value={c}>{CLASSIFICATION_LABELS[c] || c}</option>)}
               </select>
             </Lbl>
           </div>
           <Lbl text="מועדון יעד (אקדמיה/התאחדות)"><input value={form.target_club_name} onChange={e => set('target_club_name', e.target.value)} className={inp} /></Lbl>
           <div className="grid grid-cols-2 gap-3">
             <Lbl text="דמי מעבר (₪)"><input type="number" value={form.bridge_fee} onChange={e => set('bridge_fee', Number(e.target.value))} className={inp} /></Lbl>
-            <Lbl text="סעיף Sell-On"><input value={form.sell_on_clause} onChange={e => set('sell_on_clause', e.target.value)} className={inp} /></Lbl>
+            <Lbl text="סעיף השבחה (Sell-On)"><input value={form.sell_on_clause} onChange={e => set('sell_on_clause', e.target.value)} className={inp} /></Lbl>
           </div>
           <button onClick={submit} disabled={busy || !form.player_id} className="w-full bg-brand text-brand-ink font-bold text-sm py-2.5 rounded-md flex items-center justify-center gap-1.5 disabled:opacity-40">{busy ? <Loader2 size={14} className="animate-spin" /> : <GitMerge size={14} />} פתח צינור</button>
         </div>
