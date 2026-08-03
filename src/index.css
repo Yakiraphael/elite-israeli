@@ -247,3 +247,15 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
 @media (prefers-reduced-motion: reduce) {
   html.theme-anim, html.theme-anim * { transition: none !important; }
 }
+
+/* ============================================================
+   iOS MOBILE READINESS
+   ============================================================ */
+button, nav, [role="navigation"], [role="button"], a {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.safe-area-top { padding-top: env(safe-area-inset-top); }
+.safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }

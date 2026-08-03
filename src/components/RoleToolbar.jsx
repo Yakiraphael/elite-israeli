@@ -30,7 +30,7 @@ export default function RoleToolbar({ activeLabel, activeIcon: ActiveIcon }) {
   }, []);
 
   return (
-    <div className="sticky top-0 z-30 bg-surface backdrop-blur border-b border-hairline">
+    <div className="sticky top-0 z-30 bg-surface backdrop-blur border-b border-hairline" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="max-w-7xl mx-auto h-14 px-5 flex items-center justify-between gap-3">
         {/* ימין — מותג + תג תפקיד */}
         <div className="flex items-center gap-2.5 min-w-0">

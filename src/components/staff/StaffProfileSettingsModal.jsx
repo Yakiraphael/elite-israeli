@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { X, Loader2, Upload, Trash2, Check } from 'lucide-react';
+import { X, Loader2, Upload, Trash2, Check, AlertCircle } from 'lucide-react';
 import NotificationPrefsFields from '../NotificationPrefsFields';
 
 const ALL_NOTIFICATION_OPTIONS = [
@@ -34,6 +34,10 @@ export default function StaffProfileSettingsModal({ onClose }) {
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [certTitle, setCertTitle] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -77,6 +81,16 @@ export default function StaffProfileSettingsModal({ onClose }) {
     const updated = { ...(record.notification_preferences || {}), [key]: checked };
     await base44.entities.ClubUser.update(record.id, { notification_preferences: updated });
     setRecord(r => ({ ...r, notification_preferences: updated }));
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true); setDeleteError(null);
+    try {
+      await base44.functions.invoke('delete-account', {});
+      await base44.auth.logout('/');
+    } catch (e) {
+      setDeleteError(e.message || 'שגיאה'); setDeleting(false);
+    }
   };
 
   return (
@@ -146,6 +160,37 @@ export default function StaffProfileSettingsModal({ onClose }) {
               <div className="text-white/40 text-xs font-bold mb-2">התראות במייל</div>
               <p className="text-white/25 text-[10px] mb-2">מותאם לתפקידך — {record.role_title}</p>
               <NotificationPrefsFields options={getNotificationOptionsForRole(record.role_title)} value={record.notification_preferences} onChange={updateNotificationPref} />
+            </div>
+
+            <div className="pt-3 border-t border-red-500/20">
+              <div className="text-red-400 text-xs font-bold mb-2 flex items-center gap-1.5">
+                <AlertCircle size={12} /> אזור סכנה — מחיקת חשבון
+              </div>
+              <p className="text-white/25 text-[10px] mb-3 leading-relaxed">
+                מחיקת החשבון תסיר לצמיתות את כל הנתונים האישיים שלך מהמערכת. פעולה זו אינה הפיכה.
+              </p>
+              {!showDeleteConfirm ? (
+                <button onClick={() => setShowDeleteConfirm(true)}
+                  className="w-full flex items-center justify-center gap-2 bg-red-500/10 text-red-400 text-xs font-bold py-2.5 rounded-sm hover:bg-red-500/20 border border-red-500/20 transition-colors">
+                  <Trash2 size={13} /> מחיקת חשבון
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-white/40 text-[11px]">לאישור, הקלד <span className="text-red-400 font-bold">DELETE</span></p>
+                  <input value={deleteConfirmText} onChange={e => setDeleteConfirmText(e.target.value)} placeholder="DELETE"
+                    className="w-full bg-[#0D1B2A] border border-red-500/30 rounded-sm px-3 py-2 text-white text-sm placeholder-white/25 focus:outline-none text-center tracking-widest" />
+                  {deleteError && <p className="text-red-400 text-xs">{deleteError}</p>}
+                  <div className="flex gap-2">
+                    <button onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); setDeleteError(null); }}
+                      className="flex-1 bg-white/10 text-white text-xs font-bold py-2.5 rounded-sm hover:bg-white/15 transition-colors">ביטול</button>
+                    <button onClick={handleDeleteAccount} disabled={deleting || deleteConfirmText !== 'DELETE'}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 text-white text-xs font-bold py-2.5 rounded-sm hover:bg-red-600 transition-colors disabled:opacity-40">
+                      {deleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                      {deleting ? 'מוחק...' : 'מחק לצמיתות'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

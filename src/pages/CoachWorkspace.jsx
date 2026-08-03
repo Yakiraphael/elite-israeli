@@ -22,6 +22,8 @@ import { computeEligibility } from '@/lib/playerEligibility';
 import { whatsappLink } from '@/lib/contactLinks';
 import useActiveTeam from '@/components/coach/useActiveTeam';
 import TeamContextSwitcher from '@/components/coach/TeamContextSwitcher';
+import PullToRefresh from '@/components/mobile/PullToRefresh';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
@@ -100,6 +102,7 @@ export default function CoachWorkspace() {
     queryFn: () => base44.entities.TransferProposal.filter({ coach_approval_status: 'ממתין לאישור מאמן' }, '-created_date', 50),
   });
 
+  const queryClient = useQueryClient();
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     (async () => {
@@ -114,6 +117,11 @@ export default function CoachWorkspace() {
   });
   const isApprovedCoach = clubUserRecords.length > 0;
 
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['coach-players'] });
+    await queryClient.invalidateQueries({ queryKey: ['coach-requests'] });
+    await queryClient.invalidateQueries({ queryKey: ['coach-transfer-approvals'] });
+  };
   // סדר עבודה זרימה: דיווח שטח (קלט) → בריאות סגל → זימון למשחק → תקינות IFA → בקשות → אישורי העברה → חוזים → גיוס
   const tabs = [
     { id: 'training', label: t('coach.training'), icon: Calendar },
@@ -129,7 +137,7 @@ export default function CoachWorkspace() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0D1B2A]">
+    <div className="min-h-screen bg-[#0D1B2A] overflow-x-hidden">
       <RoleToolbar activeLabel={t('coach.workspace')} activeIcon={Briefcase} />
 
       {/* Header */}
@@ -173,7 +181,7 @@ export default function CoachWorkspace() {
         </div>
 
         {/* Tabs */}
-        <div className="max-w-6xl mx-auto px-6 flex gap-0 border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-6 flex gap-0 border-t border-white/10 overflow-x-auto overflow-y-hidden">
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${tab === t.id ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/40 border-transparent hover:text-white/70'}`}>
@@ -184,7 +192,8 @@ export default function CoachWorkspace() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <PullToRefresh onRefresh={handleRefresh}>
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-20 md:pb-8">
         {(tab === 'squad' || tab === 'training') && (
           <div className="mb-5">
             <CoachAlertsStream players={filtered} medicalStatusOf={getMedicalStatus} onPick={setSelectedPlayer} />
@@ -214,7 +223,9 @@ export default function CoachWorkspace() {
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}
         {tab === 'invite' && isApprovedCoach && <InvitePlayerPanel />}
       </div>
+      </PullToRefresh>
 
+      <MobileBottomNav tabs={tabs} activeTab={tab} onTabChange={setTab} />
       {selectedPlayer && (
         <CoachPlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
       )}

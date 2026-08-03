@@ -26,6 +26,8 @@ import PlayerGapModal from '@/components/director/PlayerGapModal';
 import MovePlayerBetweenTeamsModal from '@/components/director/MovePlayerBetweenTeamsModal';
 import FieldReportsStudio from '@/components/fieldreports/FieldReportsStudio';
 import { useTranslation } from '@/lib/i18n/LanguagesContext';
+import PullToRefresh from '@/components/mobile/PullToRefresh';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 const ADMIN_PASSWORD = 'elite2025';
@@ -77,6 +79,13 @@ function DashboardContent({ onLogout }) {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [openFormKey, setOpenFormKey] = useState(null);
   const [subCF, setSubCF] = useState('contracts');
+  const queryClient = useQueryClient();
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['dir-players'] });
+    await queryClient.invalidateQueries({ queryKey: ['dir-requests'] });
+    await queryClient.invalidateQueries({ queryKey: ['dir-transfers'] });
+    await queryClient.invalidateQueries({ queryKey: ['dir-contracts'] });
+  };
 
   const { data: players = [], isLoading: loadPlayers } = useQuery({
     queryKey: ['dir-players'],
@@ -133,7 +142,7 @@ function DashboardContent({ onLogout }) {
   ];
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-surface overflow-x-hidden">
       <RoleToolbar activeLabel={t('director.controlRoom')} activeIcon={Crown} />
 
       {/* Header */}
@@ -179,7 +188,8 @@ function DashboardContent({ onLogout }) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <PullToRefresh onRefresh={handleRefresh}>
+      <div className="max-w-7xl mx-auto px-6 py-8 pb-20 md:pb-8">
 
         {tab === 'overview' && (
           <OverviewTab
@@ -246,6 +256,9 @@ function DashboardContent({ onLogout }) {
         )}
       </div>
 
+      </PullToRefresh>
+
+      <MobileBottomNav tabs={tabs} activeTab={tab} onTabChange={setTab} />
       {selectedPlayer && <DirectorPlayerProfileModal player={selectedPlayer} allPlayers={players} onClose={() => setSelectedPlayer(null)} />}
       {gapPlayer && (
         <PlayerGapModal

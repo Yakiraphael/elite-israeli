@@ -40,7 +40,8 @@ export default function Navbar() {
 
   return (
     <nav role="navigation" aria-label={s.nav.homeBtn}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? 'glass-light border-b border-black/5 shadow-sm' : 'bg-transparent'}`}>
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? 'glass-light border-b border-black/5 shadow-sm' : 'bg-transparent'}`}
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="max-w-7xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4">
         <button onClick={() => handleNav('#hero')} aria-label={s.nav.homeBtn} className="flex items-center gap-2.5 shrink-0">
           <img src={LOGO} alt={s.nav.home} className="h-9 md:h-10 w-auto transition-all duration-300"
