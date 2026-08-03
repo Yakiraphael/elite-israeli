@@ -91,14 +91,14 @@ export default function HeroSection() {
       <div className="absolute top-20 right-6 md:right-8 flex items-center gap-1.5 z-20">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 hidden" />
+          
         </span>
-        <span className="text-[10px] font-bold text-white/70 tracking-[0.25em] uppercase hidden">עונה חיה</span>
+        
       </div>
 
       <button onClick={() => document.querySelector('#mission')?.scrollIntoView({ behavior: 'smooth' })} aria-label="גלילה למטה"
       className="absolute bottom-6 left-1/2 -translate-x-1/2 text-gold/60 hover:text-gold transition-colors">
-        <span className="block w-6 h-10 rounded-full border-2 border-gold/40 mx-auto" />
+        
       </button>
     </section>);
 
