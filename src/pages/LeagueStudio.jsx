@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import RoleToolbar from '../components/RoleToolbar';
@@ -136,20 +136,22 @@ function RulesTab({ club, ageGroup }) {
     queryKey: ['league-rules', club.id, ageGroup],
     queryFn: async () => (await call('getRules', { club_id: club.id, age_group: ageGroup })).rules,
   });
-  const [form, setForm] = useState(null);
-  if (rules && !form) setForm({
-    max_games_per_week: rules.max_games_per_week ?? 1,
-    allowed_match_days: rules.allowed_match_days ?? [0, 1, 2, 3, 4],
-    avoid_consecutive_home_games: rules.avoid_consecutive_home_games ?? true,
-    seeding_mode: rules.seeding_mode || 'BALANCED_RANDOM',
-    double_round: rules.double_round ?? false,
-  });
+  const DEFAULT_RULES = { max_games_per_week: 1, allowed_match_days: [0, 1, 2, 3, 4], avoid_consecutive_home_games: true, seeding_mode: 'BALANCED_RANDOM', double_round: false };
+  const [form, setForm] = useState(DEFAULT_RULES);
+  useEffect(() => {
+    if (rules) setForm({
+      max_games_per_week: rules.max_games_per_week ?? 1,
+      allowed_match_days: rules.allowed_match_days ?? [0, 1, 2, 3, 4],
+      avoid_consecutive_home_games: rules.avoid_consecutive_home_games ?? true,
+      seeding_mode: rules.seeding_mode || 'BALANCED_RANDOM',
+      double_round: rules.double_round ?? false,
+    });
+  }, [rules]);
   const DAYS = [{ k: 0, l: 'א׳' }, { k: 1, l: 'ב׳' }, { k: 2, l: 'ג׳' }, { k: 3, l: 'ד׳' }, { k: 4, l: 'ה׳' }, { k: 5, l: 'ו׳' }, { k: 6, l: 'ש׳' }];
   const save = useMutation({
     mutationFn: async () => call('saveRules', { club_id: club.id, club_name: club.name, age_group: ageGroup, ...form }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['league-rules', club.id, ageGroup] }),
   });
-  if (!form) return <div className="flex justify-center py-10"><Loader2 className="animate-spin text-brand" /></div>;
   const tog = (k) => setForm(f => ({ ...f, allowed_match_days: f.allowed_match_days.includes(k) ? f.allowed_match_days.filter(x => x !== k) : [...f.allowed_match_days, k] }));
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

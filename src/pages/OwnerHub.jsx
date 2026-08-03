@@ -41,16 +41,23 @@ function Gate() {
 }
 
 const SYSTEMS = [
-  { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025' },
-  { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא' },
-  { label: 'ליגה והגרלה — Round-Robin', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה' },
-  { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי' },
-  { label: 'Super Admin — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים חדשים' },
-  { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות' },
-  { label: 'פאנל ניהול (אירועים/שחקנים)', path: '/admin', icon: Settings, color: '#3B82F6', note: 'סיסמה: elite2025' },
-  { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גילוי והשוואת כשרונות' },
-  { label: 'דשבורד מאמן', path: '/coach', icon: LayoutDashboard, color: '#10B981', note: 'סגל · דיווח שטח · זימון' },
-  { label: 'פורטל אפוטרופוס', path: '/guardian-portal', icon: Users, color: '#F59E0B', note: 'מעקב הורה/אפוטרופוס' },
+  { label: 'דשבורד מנהל מקצועי', path: '/director', icon: Crown, color: '#EF4444', note: 'סיסמה: elite2025', cat: 'professional' },
+  { label: 'דשבורד מאמן', path: '/coach', icon: LayoutDashboard, color: '#10B981', note: 'סגל · דיווח שטח · זימון', cat: 'professional' },
+  { label: 'דשבורד סקאוטינג', path: '/scouting', icon: Search, color: '#8B5CF6', note: 'גילוי והשוואת כשרונות', cat: 'professional' },
+  { label: 'ניהול גשר — נוער מקצועני', path: '/bridge', icon: GitMerge, color: '#22C55E', note: 'מעבר מבוקר עממי→מקצועי', cat: 'professional' },
+  { label: 'לוח זמנים — ניהול משחקים', path: '/schedule', icon: CalendarDays, color: '#0EA5E9', note: 'זימון שופטים · התנגשויות · ייבוא', cat: 'technical' },
+  { label: 'ליגה והגרלה — Round-Robin', path: '/league', icon: Trophy, color: '#F59E0B', note: 'הגרלה · חוקי צוות · טבלה חיה', cat: 'technical' },
+  { label: 'Super Admin — אישור מועדונים', path: '/super-admin', icon: Building2, color: '#A855F7', note: 'קליטת מועדונים · איפוס נתונים', cat: 'bureaucratic' },
+  { label: 'פורטל אפוטרופוס', path: '/guardian-portal', icon: Users, color: '#F59E0B', note: 'מעקב הורה/אפוטרופוס · תאימות', cat: 'bureaucratic' },
+  { label: 'מנוע QA רגולטורי', path: '/qa-engine', icon: Flag, color: '#F97316', note: 'סריקות תאימות אוטומטיות של המערכת', cat: 'software' },
+  { label: 'פאנל ניהול — אירועים/שחקנים', path: '/admin', icon: Settings, color: '#3B82F6', note: 'סיסמה: elite2025 · הרשאות/ביקורת/אבטחה', cat: 'software' },
+];
+
+const CATEGORIES = [
+  { id: 'professional', title: 'מקצועית', icon: Crown, color: '#EF4444', sub: 'ניהול ספורטיבי · מאמן · סקאוטינג · גשר נוער' },
+  { id: 'technical', title: 'טכנית', icon: CalendarDays, color: '#0EA5E9', sub: 'לוח זמנים · ליגה והגרלה · תיאום משחקים' },
+  { id: 'bureaucratic', title: 'בירוקרטית', icon: Shield, color: '#A855F7', sub: 'אישור מועדונים · אפוטרופוס · תאימות רגולטורית' },
+  { id: 'software', title: 'תוכנה', icon: Flag, color: '#F97316', sub: 'QA רגולטורי · ניהול מערכת · יומן ביקורת' },
 ];
 
 function OwnerContent({ me }) {
@@ -102,25 +109,37 @@ function OwnerContent({ me }) {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* מערכות */}
-        <section>
-          <SectionTitle icon={LayoutDashboard} title="כל המערכות" sub="כניסה מהירה לכל כלי הניהול שפותחו" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {SYSTEMS.map(s => (
-              <Link key={s.path} to={s.path}
-                className="bg-panel border border-hairline hover:border-brand-line rounded-lg p-4 flex items-center gap-3 transition-colors group">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15`, border: `1px solid ${s.color}40` }}>
-                  <s.icon size={18} style={{ color: s.color }} />
+        {/* מערכות — מחולקות לפי קטגוריות: מקצועית / טכנית / בירוקרטית / תוכנה */}
+        {CATEGORIES.map(cat => {
+          const items = SYSTEMS.filter(s => s.cat === cat.id);
+          if (!items.length) return null;
+          return (
+            <section key={cat.id}>
+              <div className="flex items-center gap-2 mb-4">
+                <cat.icon size={16} style={{ color: cat.color }} />
+                <div>
+                  <h2 className="text-ink font-black text-base">{cat.title}</h2>
+                  <p className="text-ink-muted text-[11px]">{cat.sub}</p>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-ink font-bold text-sm">{s.label}</div>
-                  <div className="text-ink-faint text-[10px]">{s.note}</div>
-                </div>
-                <ArrowRight size={14} className="text-ink-faint group-hover:text-brand transition-colors flex-shrink-0" />
-              </Link>
-            ))}
-          </div>
-        </section>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {items.map(s => (
+                  <Link key={s.path} to={s.path}
+                    className="bg-panel border border-hairline hover:border-brand-line rounded-lg p-4 flex items-center gap-3 transition-colors group">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15`, border: `1px solid ${s.color}40` }}>
+                      <s.icon size={18} style={{ color: s.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-ink font-bold text-sm">{s.label}</div>
+                      <div className="text-ink-faint text-[10px]">{s.note}</div>
+                    </div>
+                    <ArrowRight size={14} className="text-ink-faint group-hover:text-brand transition-colors flex-shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })}
 
         {/* לו״ז מאוחד */}
         <section>

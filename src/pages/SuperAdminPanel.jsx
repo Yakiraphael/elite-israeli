@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Crown, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import ClubOnboardingPanel from '@/components/admin/ClubOnboardingPanel';
+import DangerZonePanel from '@/components/admin/DangerZonePanel';
 
 // פורטל Super Admin — נקודת כניסה יחידה לקליטת מועדונים חדשים וניהול רב-מועדוני.
 // גישה אך ורק ל-role: admin. שאר התפקידים רואים מסך נעילה. (גם אם המשתמש אינו admin, ה-RLS של ישות Club חוסם קריאה/כתיבה בצד שרת).
@@ -70,6 +71,7 @@ export default function SuperAdminPanel() {
       </header>
       <main className="max-w-7xl mx-auto px-6 py-8">
         <ClubOnboardingPanel user={user} />
+        <DangerZonePanel user={user} />
       </main>
     </div>
   );

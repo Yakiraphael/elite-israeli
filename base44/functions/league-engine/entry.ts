@@ -220,33 +220,24 @@ export default async function(req: Request): Promise<Response> {
       if (fx.result_status === 'DISPUTED') return Response.json({ error: 'הדיווח ננעל עקב מחלוקת — ממתין להכרעת הנהלת הארגון' }, { status: 409 });
 
       const patch: any = {};
-      if (side === 'home') {
-        patch.home_reported_score = score;
-        patch.home_scorers = scorers || [];
-      } else {
-        patch.away_reported_score = score;
-        patch.away_scorers = scorers || [];
-      }
+      if (side === 'home') { patch.home_reported_score = score; patch.home_scorers = scorers || []; }
+      else { patch.away_reported_score = score; patch.away_scorers = scorers || []; }
 
-      // טריגר אימות צולב כששני הצדדים דיווחו
-      if (patch.home_reported_score != null && patch.away_reported_score != null) {
-        if (patch.home_reported_score === patch.away_reported_score) {
-          // תאימות — אימות אוטומטי
-          patch.home_score = patch.home_reported_score;
-          patch.away_score = patch.away_reported_score;
-          patch.result_status = 'VERIFIED_AND_APPROVED';
-          patch.status = 'COMPLETED';
-          await base44.entities.MatchFixture.update(fixture_id, patch);
-          const standing = await recomputeStandings(base44, fx.club_id, fx.age_group, fx.club_name);
-          await audit(base44, user, 'status_change', `אימות תוצאה אוטומטי: ${fx.home_team} ${patch.home_score}–${patch.away_score} ${fx.away_team}`, fx.club_id);
-          return Response.json({ fixture: { ...fx, ...patch }, standings: standing });
-        } else {
-          patch.result_status = 'DISPUTED';
-          patch.disputed_reason = `חוסר התאמה בין דיווחי הבית (${side === 'home' ? score : fx.home_reported_score}) והחוץ (${side === 'away' ? score : fx.away_reported_score})`;
-          const updated = await base44.entities.MatchFixture.update(fixture_id, patch);
-          await audit(base44, user, 'status_change', `מחלוקת תוצאה: ${fx.home_team}–${fx.away_team}`, fx.club_id);
-          return Response.json({ fixture: updated });
-        }
+      // אימות צולב: כששני הצדדים דיווחו (כל צד את כמות השערים שלו) — אימות אוטומטי.
+      // תיקון: הבדיקה משלבת את הדיווח הקודם (fx) עם הנוכחי (patch), אחרת לעולם לא מתקיים אימות.
+      const homeRep = side === 'home' ? score : fx.home_reported_score;
+      const awayRep = side === 'away' ? score : fx.away_reported_score;
+      if (homeRep != null && awayRep != null) {
+        patch.home_reported_score = homeRep;
+        patch.away_reported_score = awayRep;
+        patch.home_score = homeRep;
+        patch.away_score = awayRep;
+        patch.result_status = 'VERIFIED_AND_APPROVED';
+        patch.status = 'COMPLETED';
+        await base44.entities.MatchFixture.update(fixture_id, patch);
+        const standing = await recomputeStandings(base44, fx.club_id, fx.age_group, fx.club_name);
+        await audit(base44, user, 'status_change', `אימות תוצאה אוטומטי: ${fx.home_team} ${homeRep}–${awayRep} ${fx.away_team}`, fx.club_id);
+        return Response.json({ fixture: { ...fx, ...patch }, standings: standing });
       }
       // דיווח צד אחד בלבד
       patch.result_status = side === 'home' ? 'HOME_REPORTED' : 'AWAY_REPORTED';
