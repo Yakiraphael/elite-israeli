@@ -56,9 +56,11 @@
     direction: rtl;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--surface);
+    color: var(--ink);
     font-family: 'Assistant', sans-serif;
     direction: rtl;
+    transition: background-color .3s ease, color .3s ease;
   }
   h1, h2, h3, h4 {
     font-family: 'Assistant', sans-serif;
@@ -231,3 +233,16 @@ html.light .navy-gradient {
 .live-dot::before { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: var(--live); opacity: 0.6; animation: live-ping 1.6s cubic-bezier(0,0,0.2,1) infinite; }
 .live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: var(--live); }
 @keyframes live-ping { 75%,100% { transform: scale(2.2); opacity: 0; } }
+
+/* ============================================================
+   מעבר עדין וחלק בין מצבי תצוגה (כהה ↔ בהיר)
+   מופעל רק בעת החלפת תמה דרך class זמני (theme-anim) שמוסיף
+   ThemeProvider ל-0.5s — כדי לא להאט ריחופים בשגרה.
+   ============================================================ */
+html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+  transition: background-color .35s ease, border-color .35s ease, color .35s ease,
+    fill .35s ease, box-shadow .35s ease, outline-color .35s ease !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-anim, html.theme-anim * { transition: none !important; }
+}

@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useEffect, useState, useCallback, useRef } from 'react';
 
 // ספק ערכת נושא גלובלית: dark (ברירת מחדל) / light / auto (לפי מערכת ההפעלה).
 // מסונכרן עם כיתת `html.light`, מתעד ב-localStorage, ומאזין לשינוי prefers-color-scheme במצב auto.
@@ -16,8 +16,13 @@ function resolveTheme(t) {
   return 'dark';
 }
 
-function applyResolved(resolved) {
+function applyResolved(resolved, animate) {
   const root = document.documentElement;
+  if (animate) {
+    root.classList.add('theme-anim');
+    window.clearTimeout(applyResolved._t);
+    applyResolved._t = window.setTimeout(() => root.classList.remove('theme-anim'), 500);
+  }
   root.classList.toggle('light', resolved === 'light');
   root.style.colorScheme = resolved;
 }
@@ -29,8 +34,12 @@ export function ThemeProvider({ children }) {
   const [resolved, setResolved] = useState(() => resolveTheme(
     (typeof localStorage !== 'undefined' && localStorage.getItem(THEME_STORAGE_KEY)) || 'dark'
   ));
+  const firstRun = useRef(true);
 
-  useEffect(() => { applyResolved(resolved); }, [resolved]);
+  useEffect(() => {
+    applyResolved(resolved, !firstRun.current);
+    firstRun.current = false;
+  }, [resolved]);
 
   useEffect(() => {
     setResolved(resolveTheme(theme));
