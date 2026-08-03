@@ -10,6 +10,7 @@ import CoachPlayerProfileModal from '../components/coach/CoachPlayerProfileModal
 import InvitePlayerPanel from '../components/InvitePlayerPanel';
 import SubmissionProgressBar from '../components/registration/SubmissionProgressBar';
 import SquadCallupPanel from '../components/coach/SquadCallupPanel';
+import CoachTeamSchedule from '../components/coach/CoachTeamSchedule';
 import InjuryLogModal from '../components/coach/InjuryLogModal';
 import CoachRosterContractsView from '../components/coach/CoachRosterContractsView';
 import CoachAlertsStream from '../components/coach/CoachAlertsStream';
@@ -23,7 +24,7 @@ import {
   Users, ClipboardList, AlertTriangle, CheckCircle2, Clock, X,
   Search, Calendar, Activity, Shield, FileText, Loader2,
   ChevronRight, ChevronDown, AlertCircle, TrendingUp, Lock, Briefcase, UserPlus, ListChecks,
-  MessageCircle, HeartPulse, Stethoscope
+  MessageCircle, HeartPulse, Stethoscope, CalendarDays
 } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
@@ -114,6 +115,7 @@ export default function CoachWorkspace() {
   const tabs = [
     { id: 'training', label: 'דיווח שטח', icon: Calendar },
     { id: 'squad', label: 'בריאות הסגל', icon: Shield },
+    { id: 'schedule', label: 'לוז הקבוצה', icon: CalendarDays },
     { id: 'callup', label: 'זימון סגל', icon: ListChecks },
     { id: 'compliance', label: 'תקינות מול ההתאחדות הרשמית', icon: AlertTriangle },
     { id: 'requests', label: 'בקשות שחקנים', icon: ClipboardList, badge: pendingRequests },
@@ -201,6 +203,7 @@ export default function CoachWorkspace() {
         {tab === 'requests' && <RequestsView />}
         {tab === 'roster' && <CoachRosterContractsView players={filtered} onSelect={setSelectedPlayer} />}
         {tab === 'callup' && <SquadCallupPanel players={filtered} />}
+        {tab === 'schedule' && <CoachTeamSchedule teamLabel={activeAssignment?.team_label} />}
         {tab === 'training' && <CoachTrainingReportPanel region={activeAssignment?.team_label} team={{ id: activeTeamId, name: activeAssignment?.team_label || (filtered[0]?.team_name) }} teamPlayers={filtered} />}
         {tab === 'approvals' && <CoachTransferApprovals />}
         {tab === 'compliance' && <ComplianceMatrix players={filtered} />}

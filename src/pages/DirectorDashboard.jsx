@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
-  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus, Package
+  Lock, Star, Activity, Calendar, ArrowRight, Filter, Wallet, Crown, Send, UserPlus, Package, CalendarDays
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import RoleToolbar from '../components/RoleToolbar';
@@ -164,6 +164,10 @@ function DashboardContent({ onLogout }) {
               {t.badge > 0 && <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">{t.badge}</span>}
             </button>
           ))}
+          <Link to="/schedule" title="לוח זמנים — ניהול משחקים וזימון שופטים"
+            className="px-5 py-3.5 text-xs font-bold transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap text-ink-muted border-transparent hover:text-brand hover:border-brand">
+            <CalendarDays size={13} /> לוח זמנים
+          </Link>
         </div>
       </div>
 
