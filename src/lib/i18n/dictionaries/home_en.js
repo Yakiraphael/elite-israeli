@@ -8,7 +8,7 @@ export default {
   },
   hero: {
     badge: 'Public Benefit Company · 2025',
-    title1: 'An Educational & Therapeutic Framework',
+    title1: 'Educational & Therapeutic Framework',
     title2: 'for Youth Leadership Development',
     subtitle: 'Elite Israeli specializes in leading personal development, mental resilience and operational excellence for periphery youth — through a unique blend of sport, education and entrepreneurship.',
     btnVision: 'Our Vision & Mission', btnPartnership: 'Strategic Partnership',
