@@ -8,6 +8,7 @@ const PageNotFound = lazy(() => import('./lib/PageNotFound'));
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { LanguageProvider } from '@/lib/i18n/LanguagesContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import RoleGuard from '@/components/security/RoleGuard';
 // Add page imports here — code-split for bundle optimization
 const Home = lazy(() => import('./pages/Home'));
 const PlayerProfile = lazy(() => import('./pages/PlayerProfile'));
@@ -69,24 +70,24 @@ const AuthenticatedApp = () => {
       <Routes location={location}>
       <Route path="/" element={<Home />} />
       <Route path="/player-profile" element={<PlayerProfile />} />
-      <Route path="/admin" element={<AdminPanel />} />
+      <Route path="/admin" element={<RoleGuard roles={['admin']}><AdminPanel /></RoleGuard>} />
       <Route path="/transfer-portal" element={<TransferPortal />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/club-registration" element={<ClubRegistration />} />
       <Route path="/scouting" element={<ScoutingArena />} />
       <Route path="/onboarding" element={<OnboardingFlow />} />
-      <Route path="/coach/*" element={<CoachWorkspace />} />
-      <Route path="/coach-roster" element={<CoachRoster />} />
-      <Route path="/director/*" element={<DirectorDashboard />} />
+      <Route path="/coach/*" element={<RoleGuard roles={['admin', 'coach', 'director']}><CoachWorkspace /></RoleGuard>} />
+      <Route path="/coach-roster" element={<RoleGuard roles={['admin', 'coach', 'director']}><CoachRoster /></RoleGuard>} />
+      <Route path="/director/*" element={<RoleGuard roles={['admin', 'director']}><DirectorDashboard /></RoleGuard>} />
       <Route path="/sign-contract" element={<SignContract />} />
       <Route path="/guardian-portal" element={<GuardianPortal />} />
-      <Route path="/qa-engine" element={<QaEnginePanel />} />
-      <Route path="/super-admin" element={<SuperAdminPanel />} />
-      <Route path="/schedule" element={<ScheduleStudio />} />
-      <Route path="/bridge" element={<BridgeStudio />} />
-      <Route path="/owner" element={<OwnerHub />} />
-      <Route path="/league" element={<LeagueStudio />} />
+      <Route path="/qa-engine" element={<RoleGuard roles={['admin']}><QaEnginePanel /></RoleGuard>} />
+      <Route path="/super-admin" element={<RoleGuard roles={['admin']}><SuperAdminPanel /></RoleGuard>} />
+      <Route path="/schedule" element={<RoleGuard roles={['admin', 'director', 'coach']}><ScheduleStudio /></RoleGuard>} />
+      <Route path="/bridge" element={<RoleGuard roles={['admin', 'director']}><BridgeStudio /></RoleGuard>} />
+      <Route path="/owner" element={<RoleGuard roles={['admin']}><OwnerHub /></RoleGuard>} />
+      <Route path="/league" element={<RoleGuard roles={['admin', 'director', 'coach']}><LeagueStudio /></RoleGuard>} />
       <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
