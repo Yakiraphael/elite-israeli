@@ -7,11 +7,11 @@ import SecurityBadge from './SecurityBadge';
 const LOGO = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
 const BG_IMAGES = [
-  'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/f76cf2c20_generated_image.png',
-  'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/c86a77f00_generated_image.png',
-  'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/a12a41045_generated_image.png',
-  'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/ab8bc775c_generated_image.png',
-  'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/6301d5613_generated_image.png'];
+'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/f76cf2c20_generated_image.png',
+'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/c86a77f00_generated_image.png',
+'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/a12a41045_generated_image.png',
+'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/ab8bc775c_generated_image.png',
+'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/6301d5613_generated_image.png'];
 
 export default function HeroSection() {
   const s = useHomeStrings();
@@ -74,7 +74,7 @@ export default function HeroSection() {
             {s.hero.btnPartnership}
           </button>
           <Link to="/player-profile" aria-label={s.hero.btnRegisterAria}
-          className="bg-white/10 border border-white/25 text-white font-bold text-sm px-9 h-12 rounded-full hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2">
+          className="bg-white/10 border border-white/25 text-white font-bold text-sm px-9 h-12 rounded-full hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2 hidden">
             {s.hero.btnRegister}
           </Link>
         </motion.div>
