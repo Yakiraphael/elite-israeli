@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useHomeStrings } from '@/lib/i18n/homeStrings';
 import SecurityBadge from './SecurityBadge';
@@ -72,12 +71,9 @@ export default function HeroSection() {
           <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} aria-label={s.hero.btnContactAria}
           className="border border-gold/50 text-gold font-bold text-sm px-9 h-12 rounded-full hover:bg-gold/10 transition-all duration-300">
             {s.hero.btnPartnership}
-          </button>
-          
+            </button>
 
-
-          
-        </motion.div>
+            </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 1.1 }} className="flex justify-center">
           <SecurityBadge />
