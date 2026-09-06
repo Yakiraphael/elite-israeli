@@ -28,6 +28,7 @@ import PlayerProgressChart from '../coach/PlayerProgressChart';
 import BackButton from '../BackButton';
 import PlayerNotificationSettingsModal from './PlayerNotificationSettingsModal';
 import { Lock, Settings } from 'lucide-react';
+import PlayerEvaluationSummary from './PlayerEvaluationSummary';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -55,6 +56,13 @@ const RESTRICTED_TABS = ['vault', 'transfers', 'requests'];
 export default function PlayerProfileView({ player, events }) {
   const [tab, setTab] = useState('showcase');
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    (async () => {
+      try { setCurrentUser(await base44.auth.me()); } catch { /* not logged in */ }
+    })();
+  }, []);
+  const canEvaluate = currentUser && ['admin', 'director', 'coach'].includes(currentUser.role);
   const posInfo = POSITIONS_INFO[player.position] || { role: '', skills: [], color: 'from-gray-600 to-gray-800' };
   const playerEvent = events.find((e) => e.id === player.event_id);
   const isMedicalExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();
@@ -306,6 +314,8 @@ export default function PlayerProfileView({ player, events }) {
                   <MentalJourneyChart playerId={player.id} isEliteOrg={!!player.elite_id} />
                 </div>
               </div>
+
+              <PlayerEvaluationSummary player={player} evaluator={currentUser} canEvaluate={canEvaluate} />
 
               <PlayerProgressChart player={player} />
 
