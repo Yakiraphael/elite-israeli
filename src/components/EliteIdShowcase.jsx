@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import EliteIdCard, { STAT_KEYS, computeOverall } from './EliteIdCard';
-import { Link } from 'react-router-dom';
+import EliteIdCard, { STAT_KEYS, computeOverall, overallToTier } from './EliteIdCard';
+import FootballBalls from './player/FootballBalls';
+import TierBadge from './player/TierBadge';
 import { Sliders } from 'lucide-react';
 import { useHomeStrings } from '@/lib/i18n/homeStrings';
+
+// Ball value (1-5) -> internal 0-99 stored value
+const BALL_TO_VAL = { 1: 20, 2: 40, 3: 60, 4: 80, 5: 99 };
 
 export default function EliteIdShowcase() {
   const s = useHomeStrings();
@@ -13,9 +17,10 @@ export default function EliteIdShowcase() {
     stats: { pac: 78, sho: 74, pas: 81, dri: 85, def: 52, phy: 68, mental: 89 },
   };
   const [stats, setStats] = useState({ ...DEMO.stats });
-  const setStat = (key, val) => setStats(prev => ({ ...prev, [key]: Number(val) }));
+  const setStat = (key, ballVal) => setStats(prev => ({ ...prev, [key]: BALL_TO_VAL[ballVal] ?? 0 }));
   const reset = () => setStats({ ...DEMO.stats });
   const overall = computeOverall(stats);
+  const tier = overallToTier(overall);
 
   return (
     <section className="py-24 md:py-28 relative overflow-hidden bg-slate-100">
@@ -51,18 +56,23 @@ export default function EliteIdShowcase() {
             </div>
             <div className="space-y-5">
               {STAT_KEYS.map(st => (
-                <div key={st.key}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-body text-xs font-bold text-navy">{st.label} <span className="text-slate-400 font-normal">— {st.he}</span></span>
-                    <span className="font-display text-sm font-black text-gold tabular-nums w-8 text-left">{stats[st.key]}</span>
+                <div key={st.key} className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col">
+                    <span className="font-body text-xs font-bold text-navy">{st.label}</span>
+                    <span className="text-slate-400 text-[11px] font-normal">{st.he}</span>
                   </div>
-                  <input type="range" min={0} max={99} value={stats[st.key]} onChange={e => setStat(st.key, e.target.value)} className="w-full accent-amber-500 cursor-pointer" />
+                  <FootballBalls
+                    score={stats[st.key] ?? 0}
+                    size={22}
+                    interactive
+                    onChange={(b) => setStat(st.key, b)}
+                  />
                 </div>
               ))}
             </div>
             <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
               <span className="font-body text-sm font-bold text-navy">{s.eliteId.overallLabel}</span>
-              <span className="font-display text-3xl font-black text-gold tabular-nums">{overall}</span>
+              <TierBadge tier={tier} size="lg" />
             </div>
             <p className="mt-4 text-[11px] text-slate-400 leading-relaxed">{s.eliteId.disclaimer}</p>
           </div>

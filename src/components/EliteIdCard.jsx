@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import FootballBalls from './player/FootballBalls';
+import TierBadge from './player/TierBadge';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -31,7 +33,24 @@ export function computeOverall(stats = {}) {
   return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
 }
 
-// ---- Smooth color interpolation across rating spectrum ----
+// ---- Zero-Numbers helpers ----
+// overall 0-99 -> tier A5..B1
+export function overallToTier(v) {
+  if (v == null) return 'B1';
+  if (v >= 90) return 'A5';
+  if (v >= 85) return 'A4';
+  if (v >= 80) return 'A3';
+  if (v >= 75) return 'A2';
+  if (v >= 70) return 'A1';
+  if (v >= 60) return 'B3';
+  if (v >= 50) return 'B2';
+  return 'B1';
+}
+
+// Tier -> representative 0-99 value for color theming
+const TIER_VALUE = { A5: 95, A4: 87, A3: 82, A2: 77, A1: 72, B3: 65, B2: 55, B1: 40 };
+
+// ---- Smooth color interpolation across tier spectrum ----
 function lerp(a, b, t) { return a + (b - a) * t; }
 
 function interpolateColor(c1, c2, t) {
@@ -42,22 +61,21 @@ function interpolateColor(c1, c2, t) {
   };
 }
 
-// Spectrum: dark bronze → bronze → silver → gold → emerald
+// Spectrum keyed off the tier's representative value
 const COLOR_STOPS = [
-  { stop: 0,  rgb: { r: 92,  g: 58,  b: 38  } },
-  { stop: 45, rgb: { r: 184, g: 115, b: 51  } },
-  { stop: 68, rgb: { r: 160, g: 145, b: 125 } },
-  { stop: 72, rgb: { r: 200, g: 200, b: 205 } },
-  { stop: 79, rgb: { r: 220, g: 220, b: 225 } },
+  { stop: 40, rgb: { r: 92,  g: 58,  b: 38  } },
+  { stop: 55, rgb: { r: 184, g: 115, b: 51  } },
+  { stop: 70, rgb: { r: 160, g: 145, b: 125 } },
+  { stop: 75, rgb: { r: 200, g: 200, b: 205 } },
   { stop: 80, rgb: { r: 212, g: 175, b: 55  } },
   { stop: 87, rgb: { r: 245, g: 205, b: 50  } },
-  { stop: 90, rgb: { r: 16,  g: 185, b: 129 } },
+  { stop: 95, rgb: { r: 16,  g: 185, b: 129 } },
   { stop: 99, rgb: { r: 60,  g: 230, b: 160 } },
 ];
 
 function getThemeColor(rating) {
   if (rating == null) return { r: 107, g: 114, b: 128 };
-  const v = Math.max(0, Math.min(99, rating));
+  const v = Math.max(40, Math.min(99, rating));
   for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
     const lo = COLOR_STOPS[i], hi = COLOR_STOPS[i + 1];
     if (v >= lo.stop && v <= hi.stop) {
@@ -70,24 +88,9 @@ function getThemeColor(rating) {
 
 function rgba(c, a = 1) { return `rgba(${c.r},${c.g},${c.b},${a})`; }
 
-function tierLabel(v) {
-  if (v == null) return '—';
-  if (v >= 90) return 'ELITE';
-  if (v >= 80) return 'GOLD';
-  if (v >= 70) return 'SILVER';
-  return 'BRONZE';
-}
-
-function statColor(v) {
-  if (v == null) return 'text-white/35';
-  if (v >= 85) return 'text-emerald-400';
-  if (v >= 75) return 'text-[#E8C547]';
-  if (v >= 65) return 'text-amber-500';
-  return 'text-red-400';
-}
-
 /**
- * Elite ID Player Card — premium branded card with smooth tier-based color transitions.
+ * Elite ID Player Card — Zero-Numbers edition.
+ * No raw numeric scores exposed; visual proxies only (FootballBalls + TierBadge).
  */
 export default function EliteIdCard({
   name = 'שחקן',
@@ -101,7 +104,8 @@ export default function EliteIdCard({
 }) {
   const overall = rating != null ? rating : computeOverall(stats);
   const posCode = POSITION_MAP[position] || '—';
-  const c = getThemeColor(overall);
+  const tier = overallToTier(overall);
+  const c = getThemeColor(TIER_VALUE[tier] ?? overall);
 
   const transition = 'all 0.7s cubic-bezier(0.4,0,0.2,1)';
 
@@ -112,7 +116,7 @@ export default function EliteIdCard({
       viewport={{ once: true }}
       className="relative w-[320px] mx-auto select-none"
     >
-      {/* Outer glow — smooth color transition */}
+      {/* Outer glow */}
       <div
         className="absolute -inset-1.5 rounded-2xl blur-lg"
         style={{ background: `linear-gradient(135deg, ${rgba(c, 0.35)}, ${rgba(c, 0.05)} 50%, ${rgba(c, 0.25)})`, transition }}
@@ -144,15 +148,15 @@ export default function EliteIdCard({
         </div>
 
         <div className="relative p-5">
-          {/* Top: rating + avatar + identity */}
+          {/* Top: tier badge + avatar + identity */}
           <div className="flex items-center gap-4">
-            {/* Rating badge */}
+            {/* Tier badge (replaces numeric rating) */}
             <div
               className="flex flex-col items-center justify-center w-16 h-16 rounded-xl flex-shrink-0"
               style={{ background: `linear-gradient(135deg, ${rgba(c, 0.2)}, ${rgba(c, 0.05)})`, border: `1.5px solid ${rgba(c, 0.5)}`, transition }}
             >
-              <span className="text-3xl font-black leading-none tabular-nums" style={{ color: rgba(c, 1), transition }}>{overall ?? '--'}</span>
-              <span className="text-[8px] font-black tracking-widest mt-1" style={{ color: rgba(c, 0.6), transition }}>{tierLabel(overall)}</span>
+              <TierBadge tier={tier} size="sm" />
+              <span className="text-[8px] font-black tracking-widest mt-1.5" style={{ color: rgba(c, 0.6), transition }}>TIER</span>
             </div>
 
             {/* Avatar */}
@@ -188,23 +192,23 @@ export default function EliteIdCard({
             style={{ background: `linear-gradient(90deg, transparent, ${rgba(c, 0.35)}, transparent)`, transition }}
           />
 
-          {/* Stats grid */}
+          {/* Stats grid — FootballBalls only, no numbers */}
           <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
             {STAT_KEYS.slice(0, 6).map(s => (
-              <div key={s.key} className="flex flex-col items-center">
-                <span className={`text-lg font-black leading-none tabular-nums ${statColor(stats[s.key])}`}>{stats[s.key] ?? '--'}</span>
-                <span className="text-[9px] font-bold text-white/40 tracking-wider mt-1">{s.label}</span>
+              <div key={s.key} className="flex flex-col items-center gap-1">
+                <FootballBalls score={stats[s.key] ?? 0} size={14} />
+                <span className="text-[9px] font-bold text-white/40 tracking-wider">{s.label}</span>
               </div>
             ))}
           </div>
 
-          {/* Mental — emphasized */}
+          {/* Mental — emphasized strip */}
           <div
             className="mt-3 flex items-center justify-between rounded-lg px-3 py-2"
             style={{ background: `linear-gradient(90deg, ${rgba(c, 0.12)}, transparent)`, border: `1px solid ${rgba(c, 0.2)}`, transition }}
           >
             <span className="text-[10px] font-black tracking-wider" style={{ color: rgba(c, 0.85), transition }}>MENTAL · חוסן מנטלי</span>
-            <span className={`text-lg font-black tabular-nums ${statColor(stats.mental)}`}>{stats.mental ?? '--'}</span>
+            <FootballBalls score={stats.mental ?? 0} size={16} />
           </div>
 
           {/* Footer */}

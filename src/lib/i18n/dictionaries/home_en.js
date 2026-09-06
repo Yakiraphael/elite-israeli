@@ -119,10 +119,10 @@ export default {
   eliteId: {
     badge: 'Technological Innovation — Elite ID',
     title1: 'Player Card', title2: 'Elite ID',
-    intro: 'Every player in Elite gets a personal digital profile — a tool for scouts, motivation for youth and a real measure for multi-dimensional growth. The analyst updates the data after every training and match. Try the control panel below ↓',
+    intro: 'Every player on the platform — regardless of which youth association they belong to — gets a unified Elite ID digital profile: a tool for scouts, motivation for youth and a real measure for multi-dimensional growth. The analyst updates the data after every training and match. Try the control panel below ↓',
     liveHint: 'Live view — the card updates in real time',
     panelTitle: 'Analyst Control Panel', reset: 'Reset',
-    overallLabel: 'Calculated Overall Score',
+    overallLabel: 'Tier Rating',
     disclaimer: '* This display is an interactive simulation to illustrate the model. Real data updates are done by an authorized analyst in the internal management interface.',
     demoName: 'Israel Israeli', demoPos: 'Attacking Midfielder',
   },
