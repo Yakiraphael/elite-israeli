@@ -32,8 +32,7 @@ export default function MissionSection() {
               className="pillar-card card-hover rounded-sm p-8 text-center group bg-white">
               <div className="text-3xl text-gold mb-4">{pillar.icon}</div>
               <div className="font-display text-3xl font-black text-navy mb-1">{pillar.hebrew}</div>
-              <div className="font-body text-xs tracking-[0.25em] text-gold font-bold mb-5 uppercase">{pillar.english}</div>
-              <p className="font-body text-sm text-slate-500 leading-relaxed">{pillar.description}</p>
+              <p className="font-body text-sm text-slate-500 leading-relaxed mt-5">{pillar.description}</p>
             </motion.div>
           ))}
         </div>

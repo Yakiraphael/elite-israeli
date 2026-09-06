@@ -135,7 +135,7 @@ export default function EliteIdCard({
               style={{ background: `linear-gradient(135deg, ${rgba(c, 0.2)}, ${rgba(c, 0.05)})`, border: `1.5px solid ${rgba(c, 0.5)}`, transition }}
             >
               <TierBadge tier={tier} size="sm" />
-              <span className="text-[8px] font-black tracking-widest mt-1.5" style={{ color: rgba(c, 0.6), transition }}>TIER</span>
+              <span className="text-[8px] font-black tracking-widest mt-1.5" style={{ color: rgba(c, 0.6), transition }}>דירוג</span>
             </div>
 
             <div
@@ -147,7 +147,7 @@ export default function EliteIdCard({
 
             <div className="flex-1 text-right min-w-0">
               <div className="flex items-center justify-end gap-1.5 text-[10px] font-bold text-white/50">
-                <span>🇮🇱 ISR</span>
+                <span>🇮🇱 ישר</span>
                 <span className="px-1.5 py-0.5 rounded font-black tracking-wider" style={{ background: rgba(c, 0.15), color: rgba(c, 0.95), transition }}>{posCode}</span>
               </div>
               <div className="text-white font-black text-sm leading-tight mt-1 truncate">{name}</div>
