@@ -210,10 +210,10 @@ export default function UltimatePlayerCard({ player, clubId, className }) {
     noEvaluations: lang === 'ar' ? 'لا توجد تقييمات بعد' : lang === 'en' ? 'No evaluations yet' : 'אין עדיין הערכות',
   };
 
-  // שליפת הערכות שחקן
+  // שליפת דוחות מאוחדים — מקור אמת יחיד (SSOT)
   const { data: evaluations = [], isLoading } = useQuery({
-    queryKey: ['player-evaluations', player?.id],
-    queryFn: () => base44.entities.PlayerEvaluation.filter({ player_id: player.id }, '-created_date', 50),
+    queryKey: ['unified-reports', player?.id],
+    queryFn: () => base44.entities.UnifiedReport.filter({ player_id: player.id }, '-created_date', 50),
     enabled: !!player?.id,
   });
 

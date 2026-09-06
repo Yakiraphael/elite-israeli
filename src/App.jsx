@@ -30,6 +30,7 @@ const BridgeStudio = lazy(() => import('./pages/BridgeStudio'));
 const OwnerHub = lazy(() => import('./pages/OwnerHub'));
 const LeagueStudio = lazy(() => import('./pages/LeagueStudio'));
 const QaEnginePanel = lazy(() => import('./components/admin/QaEnginePanel'));
+const ReportStudio = lazy(() => import('./components/reports/ReportStudio'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -88,6 +89,7 @@ const AuthenticatedApp = () => {
       <Route path="/bridge" element={<RoleGuard roles={['admin', 'director']}><BridgeStudio /></RoleGuard>} />
       <Route path="/owner" element={<RoleGuard roles={['admin']}><OwnerHub /></RoleGuard>} />
       <Route path="/league" element={<RoleGuard roles={['admin', 'director', 'coach']}><LeagueStudio /></RoleGuard>} />
+      <Route path="/reports" element={<RoleGuard roles={['admin', 'director', 'coach']}><ReportStudio /></RoleGuard>} />
       <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>

@@ -1,0 +1,242 @@
+{
+  "name": "UnifiedReport",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df (PlayerRegistration.id)"
+    },
+    "player_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e9\u05d7\u05e7\u05df"
+    },
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "club_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05de\u05d5\u05e2\u05d3\u05d5\u05df"
+    },
+    "age_group": {
+      "type": "string",
+      "title": "\u05e9\u05e0\u05ea\u05d5\u05df",
+      "enum": [
+        "U10",
+        "U11",
+        "U12",
+        "U13",
+        "U14",
+        "U15",
+        "U16",
+        "U17",
+        "U18",
+        "U19",
+        "U20",
+        "U21"
+      ],
+      "description": "\u05de\u05e2\u05e8\u05db\u05ea \u05e0\u05d5\u05e2\u05e8-\u05d1\u05dc\u05d1\u05d3: \u05e9\u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u05de\u05d5\u05ea\u05e8\u05d9\u05dd U10\u2013U21 \u05d1\u05dc\u05d1\u05d3."
+    },
+    "team_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05e7\u05d1\u05d5\u05e6\u05d4 (Team.id)"
+    },
+    "team_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05e7\u05d1\u05d5\u05e6\u05d4"
+    },
+    "session_id": {
+      "type": "string",
+      "title": "\u05e7\u05d9\u05e9\u05d5\u05e8 \u05dc\u05d0\u05d9\u05de\u05d5\u05df/\u05e1\u05d3\u05e0\u05d4 (TeamEvent.id)",
+      "description": "\u05d0\u05d5\u05e4\u05e6\u05d9\u05d5\u05e0\u05dc\u05d9 \u2014 \u05de\u05d0\u05e4\u05e9\u05e8 \u05e4\u05ea\u05d9\u05d7\u05ea \u05d3\u05d5\u05d7 \u05de\u05ea\u05d5\u05da \u05d0\u05d9\u05de\u05d5\u05ea \u05e1\u05e4\u05e6\u05d9\u05e4\u05d9\u05ea \u05d5\u05d4\u05ea\u05e2\u05de\u05e7\u05d5\u05ea \u05d1\u05d4 \u05d1\u05ea\u05d5\u05da \u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d9\u05ea \u05d4\u05d0\u05d9\u05de\u05d5\u05e0\u05d9\u05dd"
+    },
+    "session_label": {
+      "type": "string",
+      "title": "\u05ea\u05d5\u05d5\u05d9\u05ea \u05d0\u05d9\u05de\u05d5\u05ea"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d3\u05d9\u05d5\u05d5\u05d7"
+    },
+    "report_type": {
+      "type": "string",
+      "title": "\u05e1\u05d5\u05d2 \u05d3\u05d5\u05d7",
+      "enum": [
+        "\u05d0\u05d9\u05de\u05d5\u05df",
+        "\u05de\u05e9\u05d7\u05e7 \u05ea\u05d7\u05e8\u05d5\u05ea\u05d9",
+        "\u05e1\u05d3\u05e0\u05d4",
+        "\u05de\u05d7\u05e0\u05d4",
+        "\u05ea\u05e6\u05e4\u05d9\u05ea \u05d9\u05d7\u05d9\u05d3"
+      ],
+      "default": "\u05d0\u05d9\u05de\u05d5\u05df"
+    },
+    "technique_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "title": "\u05d8\u05db\u05e0\u05d9\u05e7\u05d4 (1-5)",
+      "description": "1=\u05d8\u05e2\u05d5\u05df \u05e9\u05d9\u05e4\u05d5\u05e8 \u05e7\u05e8\u05d9\u05d8\u05d9, 2=\u05de\u05ea\u05d7\u05ea \u05dc\u05de\u05de\u05d5\u05e6\u05e2, 3=\u05d8\u05d5\u05d1, 4=\u05de\u05e2\u05d5\u05dc\u05d4, 5=\u05de\u05e6\u05d5\u05d9\u05e0\u05d5\u05ea"
+    },
+    "game_intelligence_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "title": "\u05d4\u05d1\u05e0\u05ea \u05de\u05e9\u05d7\u05e7 (1-5)"
+    },
+    "physicality_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "title": "\u05e4\u05d9\u05d6\u05d9\u05d5\u05ea (1-5)"
+    },
+    "decision_making_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "title": "\u05e7\u05d1\u05dc\u05ea \u05d4\u05d7\u05dc\u05d8\u05d5\u05ea (1-5)"
+    },
+    "mentality_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "title": "\u05de\u05e0\u05d8\u05dc\u05d9\u05d5\u05ea (1-5)"
+    },
+    "confidence_level": {
+      "type": "number",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "title": "\u05e8\u05de\u05ea \u05d4\u05d9\u05db\u05e8\u05d5\u05ea \u05d4\u05de\u05e2\u05e8\u05d9\u05da",
+      "description": "1=\u05de\u05dc\u05d5\u05d5\u05d4 \u05de\u05e2\u05dc \u05d7\u05e6\u05d9 \u05e9\u05e0\u05d4 (\u05de\u05e9\u05e7\u05dc 1.0), 2=\u05e8\u05d0\u05d4 \u05de\u05e2\u05d8 \u05de\u05e9\u05d7\u05e7\u05d9\u05dd <5 (\u05de\u05e9\u05e7\u05dc 0.5), 3=\u05dc\u05d0 \u05e8\u05d0\u05d4 (\u05de\u05e9\u05e7\u05dc 0.0 \u2014 \u05ea\u05d9\u05e2\u05d5\u05d3 \u05d1\u05dc\u05d1\u05d3)"
+    },
+    "summary": {
+      "type": "string",
+      "title": "\u05e1\u05d9\u05db\u05d5\u05dd \u05d7\u05d5\u05e4\u05e9\u05d9",
+      "description": "\u05ea\u05e7\u05e6\u05d9\u05e8 \u05d4\u05d3\u05d9\u05d5\u05d5\u05d7 \u2014 \u05de\u05d5\u05d6\u05df \u05d9\u05e9\u05d9\u05e8\u05d5\u05ea \u05dc\u05de\u05e1\u05de\u05da \u05d4\u05d4\u05e2\u05e8\u05db\u05d4 \u05d4\u05e8\u05e9\u05de\u05d9"
+    },
+    "strengths": {
+      "type": "string",
+      "title": "\u05e0\u05e7\u05d5\u05d3\u05d5\u05ea \u05d7\u05d5\u05d6\u05e7"
+    },
+    "improvements": {
+      "type": "string",
+      "title": "\u05ea\u05d7\u05d5\u05de\u05d9\u05dd \u05dc\u05e9\u05d9\u05e4\u05d5\u05e8"
+    },
+    "action_items": {
+      "type": "string",
+      "title": "\u05e4\u05e2\u05d5\u05dc\u05d5\u05ea \u05e0\u05d3\u05e8\u05e9\u05d5\u05ea / \u05ea\u05db\u05e0\u05d5\u05df \u05d4\u05d1\u05d0"
+    },
+    "private_note": {
+      "type": "string",
+      "title": "\u05d4\u05e2\u05e8\u05d4 \u05e4\u05e0\u05d9\u05de\u05d9\u05ea \u05dc\u05e6\u05d5\u05d5\u05ea (\u05dc\u05d0 \u05de\u05d5\u05e6\u05d2\u05ea \u05dc\u05e9\u05d7\u05e7\u05df)"
+    },
+    "evaluator_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05e2\u05e8\u05d9\u05da (User.id)"
+    },
+    "evaluator_name": {
+      "type": "string",
+      "title": "\u05e9\u05dd \u05d4\u05de\u05e2\u05e8\u05d9\u05da"
+    },
+    "evaluator_role": {
+      "type": "string",
+      "title": "\u05ea\u05e4\u05e7\u05d9\u05d3 \u05d4\u05de\u05e2\u05e8\u05d9\u05da",
+      "enum": [
+        "coach",
+        "director",
+        "admin",
+        "scout"
+      ]
+    },
+    "aggregated_overall": {
+      "type": "number",
+      "title": "\u05de\u05de\u05d5\u05e6\u05e2 \u05de\u05e9\u05d5\u05e7\u05dc\u05dc \u05db\u05d5\u05dc\u05dc (\u05dc\u05d0\u05d7\u05e8 \u05d7\u05d9\u05e9\u05d5\u05d1)",
+      "description": "\u05e0\u05db\u05ea\u05d1 \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9\u05ea \u05e2\u05dc \u05d9\u05d3\u05d9 \u05de\u05e0\u05d5\u05e2 \u05d4\u05d0\u05d2\u05e8\u05d2\u05e6\u05d9\u05d4 \u2014 snapshot \u05d1\u05e2\u05ea \u05e9\u05de\u05d9\u05e8\u05ea \u05d4\u05d3\u05d5\u05d7"
+    },
+    "aggregated_tier": {
+      "type": "string",
+      "title": "\u05d3\u05d9\u05e8\u05d5\u05d2 \u05e8\u05de\u05d4 (A5\u2013B1) \u2014 snapshot",
+      "description": "\u05e0\u05db\u05ea\u05d1 \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9\u05ea \u05e2\u05dc \u05d9\u05d3\u05d9 \u05de\u05e0\u05d5\u05e2 \u05d4\u05d0\u05d2\u05e8\u05d2\u05e6\u05d9\u05d4"
+    }
+  },
+  "required": [
+    "player_id",
+    "player_name",
+    "session_date",
+    "technique_score",
+    "game_intelligence_score",
+    "physicality_score",
+    "decision_making_score",
+    "mentality_score",
+    "confidence_level",
+    "evaluator_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
