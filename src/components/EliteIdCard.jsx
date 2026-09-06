@@ -1,34 +1,33 @@
 import { motion } from 'framer-motion';
+import FootballBalls from './player/FootballBalls';
+import TierBadge from './player/TierBadge';
+import { EVALUATION_CATEGORIES, scoreToTier } from '@/lib/evaluationEngine';
+import { getEvaluationStrings } from '@/lib/i18n/evaluationStrings';
+import { useTranslation } from '@/lib/i18n/LanguagesContext';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
-// Hebrew position -> short role code
 export const POSITION_MAP = {
-  'שוער': 'GK',
-  'בלם': 'CB',
-  'מגן צד': 'FB',
-  'קשר מגן': 'CDM',
-  'קשר': 'CM',
-  'קשר התפורס': 'CAM',
-  'קשר התקפי': 'CAM',
-  'חלוץ צד': 'WG',
-  'חלוץ': 'ST',
+  'שוער': 'GK', 'בלם': 'CB', 'מגן צד': 'FB', 'קשר מגן': 'CDM',
+  'קשר': 'CM', 'קשר התפורס': 'CAM', 'קשר התקפי': 'CAM',
+  'חלוץ צד': 'WG', 'חלוץ': 'ST',
+  'حارس مرمى': 'GK', 'قلب دفاع': 'CB', 'ظهير': 'FB', 'وسط دفاعي': 'CDM',
+  'وسط': 'CM', 'صانع ألعاب': 'CAM', 'وسط مهاجم': 'CAM',
+  'جناح': 'WG', 'مهاجم': 'ST',
+  'Goalkeeper': 'GK', 'Center Back': 'CB', 'Full Back': 'FB', 'Defensive Midfielder': 'CDM',
+  'Midfielder': 'CM', 'Attacking Midfielder': 'CAM',
+  'Winger': 'WG', 'Striker': 'ST',
 };
 
-export const STAT_KEYS = [
-  { key: 'pac', label: 'PAC', he: 'מהירות' },
-  { key: 'sho', label: 'SHO', he: 'בעיטה' },
-  { key: 'pas', label: 'PAS', he: 'מסירה' },
-  { key: 'dri', label: 'DRI', he: 'כדרור' },
-  { key: 'def', label: 'DEF', he: 'הגנה' },
-  { key: 'phy', label: 'PHY', he: 'פיזיות' },
-  { key: 'mental', label: 'MENTAL', he: 'חוסן מנטלי' },
-];
+// Map 1-5 evaluation score → 0-100 for color theme selection (internal only, never displayed)
+function scoreToColorValue(overall) {
+  return Math.round((overall / 5) * 100);
+}
 
-export function computeOverall(stats = {}) {
-  const vals = STAT_KEYS.map(s => stats[s.key]).filter(v => typeof v === 'number');
-  if (vals.length === 0) return null;
-  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+export function computeOverall(categories = {}) {
+  const vals = EVALUATION_CATEGORIES.map(c => categories[c]).filter(v => typeof v === 'number' && v > 0);
+  if (vals.length === 0) return 0;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
 
 // ---- Smooth color interpolation across rating spectrum ----
@@ -42,7 +41,6 @@ function interpolateColor(c1, c2, t) {
   };
 }
 
-// Spectrum: dark bronze → bronze → silver → gold → emerald
 const COLOR_STOPS = [
   { stop: 0,  rgb: { r: 92,  g: 58,  b: 38  } },
   { stop: 45, rgb: { r: 184, g: 115, b: 51  } },
@@ -70,38 +68,27 @@ function getThemeColor(rating) {
 
 function rgba(c, a = 1) { return `rgba(${c.r},${c.g},${c.b},${a})`; }
 
-function tierLabel(v) {
-  if (v == null) return '—';
-  if (v >= 90) return 'ELITE';
-  if (v >= 80) return 'GOLD';
-  if (v >= 70) return 'SILVER';
-  return 'BRONZE';
-}
-
-function statColor(v) {
-  if (v == null) return 'text-white/35';
-  if (v >= 85) return 'text-emerald-400';
-  if (v >= 75) return 'text-[#E8C547]';
-  if (v >= 65) return 'text-amber-500';
-  return 'text-red-400';
-}
-
 /**
- * Elite ID Player Card — premium branded card with smooth tier-based color transitions.
+ * Elite ID Player Card — premium branded card with Zero-Numbers UI.
+ * Shows 5 evaluation categories as FootballBalls + TierBadge (A5-B1).
+ * No raw numbers are displayed anywhere.
  */
 export default function EliteIdCard({
   name = 'שחקן',
   eliteId = 'ELITE-2026-0000',
   position = 'קשר',
-  stats = {},
+  categories = {},
   avatarUrl,
-  rating,
   age,
   city,
 }) {
-  const overall = rating != null ? rating : computeOverall(stats);
+  const { lang } = useTranslation();
+  const strings = getEvaluationStrings(lang);
+  const overall = computeOverall(categories);
+  const tier = scoreToTier(overall);
   const posCode = POSITION_MAP[position] || '—';
-  const c = getThemeColor(overall);
+  const colorVal = scoreToColorValue(overall);
+  const c = getThemeColor(colorVal);
 
   const transition = 'all 0.7s cubic-bezier(0.4,0,0.2,1)';
 
@@ -146,13 +133,15 @@ export default function EliteIdCard({
         <div className="relative p-5">
           {/* Top: rating + avatar + identity */}
           <div className="flex items-center gap-4">
-            {/* Rating badge */}
-            <div
-              className="flex flex-col items-center justify-center w-16 h-16 rounded-xl flex-shrink-0"
-              style={{ background: `linear-gradient(135deg, ${rgba(c, 0.2)}, ${rgba(c, 0.05)})`, border: `1.5px solid ${rgba(c, 0.5)}`, transition }}
-            >
-              <span className="text-3xl font-black leading-none tabular-nums" style={{ color: rgba(c, 1), transition }}>{overall ?? '--'}</span>
-              <span className="text-[8px] font-black tracking-widest mt-1" style={{ color: rgba(c, 0.6), transition }}>{tierLabel(overall)}</span>
+            {/* Rating area — TierBadge + FootballBalls (Zero-Numbers) */}
+            <div className="flex flex-col items-center justify-center gap-1.5 w-16 flex-shrink-0">
+              <div
+                className="flex flex-col items-center justify-center rounded-xl py-2.5 px-1 w-full"
+                style={{ background: `linear-gradient(135deg, ${rgba(c, 0.2)}, ${rgba(c, 0.05)})`, border: `1.5px solid ${rgba(c, 0.5)}`, transition }}
+              >
+                <TierBadge tier={tier} size="sm" strings={strings} />
+                <div className="mt-2"><FootballBalls score={overall} size={12} /></div>
+              </div>
             </div>
 
             {/* Avatar */}
@@ -188,23 +177,14 @@ export default function EliteIdCard({
             style={{ background: `linear-gradient(90deg, transparent, ${rgba(c, 0.35)}, transparent)`, transition }}
           />
 
-          {/* Stats grid */}
-          <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
-            {STAT_KEYS.slice(0, 6).map(s => (
-              <div key={s.key} className="flex flex-col items-center">
-                <span className={`text-lg font-black leading-none tabular-nums ${statColor(stats[s.key])}`}>{stats[s.key] ?? '--'}</span>
-                <span className="text-[9px] font-bold text-white/40 tracking-wider mt-1">{s.label}</span>
+          {/* 5 Evaluation Categories — FootballBalls (Zero-Numbers) */}
+          <div className="space-y-2.5">
+            {EVALUATION_CATEGORIES.map(cat => (
+              <div key={cat} className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-white/50">{strings.categories[cat]}</span>
+                <FootballBalls score={categories[cat] || 0} size={14} />
               </div>
             ))}
-          </div>
-
-          {/* Mental — emphasized */}
-          <div
-            className="mt-3 flex items-center justify-between rounded-lg px-3 py-2"
-            style={{ background: `linear-gradient(90deg, ${rgba(c, 0.12)}, transparent)`, border: `1px solid ${rgba(c, 0.2)}`, transition }}
-          >
-            <span className="text-[10px] font-black tracking-wider" style={{ color: rgba(c, 0.85), transition }}>MENTAL · חוסן מנטלי</span>
-            <span className={`text-lg font-black tabular-nums ${statColor(stats.mental)}`}>{stats.mental ?? '--'}</span>
           </div>
 
           {/* Footer */}
