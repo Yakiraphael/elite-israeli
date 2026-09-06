@@ -100,10 +100,10 @@ export default {
     quote: '"The biggest problem in modern football is not a lack of talent, but an outdated, opaque and bureaucratic transfer market."',
     banner: 'The IEFA platform is Israel\'s first sport-tech and fintech platform managing the player transfer market end-to-end — digital, transparent and data-driven. The system connects four nodes: players, parents, professional clubs and field analysts.',
     advantages: [
-      { subtitle: 'SSOT Engine', title: 'Unified SSOT Engine', desc: '5 standardized evaluation categories (Technique, Game Intelligence, Physicality, Decision Making, Mentality) on a 1-5 scale, with 1.0/0.5/0.0 weights by evaluator familiarity. Automatic aggregation to A5-B1 tier — no raw numbers.' },
-      { subtitle: 'Zero-Numbers UI', title: 'Zero-Numbers Rule', desc: 'Player profiles show visual football balls and tier badges (A5-B1) only — no raw score is ever exposed to the public or the player. Internal numbers are kept for the professional staff only.' },
-      { subtitle: 'Youth-Only', title: 'Youth-Only (U10-U21)', desc: 'The system serves U10 through U21 youth age groups only — adult categories are prohibited. Every action involving a minor player goes through guardian OTP verification.' },
-      { subtitle: 'Public DTO', title: 'Secure Public DTO', desc: 'The official website receives showcase data only through a DTO layer — name, position, club, tier badge and football balls. No sensitive information (weights, notes, medical) leaks to the public.' },
+      { subtitle: 'The Mental Index', title: 'The MENTAL Index', desc: 'Not just goals and assists. We developed a certified score (1-99) measuring composure, leadership and persistence — calculated in real time by our field analysts for "Elite" players only.' },
+      { subtitle: 'Data Scraping', title: 'Data Verification Bypassing Regulation', desc: 'Smart scripts pull and cross-reference official data from the FA website nightly directly into digital Elite cards.' },
+      { subtitle: 'Guardian Protection Flow', title: 'The Legal Guardian', desc: 'The youth player has a full performance profile — but zero legal authority. Every transfer offer goes through OTP verification to the parent\'s phone.' },
+      { subtitle: 'FinTech Core', title: 'Economic Disruption: Only 2%', desc: 'Instead of agents taking 10%-15%, the system enables full digital representation at an unprecedented 2% commission.' },
     ],
     joinBadge: 'Join Today', joinTitle: 'Choose Your Path', joinSubtitle: '3 user types, a dedicated interface for each',
     userTypes: [
@@ -119,10 +119,10 @@ export default {
   eliteId: {
     badge: 'Technological Innovation — Elite ID',
     title1: 'Player Card', title2: 'Elite ID',
-    intro: 'Every player in Elite gets a personal digital profile with 5 unified evaluation categories — shown as visual football balls and A5-B1 tier, with no raw numbers. The analyst updates the data after every training and match. Try the control panel below ↓',
+    intro: 'Every player in Elite gets a personal digital profile — a tool for scouts, motivation for youth and a real measure for multi-dimensional growth. The analyst updates the data after every training and match. Try the control panel below ↓',
     liveHint: 'Live view — the card updates in real time',
     panelTitle: 'Analyst Control Panel', reset: 'Reset',
-    overallLabel: 'Overall Rating',
+    overallLabel: 'Calculated Overall Score',
     disclaimer: '* This display is an interactive simulation to illustrate the model. Real data updates are done by an authorized analyst in the internal management interface.',
     demoName: 'Israel Israeli', demoPos: 'Attacking Midfielder',
   },

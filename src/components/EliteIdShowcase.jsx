@@ -1,30 +1,21 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import EliteIdCard, { computeOverall } from './EliteIdCard';
-import FootballBalls from './player/FootballBalls';
-import TierBadge from './player/TierBadge';
-import { EVALUATION_CATEGORIES, scoreToTier } from '@/lib/evaluationEngine';
-import { getEvaluationStrings } from '@/lib/i18n/evaluationStrings';
-import { useTranslation } from '@/lib/i18n/LanguagesContext';
+import EliteIdCard, { STAT_KEYS, computeOverall } from './EliteIdCard';
+import { Link } from 'react-router-dom';
 import { Sliders } from 'lucide-react';
 import { useHomeStrings } from '@/lib/i18n/homeStrings';
 
 export default function EliteIdShowcase() {
   const s = useHomeStrings();
-  const { lang } = useTranslation();
-  const strings = getEvaluationStrings(lang);
-
   const DEMO = {
     name: s.eliteId.demoName, eliteId: 'ELITE-2026-0042', position: s.eliteId.demoPos, age: 16,
     avatarUrl: 'https://media.base44.com/images/public/69fafcd4c8e6ad563cb577b8/e80f625a1_generated_image.png',
+    stats: { pac: 78, sho: 74, pas: 81, dri: 85, def: 52, phy: 68, mental: 89 },
   };
-  const DEMO_CATEGORIES = { technique: 4, game_intelligence: 4, physicality: 3, decision_making: 5, mentality: 4 };
-  const [categories, setCategories] = useState({ ...DEMO_CATEGORIES });
-
-  const setCategory = (key, val) => setCategories(prev => ({ ...prev, [key]: Number(val) }));
-  const reset = () => setCategories({ ...DEMO_CATEGORIES });
-  const overall = computeOverall(categories);
-  const tier = scoreToTier(overall);
+  const [stats, setStats] = useState({ ...DEMO.stats });
+  const setStat = (key, val) => setStats(prev => ({ ...prev, [key]: Number(val) }));
+  const reset = () => setStats({ ...DEMO.stats });
+  const overall = computeOverall(stats);
 
   return (
     <section className="py-24 md:py-28 relative overflow-hidden bg-slate-100">
@@ -45,14 +36,7 @@ export default function EliteIdShowcase() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="flex flex-col items-center">
-            <EliteIdCard
-              name={DEMO.name}
-              eliteId={DEMO.eliteId}
-              position={DEMO.position}
-              categories={categories}
-              age={DEMO.age}
-              avatarUrl={DEMO.avatarUrl}
-            />
+            <EliteIdCard name={DEMO.name} eliteId={DEMO.eliteId} position={DEMO.position} stats={stats} rating={overall} age={DEMO.age} avatarUrl={DEMO.avatarUrl} />
             <div className="mt-5 text-center">
               <div className="text-xs text-slate-400">{s.eliteId.liveHint}</div>
             </div>
@@ -65,35 +49,20 @@ export default function EliteIdShowcase() {
               </h3>
               <button onClick={reset} className="text-xs font-bold text-gold hover:text-gold-dark transition-colors">{s.eliteId.reset}</button>
             </div>
-
-            {/* Overall display — TierBadge + FootballBalls (Zero-Numbers) */}
-            <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-between">
-              <span className="font-body text-sm font-bold text-navy">{s.eliteId.overallLabel}</span>
-              <div className="flex items-center gap-3">
-                <TierBadge tier={tier} size="md" strings={strings} />
-                <FootballBalls score={overall} size={20} />
-              </div>
-            </div>
-
-            {/* 5 Category Sliders (1-5) with FootballBalls */}
             <div className="space-y-5">
-              {EVALUATION_CATEGORIES.map(cat => (
-                <div key={cat}>
+              {STAT_KEYS.map(st => (
+                <div key={st.key}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-body text-xs font-bold text-navy">{strings.categories[cat]}</span>
-                    <FootballBalls score={categories[cat] || 0} size={14} />
+                    <span className="font-body text-xs font-bold text-navy">{st.label} <span className="text-slate-400 font-normal">— {st.he}</span></span>
+                    <span className="font-display text-sm font-black text-gold tabular-nums w-8 text-left">{stats[st.key]}</span>
                   </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={5}
-                    step={1}
-                    value={categories[cat] || 1}
-                    onChange={e => setCategory(cat, e.target.value)}
-                    className="w-full accent-amber-500 cursor-pointer"
-                  />
+                  <input type="range" min={0} max={99} value={stats[st.key]} onChange={e => setStat(st.key, e.target.value)} className="w-full accent-amber-500 cursor-pointer" />
                 </div>
               ))}
+            </div>
+            <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
+              <span className="font-body text-sm font-bold text-navy">{s.eliteId.overallLabel}</span>
+              <span className="font-display text-3xl font-black text-gold tabular-nums">{overall}</span>
             </div>
             <p className="mt-4 text-[11px] text-slate-400 leading-relaxed">{s.eliteId.disclaimer}</p>
           </div>
