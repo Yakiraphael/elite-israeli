@@ -7,10 +7,28 @@ export default function DocumentUpload({ label, name, value, onChange, required,
   const [error, setError] = useState('');
   const inputRef = useRef(null);
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+  const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf'];
+
   const handleFile = async (file) => {
     if (!file) return;
-    setUploading(true);
     setError('');
+
+    // Size validation
+    if (file.size > MAX_FILE_SIZE) {
+      setError('גודל קובץ מקסימלי 10MB');
+      return;
+    }
+
+    // Type validation — check both MIME type and extension
+    const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+    if (!ALLOWED_MIME.includes(file.type) || !ALLOWED_EXT.includes(ext)) {
+      setError('סוג קובץ לא מורשה. מותר: תמונות ו-PDF בלבד');
+      return;
+    }
+
+    setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onChange(file_url);

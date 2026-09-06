@@ -171,8 +171,8 @@ export default async function(req: Request): Promise<Response> {
 
     return Response.json({ error: 'Unknown action' }, { status: 400 });
   } catch (error) {
-    console.error('bridge-engine error', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('bridge-engine error:', error?.message || error);
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 }
 

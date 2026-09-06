@@ -230,6 +230,7 @@ export default async function(req) {
       severity_breakdown: severityBreakdown,
     });
   } catch (error) {
-    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
+    console.error('runSystemQaScan error:', error?.message || error);
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 }

@@ -84,7 +84,7 @@ export default async function(req: Request): Promise<Response> {
 
     return Response.json({ ok: true, scope: team_name ? 'team' : 'club', counts });
   } catch (error) {
-    console.error('purge-org-data error', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('purge-org-data error:', error?.message || error);
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 }

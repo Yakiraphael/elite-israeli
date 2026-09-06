@@ -63,6 +63,7 @@ Deno.serve(async (req) => {
     await logAccess('unauthorized_attempt', '', `role ${user.role} attempted club data access`);
     return Response.json({ error: 'Role not permitted' }, { status: 403 });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('getClubData error:', error?.message || error);
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 });

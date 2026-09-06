@@ -9,7 +9,10 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { player_id } = await req.json();
-    if (!player_id) return Response.json({ error: 'player_id is required' }, { status: 400 });
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!player_id || typeof player_id !== 'string' || !UUID_RE.test(player_id)) {
+      return Response.json({ error: 'Invalid request' }, { status: 400 });
+    }
 
     let player;
     try {
@@ -47,6 +50,7 @@ Deno.serve(async (req) => {
 
     return Response.json({ success: true });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('deletePlayerRecord error:', error?.message || error);
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 });

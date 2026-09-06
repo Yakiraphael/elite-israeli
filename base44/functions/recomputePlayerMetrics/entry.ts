@@ -16,7 +16,11 @@ export default async function(req) {
     if (event?.type !== 'create' || !data?.player_id) {
       return Response.json({ success: true, skipped: true });
     }
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const playerId = String(data.player_id);
+    if (!UUID_RE.test(playerId)) {
+      return Response.json({ success: true, skipped: true });
+    }
 
     const logs = await base44.asServiceRole.entities.BehaviorLog.filter(
       { player_id: playerId }, '-created_date', 500
@@ -51,6 +55,7 @@ export default async function(req) {
 
     return Response.json({ success: true, playerId, patch });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('recomputePlayerMetrics error:', error?.message || error);
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 }
