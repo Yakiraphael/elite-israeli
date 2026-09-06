@@ -100,10 +100,10 @@ export default {
     quote: '"The biggest problem in modern football is not a lack of talent, but an outdated, opaque and bureaucratic transfer market."',
     banner: 'The IEFA platform is Israel\'s first sport-tech and fintech platform managing the player transfer market end-to-end — digital, transparent and data-driven. The system connects four nodes: players, parents, professional clubs and field analysts.',
     advantages: [
-      { subtitle: 'The Mental Index', title: 'The MENTAL Index', desc: 'Not just goals and assists. We developed a certified score (1-99) measuring composure, leadership and persistence — calculated in real time by our field analysts for "Elite" players only.' },
-      { subtitle: 'Data Scraping', title: 'Data Verification Bypassing Regulation', desc: 'Smart scripts pull and cross-reference official data from the FA website nightly directly into digital Elite cards.' },
-      { subtitle: 'Guardian Protection Flow', title: 'The Legal Guardian', desc: 'The youth player has a full performance profile — but zero legal authority. Every transfer offer goes through OTP verification to the parent\'s phone.' },
-      { subtitle: 'FinTech Core', title: 'Economic Disruption: Only 2%', desc: 'Instead of agents taking 10%-15%, the system enables full digital representation at an unprecedented 2% commission.' },
+      { subtitle: 'SSOT Engine', title: 'Single Source of Truth', desc: 'The UnifiedReport system unifies all field reports into one source of truth — automated aggregation of 5 standardized evaluation categories with evaluator weighting (1.0/0.5/0.0) by familiarity level.' },
+      { subtitle: 'Zero-Numbers Law', title: 'The Zero-Numbers Rule', desc: 'Zero raw numeric scores exposed — 5 unified categories (A5-B1) displayed as visual football balls and tier badges, instead of raw numerical averages.' },
+      { subtitle: 'Youth-Only U10-U21', title: 'Youth-Only Architecture', desc: 'The system is restricted to youth age groups U10 through U21 only — adult players are strictly prohibited, including a dedicated youth transfer system with guardian OTP protection.' },
+      { subtitle: 'Public DTO', title: 'Filtered Public DTO', desc: 'The public website receives data only through the public-league-data function — a filtering DTO that hides internal metrics and exposes only verified results and standings to the official site.' },
     ],
     joinBadge: 'Join Today', joinTitle: 'Choose Your Path', joinSubtitle: '3 user types, a dedicated interface for each',
     userTypes: [
@@ -125,6 +125,13 @@ export default {
     overallLabel: 'Tier Rating',
     disclaimer: '* This display is an interactive simulation to illustrate the model. Real data updates are done by an authorized analyst in the internal management interface.',
     demoName: 'Israel Israeli', demoPos: 'Attacking Midfielder',
+    evalCategories: [
+      { key: 'technique', label: 'Technique' },
+      { key: 'game_intelligence', label: 'Game Intelligence' },
+      { key: 'physicality', label: 'Physicality' },
+      { key: 'decision_making', label: 'Decision Making' },
+      { key: 'mentality', label: 'Mentality' },
+    ],
   },
   goals: {
     badge: 'Strategic Vision', title: 'Organization Goals',

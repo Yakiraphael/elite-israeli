@@ -2,13 +2,25 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import EliteIdCard, { STAT_KEYS, computeOverall } from '../EliteIdCard';
+import EliteIdCard, { computeOverall, EVALUATION_CATEGORIES } from '../EliteIdCard';
+import FootballBalls from '../player/FootballBalls';
+import TierBadge from '../player/TierBadge';
+import { scoreToTier } from '@/lib/evaluationEngine';
 import { X, Loader2, CheckCircle2, RotateCcw } from 'lucide-react';
+
+// Internal admin labels (Hebrew) for the 5 standardized evaluation categories
+const CATEGORY_LABELS = {
+  technique: 'טכניקה',
+  game_intelligence: 'הבנת משחק',
+  physicality: 'פיזיות',
+  decision_making: 'קבלת החלטות',
+  mentality: 'מנטליות',
+};
 
 export default function EliteIdEditorModal({ player, onClose }) {
   const [eliteId, setEliteId] = useState(player.elite_id || '');
   const [stats, setStats] = useState(() => ({
-    pac: 50, sho: 50, pas: 50, dri: 50, def: 50, phy: 50, mental: 50,
+    technique: 3, game_intelligence: 3, physicality: 3, decision_making: 3, mentality: 3,
     ...(player.stats || {}),
   }));
 
@@ -22,10 +34,12 @@ export default function EliteIdEditorModal({ player, onClose }) {
   });
 
   const overall = computeOverall(stats);
+  const tier = scoreToTier(overall ?? 0);
   const setStat = (key, val) => setStats(prev => ({ ...prev, [key]: Number(val) }));
   const autoId = () => setEliteId(`ELITE-2026-${String(Math.floor(Math.random() * 9000) + 1000)}`);
 
   const handleSave = () => {
+    // Store 1-5 category scores + 1-5 overall (Zero-Numbers architecture)
     save.mutate({ elite_id: eliteId, stats, overall_rating: overall });
   };
 
@@ -63,6 +77,7 @@ export default function EliteIdEditorModal({ player, onClose }) {
               avatarUrl={player.avatar_url}
               age={player.birth_date ? (new Date().getFullYear() - new Date(player.birth_date).getFullYear()) : undefined}
               city={player.city}
+              categoryLabels={CATEGORY_LABELS}
             />
             <div className="mt-4 w-full">
               <label className="text-[#D4AF37] text-xs font-bold tracking-wide mb-2 block">Elite ID</label>
@@ -79,26 +94,29 @@ export default function EliteIdEditorModal({ player, onClose }) {
             </div>
           </div>
 
-          {/* Sliders */}
+          {/* Sliders — 5 categories, 1-5 scale with football-ball anchors */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-white text-sm font-bold">נתוני ביצועים</span>
-              <span className="text-white/40 text-xs">ציון כולל: <span className="text-[#D4AF37] font-black text-base">{overall}</span></span>
+              <span className="text-white text-sm font-bold">5 קטגוריות הערכה (1-5)</span>
+              <div className="flex items-center gap-2">
+                <FootballBalls score={overall ?? 0} size={16} />
+                <TierBadge tier={tier} size="sm" />
+              </div>
             </div>
             <div className="space-y-4">
-              {STAT_KEYS.map(s => (
-                <div key={s.key}>
+              {EVALUATION_CATEGORIES.map(key => (
+                <div key={key}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-white/70">
-                      {s.label} <span className="text-white/30 font-normal">— {s.he}</span>
-                    </span>
-                    <span className="text-sm font-black text-[#D4AF37] tabular-nums w-8 text-left">{stats[s.key]}</span>
+                    <span className="text-xs font-bold text-white/70">{CATEGORY_LABELS[key]}</span>
                   </div>
                   <input
-                    type="range" min={0} max={99} value={stats[s.key]}
-                    onChange={e => setStat(s.key, e.target.value)}
+                    type="range" min={1} max={5} step={1} value={stats[key] ?? 1}
+                    onChange={e => setStat(key, e.target.value)}
                     className="w-full accent-amber-500 cursor-pointer"
                   />
+                  <div className="mt-2 flex justify-center">
+                    <FootballBalls score={stats[key] ?? 0} size={18} />
+                  </div>
                 </div>
               ))}
             </div>
