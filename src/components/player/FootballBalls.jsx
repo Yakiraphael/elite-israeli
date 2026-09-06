@@ -65,7 +65,9 @@ function FootballBall({ fillLevel, size = 20 }) {
  * @param {string} className
  */
 export default function FootballBalls({ score = 0, size = 20, interactive = false, onChange, className }) {
-  const rounded = Math.round(score * 2) / 2;
+  // Normalize: if score > 5, treat as 0-100 scale and convert to 0-5
+  const normalizedScore = score > 5 ? score / 20 : score;
+  const rounded = Math.round(normalizedScore * 2) / 2;
   const fullBalls = Math.floor(rounded);
   const hasHalf = rounded % 1 !== 0;
 

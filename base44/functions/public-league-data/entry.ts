@@ -57,6 +57,42 @@ export default async function(req: Request): Promise<Response> {
         .map(r => pickFields(r, PUBLIC_FIXTURE_FIELDS));
       return Response.json({ fixtures: safe });
 
+    } else if (resource === 'player-showcase') {
+      // ---------- DTO ציבורי — "הלינקדאין של הכדורגל" ----------
+      // מחזיר אך ורק נתוני ראווה מותרים: שם, עמדה, מועדון, שנתון, אזור, תג רמה, כדורי רגל.
+      // אין שום מספר יבש, משקל דיווח, הערות פנימיות, מידע רפואי, פרטי קשר או ת.ז.
+      // חומת DTO: השרת הפנימי מעביר הכל; ה-DTO הציבורי מסנן החוצה נתונים רגישים.
+      const records = await base44.asServiceRole.entities.PlayerRegistration.filter(
+        { account_status: 'מאושר' }, '-created_date', limit
+      );
+      const safe = records
+        .filter(r => !r.is_adult) // Youth-only enforcement — no adult players on public site
+        .map(r => {
+          const dto: Record<string, any> = {
+            full_name: r.full_name,
+            position: r.position,
+            team_name: r.team_name || '',
+            organization_name: r.organization_name || '',
+            city: r.city || '',
+            region: r.region || '',
+            age_group: r.age_group || '',
+            elite_id: r.elite_id || '',
+            tier: r.evaluation_tier || 'B1',
+          };
+          // Convert raw score → visual representation. NO numbers leak to the public site.
+          // Normalize: if rating > 5, treat as 0-100 scale and convert to 0-5
+          const rawRating = typeof r.overall_rating === 'number' ? r.overall_rating : 0;
+          const rating = rawRating > 5 ? rawRating / 20 : rawRating;
+          const rounded = Math.round(rating * 2) / 2;
+          dto.balls = {
+            full: Math.min(5, Math.floor(rounded)),
+            half: rounded > 5 ? false : rounded % 1 !== 0,
+            total: 5,
+          };
+          return dto;
+        });
+      return Response.json({ players: safe });
+
     } else {
       return Response.json({ error: 'Invalid resource' }, { status: 400 });
     }

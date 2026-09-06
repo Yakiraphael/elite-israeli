@@ -30,6 +30,8 @@ import BackButton from '../BackButton';
 import PlayerNotificationSettingsModal from './PlayerNotificationSettingsModal';
 import { Lock, Settings } from 'lucide-react';
 import PlayerEvaluationSummary from './PlayerEvaluationSummary';
+import FootballBalls from './FootballBalls';
+import TierBadge from './TierBadge';
 
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
@@ -188,8 +190,8 @@ export default function PlayerProfileView({ player, events }) {
             </div>
             {player.overall_rating != null &&
             <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/40 rounded-lg px-4 py-2 text-center">
-                <div className="text-[#D4AF37] text-xs font-bold">ציון משוקלל</div>
-                <div className="text-white font-black text-lg">{player.overall_rating}</div>
+                <div className="text-[#D4AF37] text-xs font-bold">דירוג מקצועי</div>
+                <div className="flex items-center justify-center mt-1"><FootballBalls score={player.overall_rating} size={18} /></div>
               </div>
             }
             {player.ifa_ready &&
@@ -270,8 +272,8 @@ export default function PlayerProfileView({ player, events }) {
                         <div className={`font-black text-sm mt-1 ${player.ifa_ready ? 'text-green-400' : 'text-amber-400'}`}>{player.ifa_ready ? '✓ מוכן' : 'חסר'}</div>
                       </div>
                       <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-lg p-3 text-center">
-                        <div className="font-bold text-[11px] text-[#D4AF37]">ציון משוקלל</div>
-                        <div className="font-black text-sm mt-1 text-white">{player.overall_rating ?? '—'}</div>
+                        <div className="font-bold text-[11px] text-[#D4AF37]">דירוג מקצועי</div>
+                        <div className="flex items-center justify-center mt-1.5"><FootballBalls score={player.overall_rating || 0} size={16} /></div>
                       </div>
                     </div>
                     {(player.contract_end_date || player.experience_years != null || player.ifa_id) &&

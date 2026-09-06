@@ -21,8 +21,8 @@ export default function PlayerEvaluationSummary({ player, evaluator, canEvaluate
   const [showForm, setShowForm] = useState(false);
 
   const { data: evaluations = [], isLoading } = useQuery({
-    queryKey: ['player-evaluations', player?.id],
-    queryFn: () => base44.entities.PlayerEvaluation.filter({ player_id: player.id }, '-created_date', 50),
+    queryKey: ['unified-reports', player?.id],
+    queryFn: () => base44.entities.UnifiedReport.filter({ player_id: player.id }, '-created_date', 50),
     enabled: !!player?.id,
   });
 
