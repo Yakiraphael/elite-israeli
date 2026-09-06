@@ -6,6 +6,11 @@
       "type": "string",
       "title": "\u05de\u05d6\u05d4\u05d4 \u05e9\u05d7\u05e7\u05df"
     },
+    "club_id": {
+      "type": "string",
+      "title": "\u05de\u05d6\u05d4\u05d4 \u05de\u05d5\u05e2\u05d3\u05d5\u05df",
+      "description": "\u05d1\u05d9\u05d3\u05d5\u05d3 \u05e8\u05d1-\u05de\u05d5\u05e2\u05d3\u05d5\u05e0\u05d9 \u05d1-RLS"
+    },
     "assessment_date": {
       "type": "string",
       "format": "date",
@@ -113,5 +118,67 @@
     "player_id",
     "assessment_date",
     "mental_score_nlp"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.club_id": "{{user.data.club_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "coach"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "director"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }
