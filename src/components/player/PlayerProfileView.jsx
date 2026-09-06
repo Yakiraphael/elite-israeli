@@ -82,7 +82,7 @@ export default function PlayerProfileView({ player, events }) {
     <div className="min-h-screen bg-[#0D1B2A]" dir="rtl">
       {/* Header — סרגל כלים עליון אחיד */}
       <div className="sticky top-0 z-20 bg-[#0D1B2A]/95 backdrop-blur border-b border-white/10">
-        <div className="max-w-5xl mx-auto h-14 px-5 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto h-14 px-5 flex items-center justify-between gap-3">
           <BackButton label="חזרה" fallback="/transfer-portal" className="flex items-center gap-1.5 text-white/60 hover:text-[#D4AF37] transition-colors text-xs font-bold" />
           <img src={LOGO_URL} alt="עילית ישראלית" className="h-7" />
           <button onClick={() => setShowNotificationSettings(true)} className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs font-bold transition-colors px-2.5 py-1.5 rounded hover:bg-white/5">
@@ -120,7 +120,7 @@ export default function PlayerProfileView({ player, events }) {
         <div className="absolute inset-0 bg-[#0D1B2A]/75" />
         <div className="absolute top-0 left-0 w-40 h-40 rounded-full blur-3xl opacity-25" style={{ backgroundColor: '#D4AF37' }} />
         <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-15" style={{ backgroundColor: posInfo.color.replace('from-', '').split(' ')[0] }} />
-        <div className="relative max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center gap-6">
+        <div className="relative max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center gap-6">
           {/* אווטאר עשיר */}
           <div className="w-24 h-24 rounded-2xl bg-[#D4AF37]/15 border-4 border-[#D4AF37] flex items-center justify-center flex-shrink-0 overflow-hidden shadow-2xl">
             {player.avatar_url ?
@@ -203,7 +203,7 @@ export default function PlayerProfileView({ player, events }) {
 
         {/* Quick actions — at-a-glance, no scroll needed */}
         {isApproved &&
-        <div className="relative max-w-5xl mx-auto px-6 pb-6 flex flex-wrap gap-2">
+        <div className="relative max-w-7xl mx-auto px-6 pb-6 flex flex-wrap gap-2">
             <button onClick={() => setTab('vault')} className="flex-1 min-w-[140px] bg-white/10 hover:bg-white/15 text-white text-xs font-bold py-2.5 rounded-sm transition-colors">
               🩺 עדכון רפואי
             </button>
@@ -219,7 +219,7 @@ export default function PlayerProfileView({ player, events }) {
 
       {/* Tabs */}
       <div className="border-b border-white/10 sticky top-0 bg-[#0D1B2A] z-10 overflow-x-auto">
-        <div className="max-w-5xl mx-auto px-6 flex gap-0">
+        <div className="max-w-7xl mx-auto px-6 flex gap-0">
           {TABS.map((t) => {
             const locked = !isApproved && RESTRICTED_TABS.includes(t.id);
             return (
@@ -232,7 +232,7 @@ export default function PlayerProfileView({ player, events }) {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <AnimatePresence mode="wait">
 
           {/* 1. SHOWCASE — תיק פרופיל משפטי מסודר */}
@@ -246,22 +246,17 @@ export default function PlayerProfileView({ player, events }) {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {/* ימין — פרטים אישיים (פרטי) */}
-                <div className="md:col-span-1 space-y-4">
-                  <PersonalInfoPanel player={player} />
-                  <UltimatePlayerCard player={player} clubId={currentUser?.data?.club_id} />
-                </div>
-
-                {/* שמאל — סטטוס מקצועי + היסטוריית חוזים + ציר קריירה */}
-                <div className="md:col-span-2 space-y-4">
-                  {/* כרטיס סטטוס מקצועי */}
-                  <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
+              {/* שורה 1 — פרטים אישיים | כרטיס אולטימטיבי | סטטוס מקצועי */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <PersonalInfoPanel player={player} />
+                <UltimatePlayerCard player={player} clubId={currentUser?.data?.club_id} />
+                {/* כרטיס סטטוס מקצועי */}
+                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-[#D4AF37] text-xs tracking-widest font-bold uppercase flex items-center gap-2"><Briefcase size={12} /> סטטוס מקצועי</h3>
                       <span className="text-white/30 text-[10px]">מידע גלוי לאדמיניסטרציה</span>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 gap-2.5">
                       <div className={`rounded-lg p-3 border text-center ${player.is_free_agent ? 'bg-green-500/10 border-green-500/30' : 'bg-white/5 border-white/10'}`}>
                         <div className={`font-bold text-[11px] ${player.is_free_agent ? 'text-green-400' : 'text-white/60'}`}>חוזה</div>
                         <div className={`font-black text-sm mt-1 ${player.is_free_agent ? 'text-green-400' : 'text-white'}`}>{player.is_free_agent ? 'חופשי' : 'תחת חוזה'}</div>
@@ -301,24 +296,23 @@ export default function PlayerProfileView({ player, events }) {
                     }
                       </div>
                   }
-                  </div>
-
-                  {/* היסטוריית חוזים — נגישה ישירות מהתיק המשפטי */}
-                  {isApproved && <ContractsQuickAccess playerId={player.id} />}
                 </div>
               </div>
 
-              {/* שורה תחתונה — וידאו + מנטלי (לפרופיל ציבורי) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* שורה 2 — חוזים | וידאו | מנטלי */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {isApproved && <ContractsQuickAccess playerId={player.id} />}
                 <VideoHighlightsGallery player={player} />
-                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
+                <div className="bg-[#1B263B] border border-white/10 rounded-lg p-4">
                   <MentalJourneyChart playerId={player.id} isEliteOrg={!!player.elite_id} />
                 </div>
               </div>
 
-              <PlayerEvaluationSummary player={player} evaluator={currentUser} canEvaluate={canEvaluate} />
-
-              <PlayerProgressChart player={player} />
+              {/* שורה 3 — הערכה | גרף התקדמות */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PlayerEvaluationSummary player={player} evaluator={currentUser} canEvaluate={canEvaluate} />
+                <PlayerProgressChart player={player} />
+              </div>
 
               {player.achievements &&
             <div className="bg-[#1B263B] border border-white/10 rounded-lg p-5">
