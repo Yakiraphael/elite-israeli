@@ -66,6 +66,27 @@ export function scoreToTier(score) {
   return 'B1';
 }
 
+/**
+ * מחשב את פרופיל רמת ההיכרות הממוצע של המעריכים.
+ * מחזיר תג ויזואלי: משקל מלא / משקל מעורב / משקל חלקי / מבוטל.
+ */
+export function computeConfidenceInfo(evaluations) {
+  if (!evaluations || evaluations.length === 0) {
+    return { level: 'none', color: 'muted', fullCount: 0, partialCount: 0, zeroCount: 0, effective: 0 };
+  }
+  const fullCount = evaluations.filter(e => e.confidence_level === 1).length;
+  const partialCount = evaluations.filter(e => e.confidence_level === 2).length;
+  const zeroCount = evaluations.filter(e => e.confidence_level === 3).length;
+  const effective = fullCount + partialCount;
+
+  if (effective === 0) return { level: 'none', color: 'red', fullCount, partialCount, zeroCount, effective: 0 };
+
+  const fullRatio = fullCount / effective;
+  if (fullRatio >= 0.7) return { level: 'high', color: 'green', fullCount, partialCount, zeroCount, effective };
+  if (fullRatio >= 0.3) return { level: 'medium', color: 'amber', fullCount, partialCount, zeroCount, effective };
+  return { level: 'low', color: 'amber', fullCount, partialCount, zeroCount, effective };
+}
+
 export function scoreToBalls(score) {
   const rounded = Math.round(score * 2) / 2;
   return {

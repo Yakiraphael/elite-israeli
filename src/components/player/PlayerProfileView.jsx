@@ -20,6 +20,7 @@ import PlayerOffersPanel from './PlayerOffersPanel';
 import CertificatesPanel from './CertificatesPanel';
 import VideoHighlightsGallery from './VideoHighlightsGallery';
 import DynamicPlayerCard from './DynamicPlayerCard';
+import UltimatePlayerCard from './UltimatePlayerCard';
 import PersonalInfoPanel from './PersonalInfoPanel';
 import CVComparisonPanel from './CVComparisonPanel';
 import ContractsQuickAccess from './ContractsQuickAccess';
@@ -249,7 +250,7 @@ export default function PlayerProfileView({ player, events }) {
                 {/* ימין — פרטים אישיים (פרטי) */}
                 <div className="md:col-span-1 space-y-4">
                   <PersonalInfoPanel player={player} />
-                  {(player.elite_id || player.stats) && <DynamicPlayerCard player={player} />}
+                  <UltimatePlayerCard player={player} clubId={currentUser?.data?.club_id} />
                 </div>
 
                 {/* שמאל — סטטוס מקצועי + היסטוריית חוזים + ציר קריירה */}
