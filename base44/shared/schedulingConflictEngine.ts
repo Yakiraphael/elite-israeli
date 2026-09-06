@@ -28,13 +28,16 @@ const GAME_DURATION_MIN = 120;
 const BUFFER_AFTER_MIN = 30;
 const YOUTH_REST_HOURS = 48;
 
-// שנתונים הנחשבים קטינים לעניין תקנון המנוחה.
-const YOUTH_HINTS = ['ילד', 'טרום', 'נוער', 'נער', 'קטין', 'ילדות', 'צעיר'];
+import { isYouthAgeGroup } from './youthGuard.ts';
+
+// שנתונים הנחשבים קטינים לעניין תקנון המנוחה (תאימות לאחור לשמות עבריים).
+const YOUTH_HINTS = ['ילד', 'טרום', 'נוער', 'נער', 'קטין', 'ילדות', 'צעיר', 'עתודה'];
 
 export function isYouth(ageGroup: string): boolean {
   if (!ageGroup) return true; // ברירת מחדל — להחמיר.
+  // זיהוי פורמט סטנדרטי U10–U21 דרך מודל האכיפה המשותף
+  if (isYouthAgeGroup(ageGroup)) return true;
   const g = String(ageGroup).trim();
-  if (!g) return true;
   return YOUTH_HINTS.some(h => g.includes(h));
 }
 

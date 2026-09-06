@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { isYouthAgeGroup } from '../../shared/youthGuard.ts';
 
 /**
  * public-league-data — Zero-Trust public data whitelist endpoint.
@@ -8,6 +9,10 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
  * fields (internal IDs, notes, referee details, dispute reasons, raw scores
  * before verification) are stripped at the server level before the response
  * leaves the platform.
+ *
+ * YOUTH-ONLY ENFORCEMENT: Only records with allowed youth age groups (U10–U21)
+ * are returned. Any record with adult markers or a non-youth age_group is
+ * silently filtered out — the public site never sees adult football data.
  *
  * No authentication required — this endpoint is designed for the public site.
  * But it only returns fields on the explicit public whitelist.
@@ -36,16 +41,19 @@ export default async function(req: Request): Promise<Response> {
     if (resource === 'standings') {
       const filter = ageGroup ? { age_group: ageGroup } : {};
       const records = await base44.asServiceRole.entities.LeagueStanding.filter(filter, '-points', limit);
-      // Only return completed/verified standings — strip all internal fields
-      const safe = records.map(r => pickFields(r, PUBLIC_STANDING_FIELDS));
+      // Youth-only enforcement: filter out any non-youth age groups at the server level
+      const safe = records
+        .filter(r => isYouthAgeGroup(r.age_group))
+        .map(r => pickFields(r, PUBLIC_STANDING_FIELDS));
       return Response.json({ standings: safe });
 
     } else if (resource === 'fixtures') {
       const filter = ageGroup ? { age_group: ageGroup, status: 'COMPLETED' } : { status: 'COMPLETED' };
       const records = await base44.asServiceRole.entities.MatchFixture.filter(filter, '-match_date', limit);
-      // Only return completed fixtures with verified results — no pending/disputed data
+      // Youth-only enforcement + only verified results — no pending/disputed/adult data
       const safe = records
         .filter(r => r.result_status === 'VERIFIED_AND_APPROVED')
+        .filter(r => isYouthAgeGroup(r.age_group))
         .map(r => pickFields(r, PUBLIC_FIXTURE_FIELDS));
       return Response.json({ fixtures: safe });
 
