@@ -63,7 +63,7 @@ export default function PlayerProfileView({ player, events }) {
       try { setCurrentUser(await base44.auth.me()); } catch { /* not logged in */ }
     })();
   }, []);
-  const canEvaluate = currentUser && ['admin', 'director', 'coach'].includes(currentUser.role);
+  const canEvaluate = currentUser && ['director', 'coach'].includes(currentUser.role);
   const posInfo = POSITIONS_INFO[player.position] || { role: '', skills: [], color: 'from-gray-600 to-gray-800' };
   const playerEvent = events.find((e) => e.id === player.event_id);
   const isMedicalExpired = player.medical_expiry_date && new Date(player.medical_expiry_date) < new Date();

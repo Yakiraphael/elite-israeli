@@ -5,7 +5,6 @@ import { useTranslation } from '@/lib/i18n/LanguagesContext';
 import { getEvaluationStrings } from '@/lib/i18n/evaluationStrings';
 import {
   computeAggregatedEvaluation,
-  computeConfidenceInfo,
   EVALUATION_CATEGORIES,
 } from '@/lib/evaluationEngine';
 import FootballBalls from './FootballBalls';
@@ -69,34 +68,6 @@ function OrgBadges({ player, strings }) {
   );
 }
 
-// אינדיקטור רמת היכרות ומשקל מעריכים
-function ConfidenceIndicator({ info, strings }) {
-  if (info.effective === 0 && info.level === 'none' && info.fullCount === 0 && info.zeroCount === 0) return null;
-
-  const COLORS = {
-    green: { dot: '#10B981', bg: 'bg-green-500/10', border: 'border-green-500/25', text: 'text-green-400' },
-    amber: { dot: '#F59E0B', bg: 'bg-amber-500/10', border: 'border-amber-500/25', text: 'text-amber-400' },
-    red: { dot: '#EF4444', bg: 'bg-red-500/10', border: 'border-red-500/25', text: 'text-red-400' },
-    muted: { dot: '#6B7280', bg: 'bg-white/5', border: 'border-white/10', text: 'text-ink-faint' },
-  };
-  const c = COLORS[info.color] || COLORS.muted;
-
-  const label = info.level === 'high' ? strings.confidenceFull :
-                info.level === 'medium' ? strings.confidenceMixed :
-                info.level === 'low' ? strings.confidencePartial :
-                strings.confidenceNone;
-
-  return (
-    <div className={`inline-flex items-center gap-2 text-[10px] font-bold px-2.5 py-1 rounded-full border ${c.bg} ${c.border} ${c.text}`}>
-      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.dot }} />
-      {label}
-      {info.zeroCount > 0 && (
-        <span className="opacity-60">· {info.zeroCount} {strings.confidenceArchived}</span>
-      )}
-    </div>
-  );
-}
-
 // חלק זהות השחקן
 function CardHeader({ player, aggregated, strings, lang }) {
   const ageGroup = player.age_group || extractAgeGroup(player) || 'U18';
@@ -105,7 +76,7 @@ function CardHeader({ player, aggregated, strings, lang }) {
   return (
     <div className="flex items-start gap-4">
       {/* אווטאר */}
-      <div className="w-16 h-16 rounded-2xl bg-brand-soft border-2 border-brand flex items-center justify-center flex-shrink-0 overflow-hidden shadow-lg">
+      <div className="w-12 h-12 rounded-xl bg-brand-soft border-2 border-brand flex items-center justify-center flex-shrink-0 overflow-hidden">
         {player.avatar_url ? (
           <img src={player.avatar_url} alt={player.full_name} className="w-full h-full object-cover" />
         ) : (
@@ -117,7 +88,7 @@ function CardHeader({ player, aggregated, strings, lang }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="text-ink font-black text-lg leading-tight truncate">{player.full_name}</h3>
+            <h3 className="text-ink font-black text-base leading-tight truncate">{player.full_name}</h3>
             <p className="text-ink-muted text-xs mt-0.5">
               {player.position} · {ageGroup} · {player.organization_name || player.club_name || player.team_name || ''}
             </p>
@@ -166,12 +137,12 @@ function LeagueRanking({ standings, player, strings }) {
 }
 
 // חלק הערכה כללית
-function EvaluationOverview({ aggregated, confidenceInfo, strings }) {
+function EvaluationOverview({ aggregated, strings }) {
   if (aggregated.evaluationCount === 0) return null;
 
   return (
-    <div className="bg-panel-alt rounded-xl p-4 border border-hairline">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-panel-alt rounded-lg p-3 border border-hairline">
+      <div className="flex items-center justify-between mb-2">
         <span className="text-ink-muted text-xs font-bold flex items-center gap-1.5">
           <span>⚽</span> {strings.professionalEvaluation}
         </span>
@@ -179,15 +150,8 @@ function EvaluationOverview({ aggregated, confidenceInfo, strings }) {
           {aggregated.effectiveCount} {strings.activeReports}
         </span>
       </div>
-
-      {/* כדורים כלליים */}
-      <div className="flex items-center justify-center py-2">
-        <FootballBalls score={aggregated.overall} size={32} />
-      </div>
-
-      {/* אינדיקטור משקל */}
-      <div className="flex items-center justify-center mt-2">
-        <ConfidenceIndicator info={confidenceInfo} strings={strings} />
+      <div className="flex items-center justify-center py-1">
+        <FootballBalls score={aggregated.overall} size={28} />
       </div>
     </div>
   );
@@ -198,12 +162,12 @@ function CategoryBreakdown({ aggregated, strings }) {
   if (aggregated.evaluationCount === 0) return null;
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-1.5">
       <h4 className="text-ink-faint text-[10px] font-bold uppercase tracking-wider">{strings.categoryBreakdown}</h4>
       {EVALUATION_CATEGORIES.map(cat => (
         <div key={cat} className="flex items-center justify-between">
           <span className="text-ink-muted text-xs font-medium">{strings.categories[cat]}</span>
-          <FootballBalls score={aggregated.categoryScores[cat]} size={16} />
+          <FootballBalls score={aggregated.categoryScores[cat]} size={14} />
         </div>
       ))}
     </div>
@@ -261,7 +225,6 @@ export default function UltimatePlayerCard({ player, clubId, className }) {
   });
 
   const aggregated = computeAggregatedEvaluation(evaluations);
-  const confidenceInfo = computeConfidenceInfo(evaluations);
 
   if (isLoading) {
     return (
@@ -276,7 +239,7 @@ export default function UltimatePlayerCard({ player, clubId, className }) {
       {/* פס זהב עליון */}
       <div className="h-1 bg-gradient-to-l from-transparent via-brand to-transparent" />
 
-      <div className="p-5 space-y-4">
+      <div className="p-4 space-y-3">
         {/* חלק זהות */}
         <CardHeader player={player} aggregated={aggregated} strings={cardStrings} lang={lang} />
 
@@ -286,12 +249,12 @@ export default function UltimatePlayerCard({ player, clubId, className }) {
         {/* הערכה כללית */}
         {aggregated.evaluationCount > 0 ? (
           <>
-            <EvaluationOverview aggregated={aggregated} confidenceInfo={confidenceInfo} strings={cardStrings} />
+            <EvaluationOverview aggregated={aggregated} strings={cardStrings} />
             <CategoryBreakdown aggregated={aggregated} strings={cardStrings} />
           </>
         ) : (
-          <div className="text-center py-8 bg-panel-alt rounded-xl border border-hairline">
-            <span className="text-3xl block mb-2 opacity-40">⚽</span>
+          <div className="text-center py-5 bg-panel-alt rounded-lg border border-hairline">
+            <span className="text-2xl block mb-1 opacity-40">⚽</span>
             <p className="text-ink-faint text-xs">{cardStrings.noEvaluations}</p>
           </div>
         )}
