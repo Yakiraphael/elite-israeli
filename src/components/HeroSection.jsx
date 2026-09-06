@@ -73,10 +73,10 @@ export default function HeroSection() {
           className="border border-gold/50 text-gold font-bold text-sm px-9 h-12 rounded-full hover:bg-gold/10 transition-all duration-300">
             {s.hero.btnPartnership}
           </button>
-          <Link to="/player-profile" aria-label={s.hero.btnRegisterAria}
-          className="bg-white/10 border border-white/25 text-white font-bold text-sm px-9 h-12 rounded-full hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2 hidden">
-            {s.hero.btnRegister}
-          </Link>
+          
+
+
+          
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 1.1 }} className="flex justify-center">
