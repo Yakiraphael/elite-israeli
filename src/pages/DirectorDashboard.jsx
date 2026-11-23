@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Users, AlertTriangle, CheckCircle2, TrendingUp, Search,
   FileText, ClipboardList, BarChart3, X, ChevronRight, Loader2,
@@ -30,50 +29,16 @@ import PullToRefresh from '@/components/mobile/PullToRefresh';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useTabScrollMemory } from '@/hooks/useTabScrollMemory';
 
-const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
-const ADMIN_PASSWORD = 'elite2025';
-
 function calcDaysLeft(d) {
   if (!d) return null;
   return Math.ceil((new Date(d) - new Date()) / (1000 * 60 * 60 * 24));
 }
 
 export default function DirectorDashboard() {
-  const { t } = useTranslation();
-  const [unlocked, setUnlocked] = useState(false);
-  const [pw, setPw] = useState('');
-  const [pwErr, setPwErr] = useState(false);
-
-  const tryLogin = (e) => {
-    e.preventDefault();
-    if (pw === ADMIN_PASSWORD) { setUnlocked(true); }
-    else { setPwErr(true); setTimeout(() => setPwErr(false), 2000); }
-  };
-
-  if (!unlocked) return (
-    <div className="min-h-screen bg-surface flex items-center justify-center" dir="rtl">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm px-6 text-center">
-        <img src={LOGO_URL} alt="" className="h-16 mx-auto mb-6" />
-        <div className="w-14 h-14 rounded-full bg-brand-soft border border-brand-line flex items-center justify-center mx-auto mb-4">
-          <Lock size={22} className="text-brand" />
-        </div>
-        <h1 className="text-ink font-black text-xl mb-1">{t('director.lockTitle')}</h1>
-        <p className="text-ink-muted text-sm mb-6">{t('director.lockSubtitle')}</p>
-        <form onSubmit={tryLogin} className="space-y-3">
-          <input type="password" value={pw} onChange={e => setPw(e.target.value)} placeholder={t('director.passwordPlaceholder')}
-            className={`w-full bg-panel border rounded-sm px-4 py-3 text-ink text-sm text-center tracking-widest placeholder-ink-faint focus:outline-none transition-colors ${pwErr ? 'border-red-500' : 'border-hairline focus:border-brand-line'}`} />
-          {pwErr && <p className="text-red-400 text-xs">{t('director.passwordError')}</p>}
-          <button type="submit" className="w-full bg-brand text-brand-ink font-black text-sm py-3 rounded-sm hover:bg-amber-400">{t('director.loginBtn')}</button>
-        </form>
-        <Link to="/" className="text-ink-faint text-xs mt-4 inline-block hover:text-ink-muted">{t('director.backToSite')}</Link>
-      </motion.div>
-    </div>
-  );
-
-  return <DashboardContent onLogout={() => setUnlocked(false)} />;
+  return <DashboardContent />;
 }
 
-function DashboardContent({ onLogout }) {
+function DashboardContent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
@@ -173,7 +138,7 @@ function DashboardContent({ onLogout }) {
             </Link>
             <NotificationBell audience="director" onNavigate={handleTabChange} />
             <Link to="/" className="text-ink-muted hover:text-ink text-xs flex items-center gap-1"><ArrowRight size={12} /> {t('director.siteLink')}</Link>
-            <button onClick={onLogout} className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> {t('director.exitBtn')}</button>
+            <Link to="/" className="text-ink-faint hover:text-red-400 text-xs flex items-center gap-1"><Lock size={12} /> {t('director.exitBtn')}</Link>
           </div>
         </div>
       </div>
