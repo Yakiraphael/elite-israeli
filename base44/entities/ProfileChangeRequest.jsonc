@@ -50,5 +50,15 @@
     "player_name",
     "field_name",
     "new_value"
-  ]
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": null,
+    "delete": null
+  }
 }
