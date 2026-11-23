@@ -16,60 +16,11 @@ import PlayerRegistrationFullModal from '../components/admin/PlayerRegistrationF
 import ClubsManager from '../components/admin/ClubsManager';
 import ClubDocumentsPanel from '../components/admin/ClubDocumentsPanel';
 
-const ADMIN_PASSWORD = 'elite2025';
-
 export default function AdminPanel() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [pwInput, setPwInput] = useState('');
-  const [pwError, setPwError] = useState(false);
-
-  const handleUnlock = (e) => {
-    e.preventDefault();
-    if (pwInput === ADMIN_PASSWORD) {
-      setUnlocked(true);
-    } else {
-      setPwError(true);
-      setTimeout(() => setPwError(false), 2000);
-    }
-  };
-
-  if (!unlocked) {
-    return (
-      <div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center" dir="rtl">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm px-6">
-          <div className="text-center mb-8">
-            <img src="https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png" alt="עילית ישראלית" className="h-16 mx-auto mb-6" />
-            <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto mb-4">
-              <Lock size={22} className="text-[#D4AF37]" />
-            </div>
-            <h1 className="text-white font-black text-xl">ממשק ניהול</h1>
-            <p className="text-white/40 text-sm mt-1">הכנס סיסמת כניסה</p>
-          </div>
-          <form onSubmit={handleUnlock} className="space-y-4">
-            <input
-              type="password"
-              value={pwInput}
-              onChange={e => setPwInput(e.target.value)}
-              placeholder="סיסמה"
-              className={`w-full bg-[#1B263B] border rounded-sm px-4 py-3 text-white text-sm text-center tracking-widest placeholder-white/20 focus:outline-none transition-colors ${pwError ? 'border-red-500 animate-pulse' : 'border-white/15 focus:border-[#D4AF37]/60'}`}
-            />
-            {pwError && <p className="text-red-400 text-xs text-center">סיסמה שגויה</p>}
-            <button type="submit" className="w-full bg-[#D4AF37] text-[#0D1B2A] font-black text-sm py-3 rounded-sm hover:bg-amber-400 transition-colors">
-              כניסה
-            </button>
-          </form>
-          <div className="text-center mt-6">
-            <Link to="/" className="text-white/30 text-xs hover:text-white/60 transition-colors">חזרה לאתר</Link>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  return <AdminDashboard onLogout={() => setUnlocked(false)} />;
+  return <AdminDashboard />;
 }
 
-function AdminDashboard({ onLogout }) {
+function AdminDashboard() {
   const [tab, setTab] = useState('mission_control');
 
   return (
@@ -85,9 +36,9 @@ function AdminDashboard({ onLogout }) {
             <Link to="/" className="text-white/40 hover:text-white text-xs transition-colors flex items-center gap-1">
               <ArrowRight size={13} /> אתר
             </Link>
-            <button onClick={onLogout} className="text-white/30 hover:text-red-400 text-xs transition-colors flex items-center gap-1">
+            <Link to="/" className="text-white/30 hover:text-red-400 text-xs transition-colors flex items-center gap-1">
               <Lock size={13} /> יציאה
-            </button>
+            </Link>
           </div>
         </div>
       </div>
