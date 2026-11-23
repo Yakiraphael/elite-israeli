@@ -40,5 +40,15 @@
     "requester_id",
     "club_id",
     "type"
-  ]
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": null,
+    "delete": null
+  }
 }
