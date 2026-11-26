@@ -100,6 +100,11 @@
     "check_key"
   ],
   "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {
       "$or": [
         {
@@ -109,43 +114,8 @@
           "user_condition": {
             "role": "admin"
           }
-        },
-        {
-          "user_condition": {
-            "role": "director"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "coach"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "club_scout"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "player"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "guardian"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "user"
-          }
         }
       ]
-    },
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
     },
     "update": {
       "user_condition": {
