@@ -10,7 +10,6 @@ import SecurityBadge from '../components/SecurityBadge';
 import MasterAccessPanel from '../components/MasterAccessPanel';
 import BackButton from '../components/BackButton';
 
-const MASTER_EMAIL = 'yakirkarmel@gmail.com';
 const LOGO_URL = 'https://media.base44.com/images/public/user_699769932baa8921e5e16ee9/d4c51af10_OfficialLogo-noBG.png';
 
 const ROLES = [
@@ -37,7 +36,7 @@ export default function TransferPortal() {
         if (authed) {
           const u = await base44.auth.me();
           setUser(u);
-          if (u.email === MASTER_EMAIL) {
+          if (u.role === 'admin') {
             setView('master');
           } else {
             const roleInfo = ROLES.find(r => r.value === u.role);
