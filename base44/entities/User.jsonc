@@ -20,7 +20,14 @@
     "club_id": {
       "type": "string",
       "title": "\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05de\u05e9\u05d5\u05d9\u05da",
-      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id) \u05d0\u05dc\u05d9\u05d5 \u05e9\u05d9\u05d9\u05da \u05d4\u05de\u05e9\u05ea\u05de\u05e9"
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05de\u05d5\u05e2\u05d3\u05d5\u05df (Club.id) \u05d0\u05dc\u05d9\u05d5 \u05e9\u05d9\u05d9\u05da \u05d4\u05de\u05e9\u05ea\u05de\u05e9",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "collaborator_role": "editor"
+          }
+        }
+      }
     },
     "phone": {
       "type": "string",
